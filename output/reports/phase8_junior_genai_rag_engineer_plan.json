@@ -1,0 +1,4651 @@
+{
+  "mode": "job_application_planning",
+  "candidate_positioning": "Fresher positioning based only on current JD relevance and source-supported profile evidence.",
+  "jd_analysis": {
+    "job_identity": {
+      "job_title": "Job Title: Junior Generative AI / RAG Engineer — Fresher",
+      "company": null,
+      "location": null,
+      "experience_level": "fresher",
+      "employment_type": null,
+      "explicit_years_experience": []
+    },
+    "job_title": "Job Title: Junior Generative AI / RAG Engineer — Fresher",
+    "role_function": "Job Title: Junior Generative AI / RAG Engineer — Fresher",
+    "required_technical_skills": [],
+    "preferred_technical_skills": [],
+    "uncertain_technical_skills": [
+      "python",
+      "vector databases",
+      "rag",
+      "embeddings",
+      "generative ai",
+      "llm integration",
+      "nlp",
+      "streamlit",
+      "langchain",
+      "chromadb",
+      "faiss",
+      "ollama",
+      "docker",
+      "git",
+      "github",
+      "prompt engineering",
+      "ai evaluation",
+      "document processing",
+      "semantic search",
+      "data science",
+      "machine learning"
+    ],
+    "requirements": [
+      {
+        "canonical": "python",
+        "jd_phrases": [
+          "python"
+        ],
+        "classification": "uncertain",
+        "match_classification": null
+      },
+      {
+        "canonical": "vector databases",
+        "jd_phrases": [
+          "vector databases",
+          "chromadb",
+          "faiss"
+        ],
+        "classification": "uncertain",
+        "match_classification": null
+      },
+      {
+        "canonical": "rag",
+        "jd_phrases": [
+          "rag",
+          "retrieval augmented generation"
+        ],
+        "classification": "uncertain",
+        "match_classification": null
+      },
+      {
+        "canonical": "embeddings",
+        "jd_phrases": [
+          "embedding",
+          "embeddings"
+        ],
+        "classification": "uncertain",
+        "match_classification": null
+      },
+      {
+        "canonical": "generative ai",
+        "jd_phrases": [
+          "generative ai",
+          "ai application"
+        ],
+        "classification": "uncertain",
+        "match_classification": null
+      },
+      {
+        "canonical": "llm integration",
+        "jd_phrases": [
+          "llm",
+          "llms",
+          "ollama"
+        ],
+        "classification": "uncertain",
+        "match_classification": null
+      },
+      {
+        "canonical": "nlp",
+        "jd_phrases": [
+          "nlp"
+        ],
+        "classification": "uncertain",
+        "match_classification": null
+      },
+      {
+        "canonical": "streamlit",
+        "jd_phrases": [
+          "streamlit"
+        ],
+        "classification": "uncertain",
+        "match_classification": null
+      },
+      {
+        "canonical": "langchain",
+        "jd_phrases": [
+          "langchain"
+        ],
+        "classification": "uncertain",
+        "match_classification": null
+      },
+      {
+        "canonical": "chromadb",
+        "jd_phrases": [
+          "chromadb"
+        ],
+        "classification": "uncertain",
+        "match_classification": null
+      },
+      {
+        "canonical": "faiss",
+        "jd_phrases": [
+          "faiss"
+        ],
+        "classification": "uncertain",
+        "match_classification": null
+      },
+      {
+        "canonical": "ollama",
+        "jd_phrases": [
+          "ollama"
+        ],
+        "classification": "uncertain",
+        "match_classification": null
+      },
+      {
+        "canonical": "docker",
+        "jd_phrases": [
+          "docker"
+        ],
+        "classification": "uncertain",
+        "match_classification": null
+      },
+      {
+        "canonical": "git",
+        "jd_phrases": [
+          "git"
+        ],
+        "classification": "uncertain",
+        "match_classification": null
+      },
+      {
+        "canonical": "github",
+        "jd_phrases": [
+          "github"
+        ],
+        "classification": "uncertain",
+        "match_classification": null
+      },
+      {
+        "canonical": "prompt engineering",
+        "jd_phrases": [
+          "prompt engineering"
+        ],
+        "classification": "uncertain",
+        "match_classification": null
+      },
+      {
+        "canonical": "ai evaluation",
+        "jd_phrases": [
+          "ai evaluation",
+          "evaluation of ai"
+        ],
+        "classification": "uncertain",
+        "match_classification": null
+      },
+      {
+        "canonical": "document processing",
+        "jd_phrases": [
+          "document processing",
+          "chunking"
+        ],
+        "classification": "uncertain",
+        "match_classification": null
+      },
+      {
+        "canonical": "semantic search",
+        "jd_phrases": [
+          "semantic search"
+        ],
+        "classification": "uncertain",
+        "match_classification": null
+      },
+      {
+        "canonical": "data science",
+        "jd_phrases": [
+          "data science"
+        ],
+        "classification": "uncertain",
+        "match_classification": null
+      },
+      {
+        "canonical": "machine learning",
+        "jd_phrases": [
+          "ml"
+        ],
+        "classification": "uncertain",
+        "match_classification": null
+      }
+    ],
+    "skill_categories": {
+      "programming_languages": [
+        "python"
+      ],
+      "frameworks_libraries": [
+        "streamlit",
+        "langchain",
+        "chromadb",
+        "faiss",
+        "ollama"
+      ],
+      "databases": [
+        "vector databases"
+      ],
+      "cloud_platforms": [
+        "docker"
+      ],
+      "data_ml_ai": [
+        "vector databases",
+        "rag",
+        "embeddings",
+        "generative ai",
+        "llm integration",
+        "nlp",
+        "prompt engineering",
+        "ai evaluation",
+        "document processing",
+        "semantic search",
+        "data science",
+        "machine learning"
+      ],
+      "tools": [
+        "git",
+        "github"
+      ]
+    },
+    "soft_skills_explicitly_requested": [
+      "problem-solving",
+      "analytical"
+    ],
+    "education_requirements": [
+      "bachelor",
+      "computer science",
+      "information technology",
+      "artificial intelligence",
+      "data science",
+      "degree",
+      "education"
+    ],
+    "experience_requirements": [
+      "Fresher",
+      "fresher",
+      "Experience"
+    ],
+    "responsibilities": [
+      "We are looking for a motivated fresher to join our AI engineering team as a Junior Generative AI / RAG Engineer.",
+      "Assist in building and testing Generative AI and Retrieval-Augmented Generation (RAG) applications.",
+      "Work with Python for AI/ML application development.",
+      "Build document processing, chunking, embedding, and retrieval pipelines.",
+      "Work with vector databases for semantic search and retrieval.",
+      "Integrate LLMs into AI applications and chatbot workflows.",
+      "Perform testing and evaluation of AI application outputs.",
+      "Collaborate with the team to debug and improve AI pipelines.",
+      "Document implementations and technical workflows.",
+      "Bachelor's degree in Computer Science, Information Technology, Artificial Intelligence, Data Science, or a related field.",
+      "Freshers are welcome."
+    ],
+    "domain_keywords": [
+      "python",
+      "vector databases",
+      "rag",
+      "embeddings",
+      "generative ai",
+      "llm integration",
+      "nlp",
+      "streamlit",
+      "langchain",
+      "chromadb",
+      "faiss",
+      "ollama",
+      "docker",
+      "git",
+      "github",
+      "prompt engineering",
+      "ai evaluation",
+      "document processing",
+      "semantic search",
+      "data science",
+      "machine learning"
+    ],
+    "keywords_phrases": [
+      "Job",
+      "Title",
+      "Junior",
+      "Generative",
+      "RAG",
+      "Engineer",
+      "Fresher",
+      "Description",
+      "are",
+      "looking",
+      "for",
+      "motivated",
+      "join",
+      "our",
+      "engineering",
+      "team",
+      "Responsibilities",
+      "Assist",
+      "building",
+      "and",
+      "testing",
+      "Retrieval-Augmented",
+      "Generation",
+      "applications",
+      "Work",
+      "with",
+      "Python",
+      "application",
+      "development",
+      "Build",
+      "document",
+      "processing",
+      "chunking",
+      "embedding",
+      "retrieval",
+      "pipelines",
+      "vector",
+      "databases",
+      "semantic",
+      "search",
+      "Integrate",
+      "LLMs",
+      "into",
+      "chatbot",
+      "workflows",
+      "Perform",
+      "evaluation",
+      "outputs",
+      "Collaborate",
+      "the",
+      "debug",
+      "improve",
+      "implementations",
+      "technical",
+      "Required",
+      "Skills",
+      "Basic",
+      "understanding",
+      "concepts",
+      "Experience",
+      "embeddings",
+      "knowledge",
+      "NLP",
+      "Familiarity",
+      "Git",
+      "GitHub",
+      "Problem-solving",
+      "analytical",
+      "Preferred",
+      "LangChain",
+      "similar",
+      "frameworks",
+      "ChromaDB",
+      "FAISS",
+      "other",
+      "Ollama",
+      "local",
+      "LLM",
+      "platforms",
+      "Streamlit",
+      "Prompt",
+      "Docker",
+      "Education",
+      "Bachelor",
+      "degree",
+      "Computer",
+      "Science",
+      "Information",
+      "Technology",
+      "Artificial",
+      "Intelligence",
+      "Data",
+      "related",
+      "field",
+      "Freshers",
+      "welcome"
+    ],
+    "classification_notes": [
+      "Required/preferred is assigned only when the surrounding JD section or explicit wording supports it; otherwise classification is uncertain.",
+      "Semantic mappings identify related evidence but do not add unsupported technologies to the profile."
+    ]
+  },
+  "candidate_matching": [
+    {
+      "requirement": "python",
+      "classification": "uncertain",
+      "match_type": "direct",
+      "evidence_status": "SUPPORTED",
+      "evidence": [
+        {
+          "type": "skill",
+          "record_id": null,
+          "name": "Python",
+          "status": "verified",
+          "match_type": "direct",
+          "category": "programming_languages",
+          "source": "skills.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_telecom_churn_logistic_regression",
+          "name": "Telecom Churn Logistic Regression",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "python"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_fuel_regression_crispmlq",
+          "name": "Flight Fuel-Burn Prediction",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "python"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_bank_customer_clustering_dashboard",
+          "name": "Bank Customer Clustering and Financial Analytics Dashboard",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "python"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_sample_sales_data",
+          "name": "Sample Sales Data Generator and EDA Toolkit",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "python"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_text_to_sql_project",
+          "name": "Text-to-SQL Project",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "python"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_genai_pyspark_pipeline",
+          "name": "Synthetic Data Generation and PySpark Analytics Pipeline",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "python"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_student_performance_rag",
+          "name": "Student Performance RAG Chatbot",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "python"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_smartfraud_classifier",
+          "name": "SmartFraud Classifier",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "python"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_imdb_movie_analysis",
+          "name": "IMDb Movie Analysis",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "python"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "experience",
+          "record_id": "experience_ediglobe_ai_intern",
+          "name": "Ediglobe",
+          "match_type": "direct",
+          "matched_evidence": [
+            "python"
+          ],
+          "source": "experience.json"
+        }
+      ],
+      "explanation": "SUPPORTED: direct evidence from Python, Telecom Churn Logistic Regression, Flight Fuel-Burn Prediction. Actual profile technologies are preserved."
+    },
+    {
+      "requirement": "vector databases",
+      "classification": "uncertain",
+      "match_type": "direct",
+      "evidence_status": "SUPPORTED",
+      "evidence": [
+        {
+          "type": "skill",
+          "record_id": null,
+          "name": "ChromaDB",
+          "status": "verified",
+          "match_type": "direct",
+          "category": "generative_ai",
+          "source": "skills.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_student_performance_rag",
+          "name": "Student Performance RAG Chatbot",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "vector databases",
+            "chromadb"
+          ],
+          "source": "projects.json"
+        }
+      ],
+      "explanation": "SUPPORTED: direct evidence from ChromaDB, Student Performance RAG Chatbot. Actual profile technologies are preserved."
+    },
+    {
+      "requirement": "rag",
+      "classification": "uncertain",
+      "match_type": "direct",
+      "evidence_status": "SUPPORTED",
+      "evidence": [
+        {
+          "type": "skill",
+          "record_id": null,
+          "name": "RAG",
+          "status": "verified",
+          "match_type": "direct",
+          "category": "generative_ai",
+          "source": "skills.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_student_performance_rag",
+          "name": "Student Performance RAG Chatbot",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "rag",
+            "retrieval augmented generation",
+            "retrieval-augmented generation",
+            "semantic retrieval"
+          ],
+          "source": "projects.json"
+        }
+      ],
+      "explanation": "SUPPORTED: direct evidence from RAG, Student Performance RAG Chatbot. Actual profile technologies are preserved."
+    },
+    {
+      "requirement": "embeddings",
+      "classification": "uncertain",
+      "match_type": "direct",
+      "evidence_status": "SUPPORTED",
+      "evidence": [
+        {
+          "type": "skill",
+          "record_id": null,
+          "name": "Embeddings",
+          "status": "verified",
+          "match_type": "direct",
+          "category": "generative_ai",
+          "source": "skills.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_student_performance_rag",
+          "name": "Student Performance RAG Chatbot",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "embedding",
+            "embeddings"
+          ],
+          "source": "projects.json"
+        }
+      ],
+      "explanation": "SUPPORTED: direct evidence from Embeddings, Student Performance RAG Chatbot. Actual profile technologies are preserved."
+    },
+    {
+      "requirement": "generative ai",
+      "classification": "uncertain",
+      "match_type": "direct",
+      "evidence_status": "SUPPORTED",
+      "evidence": [
+        {
+          "type": "skill",
+          "record_id": null,
+          "name": "Generative AI",
+          "status": "verified",
+          "match_type": "direct",
+          "category": "generative_ai",
+          "source": "skills.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_text_to_sql_project",
+          "name": "Text-to-SQL Project",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "generative ai",
+            "ai application"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_genai_pyspark_pipeline",
+          "name": "Synthetic Data Generation and PySpark Analytics Pipeline",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "semantic",
+          "matched_evidence": [
+            "genai"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_student_performance_rag",
+          "name": "Student Performance RAG Chatbot",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "generative ai"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_ai_resume_jd_match_tool",
+          "name": "AI Resume-JD Match Tool",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "generative ai",
+            "ai application"
+          ],
+          "source": "projects.json"
+        }
+      ],
+      "explanation": "SUPPORTED: direct evidence from Generative AI, Text-to-SQL Project, Synthetic Data Generation and PySpark Analytics Pipeline. Actual profile technologies are preserved."
+    },
+    {
+      "requirement": "llm integration",
+      "classification": "uncertain",
+      "match_type": "direct",
+      "evidence_status": "SUPPORTED",
+      "evidence": [
+        {
+          "type": "skill",
+          "record_id": null,
+          "name": "Ollama",
+          "status": "verified",
+          "match_type": "direct",
+          "category": "generative_ai",
+          "source": "skills.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_text_to_sql_project",
+          "name": "Text-to-SQL Project",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "semantic",
+          "matched_evidence": [
+            "gemini api",
+            "openai-compatible"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_student_performance_rag",
+          "name": "Student Performance RAG Chatbot",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "llm",
+            "ollama"
+          ],
+          "source": "projects.json"
+        }
+      ],
+      "explanation": "SUPPORTED: direct evidence from Ollama, Text-to-SQL Project, Student Performance RAG Chatbot. Actual profile technologies are preserved."
+    },
+    {
+      "requirement": "nlp",
+      "classification": "uncertain",
+      "match_type": "direct",
+      "evidence_status": "SUPPORTED",
+      "evidence": [
+        {
+          "type": "project",
+          "record_id": "project_text_to_sql_project",
+          "name": "Text-to-SQL Project",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "nlp"
+          ],
+          "source": "projects.json"
+        }
+      ],
+      "explanation": "SUPPORTED: direct evidence from Text-to-SQL Project. Actual profile technologies are preserved."
+    },
+    {
+      "requirement": "streamlit",
+      "classification": "uncertain",
+      "match_type": "direct",
+      "evidence_status": "SUPPORTED",
+      "evidence": [
+        {
+          "type": "skill",
+          "record_id": null,
+          "name": "Streamlit",
+          "status": "verified",
+          "match_type": "direct",
+          "category": "web_development",
+          "source": "skills.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_telecom_churn_logistic_regression",
+          "name": "Telecom Churn Logistic Regression",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "streamlit"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_fuel_regression_crispmlq",
+          "name": "Flight Fuel-Burn Prediction",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "streamlit"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_bank_customer_clustering_dashboard",
+          "name": "Bank Customer Clustering and Financial Analytics Dashboard",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "streamlit"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_student_performance_rag",
+          "name": "Student Performance RAG Chatbot",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "streamlit"
+          ],
+          "source": "projects.json"
+        }
+      ],
+      "explanation": "SUPPORTED: direct evidence from Streamlit, Telecom Churn Logistic Regression, Flight Fuel-Burn Prediction. Actual profile technologies are preserved."
+    },
+    {
+      "requirement": "langchain",
+      "classification": "uncertain",
+      "match_type": null,
+      "evidence_status": "UNSUPPORTED",
+      "evidence": [],
+      "explanation": "No matching skill, project, or experience evidence was found in the profile."
+    },
+    {
+      "requirement": "chromadb",
+      "classification": "uncertain",
+      "match_type": "direct",
+      "evidence_status": "SUPPORTED",
+      "evidence": [
+        {
+          "type": "skill",
+          "record_id": null,
+          "name": "ChromaDB",
+          "status": "verified",
+          "match_type": "direct",
+          "category": "generative_ai",
+          "source": "skills.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_student_performance_rag",
+          "name": "Student Performance RAG Chatbot",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "chromadb"
+          ],
+          "source": "projects.json"
+        }
+      ],
+      "explanation": "SUPPORTED: direct evidence from ChromaDB, Student Performance RAG Chatbot. Actual profile technologies are preserved."
+    },
+    {
+      "requirement": "faiss",
+      "classification": "uncertain",
+      "match_type": null,
+      "evidence_status": "UNSUPPORTED",
+      "evidence": [],
+      "explanation": "No matching skill, project, or experience evidence was found in the profile."
+    },
+    {
+      "requirement": "ollama",
+      "classification": "uncertain",
+      "match_type": "direct",
+      "evidence_status": "SUPPORTED",
+      "evidence": [
+        {
+          "type": "skill",
+          "record_id": null,
+          "name": "Ollama",
+          "status": "verified",
+          "match_type": "direct",
+          "category": "generative_ai",
+          "source": "skills.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_student_performance_rag",
+          "name": "Student Performance RAG Chatbot",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "ollama"
+          ],
+          "source": "projects.json"
+        }
+      ],
+      "explanation": "SUPPORTED: direct evidence from Ollama, Student Performance RAG Chatbot. Actual profile technologies are preserved."
+    },
+    {
+      "requirement": "docker",
+      "classification": "uncertain",
+      "match_type": null,
+      "evidence_status": "UNSUPPORTED",
+      "evidence": [],
+      "explanation": "No matching skill, project, or experience evidence was found in the profile."
+    },
+    {
+      "requirement": "git",
+      "classification": "uncertain",
+      "match_type": "direct",
+      "evidence_status": "SUPPORTED",
+      "evidence": [
+        {
+          "type": "skill",
+          "record_id": null,
+          "name": "Git",
+          "status": "candidate_provided",
+          "match_type": "direct",
+          "category": "tools_and_platforms",
+          "source": "skills.json"
+        }
+      ],
+      "explanation": "SUPPORTED: direct evidence from Git. Actual profile technologies are preserved."
+    },
+    {
+      "requirement": "github",
+      "classification": "uncertain",
+      "match_type": "direct",
+      "evidence_status": "SUPPORTED",
+      "evidence": [
+        {
+          "type": "project",
+          "record_id": "project_telecom_churn_logistic_regression",
+          "name": "Telecom Churn Logistic Regression",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "github"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_fuel_regression_crispmlq",
+          "name": "Flight Fuel-Burn Prediction",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "github"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_bank_customer_clustering_dashboard",
+          "name": "Bank Customer Clustering and Financial Analytics Dashboard",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "github"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_sample_sales_data",
+          "name": "Sample Sales Data Generator and EDA Toolkit",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "github"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_text_to_sql_project",
+          "name": "Text-to-SQL Project",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "github"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_genai_pyspark_pipeline",
+          "name": "Synthetic Data Generation and PySpark Analytics Pipeline",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "github"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_retail_mini_etl",
+          "name": "Retail Mini ETL",
+          "project_status": "unknown",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "github"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_student_performance_rag",
+          "name": "Student Performance RAG Chatbot",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "github"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_ai_resume_jd_match_tool",
+          "name": "AI Resume-JD Match Tool",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "github"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_vibe_kpi_demo",
+          "name": "vibe-kpi-demo-",
+          "project_status": "unknown",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "github"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_smartfraud_classifier",
+          "name": "SmartFraud Classifier",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "github"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_weather_app",
+          "name": "Weather App",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "github"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_imdb_movie_analysis",
+          "name": "IMDb Movie Analysis",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "github"
+          ],
+          "source": "projects.json"
+        }
+      ],
+      "explanation": "SUPPORTED: direct evidence from Telecom Churn Logistic Regression, Flight Fuel-Burn Prediction, Bank Customer Clustering and Financial Analytics Dashboard. Actual profile technologies are preserved."
+    },
+    {
+      "requirement": "prompt engineering",
+      "classification": "uncertain",
+      "match_type": "semantic",
+      "evidence_status": "SUPPORTED",
+      "evidence": [
+        {
+          "type": "project",
+          "record_id": "project_student_performance_rag",
+          "name": "Student Performance RAG Chatbot",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "semantic",
+          "matched_evidence": [
+            "prompt design"
+          ],
+          "source": "projects.json"
+        }
+      ],
+      "explanation": "SUPPORTED: related semantic evidence from Student Performance RAG Chatbot. Actual profile technologies are preserved."
+    },
+    {
+      "requirement": "ai evaluation",
+      "classification": "uncertain",
+      "match_type": "semantic",
+      "evidence_status": "SUPPORTED",
+      "evidence": [
+        {
+          "type": "project",
+          "record_id": "project_telecom_churn_logistic_regression",
+          "name": "Telecom Churn Logistic Regression",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "semantic",
+          "matched_evidence": [
+            "model evaluation"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_smartfraud_classifier",
+          "name": "SmartFraud Classifier",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "semantic",
+          "matched_evidence": [
+            "model evaluation"
+          ],
+          "source": "projects.json"
+        }
+      ],
+      "explanation": "SUPPORTED: related semantic evidence from Telecom Churn Logistic Regression, SmartFraud Classifier. Actual profile technologies are preserved."
+    },
+    {
+      "requirement": "document processing",
+      "classification": "uncertain",
+      "match_type": null,
+      "evidence_status": "UNSUPPORTED",
+      "evidence": [],
+      "explanation": "No matching skill, project, or experience evidence was found in the profile."
+    },
+    {
+      "requirement": "semantic search",
+      "classification": "uncertain",
+      "match_type": "semantic",
+      "evidence_status": "SUPPORTED",
+      "evidence": [
+        {
+          "type": "project",
+          "record_id": "project_student_performance_rag",
+          "name": "Student Performance RAG Chatbot",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "semantic",
+          "matched_evidence": [
+            "semantic retrieval"
+          ],
+          "source": "projects.json"
+        }
+      ],
+      "explanation": "SUPPORTED: related semantic evidence from Student Performance RAG Chatbot. Actual profile technologies are preserved."
+    },
+    {
+      "requirement": "data science",
+      "classification": "uncertain",
+      "match_type": "direct",
+      "evidence_status": "SUPPORTED",
+      "evidence": [
+        {
+          "type": "project",
+          "record_id": "project_telecom_churn_logistic_regression",
+          "name": "Telecom Churn Logistic Regression",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "data science",
+            "analytics"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_fuel_regression_crispmlq",
+          "name": "Flight Fuel-Burn Prediction",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "data science",
+            "analytics"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_bank_customer_clustering_dashboard",
+          "name": "Bank Customer Clustering and Financial Analytics Dashboard",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "data science",
+            "analytics"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_sample_sales_data",
+          "name": "Sample Sales Data Generator and EDA Toolkit",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "data science"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_genai_pyspark_pipeline",
+          "name": "Synthetic Data Generation and PySpark Analytics Pipeline",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "semantic",
+          "matched_evidence": [
+            "analytics"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_smartfraud_classifier",
+          "name": "SmartFraud Classifier",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "data science",
+            "analytics"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_imdb_movie_analysis",
+          "name": "IMDb Movie Analysis",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "data science"
+          ],
+          "source": "projects.json"
+        }
+      ],
+      "explanation": "SUPPORTED: direct evidence from Telecom Churn Logistic Regression, Flight Fuel-Burn Prediction, Bank Customer Clustering and Financial Analytics Dashboard. Actual profile technologies are preserved."
+    },
+    {
+      "requirement": "machine learning",
+      "classification": "uncertain",
+      "match_type": "direct",
+      "evidence_status": "SUPPORTED",
+      "evidence": [
+        {
+          "type": "project",
+          "record_id": "project_telecom_churn_logistic_regression",
+          "name": "Telecom Churn Logistic Regression",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "machine learning",
+            "ml"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_fuel_regression_crispmlq",
+          "name": "Flight Fuel-Burn Prediction",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "direct",
+          "matched_evidence": [
+            "machine learning",
+            "ml"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_bank_customer_clustering_dashboard",
+          "name": "Bank Customer Clustering and Financial Analytics Dashboard",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "semantic",
+          "matched_evidence": [
+            "machine learning"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_student_performance_rag",
+          "name": "Student Performance RAG Chatbot",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "semantic",
+          "matched_evidence": [
+            "machine learning"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_smartfraud_classifier",
+          "name": "SmartFraud Classifier",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "semantic",
+          "matched_evidence": [
+            "machine learning"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "experience",
+          "record_id": "experience_ediglobe_ai_intern",
+          "name": "Ediglobe",
+          "match_type": "direct",
+          "matched_evidence": [
+            "ml"
+          ],
+          "source": "experience.json"
+        },
+        {
+          "type": "experience",
+          "record_id": "experience_eduskills_ai_ml_virtual_internship",
+          "name": "EduSkills",
+          "match_type": "direct",
+          "matched_evidence": [
+            "ml"
+          ],
+          "source": "experience.json"
+        }
+      ],
+      "explanation": "SUPPORTED: direct evidence from Telecom Churn Logistic Regression, Flight Fuel-Burn Prediction, Bank Customer Clustering and Financial Analytics Dashboard. Actual profile technologies are preserved."
+    }
+  ],
+  "evidence_summary": {
+    "supported_requirements": [
+      {
+        "requirement": "python",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "Python",
+            "status": "verified",
+            "match_type": "direct",
+            "category": "programming_languages",
+            "source": "skills.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_telecom_churn_logistic_regression",
+            "name": "Telecom Churn Logistic Regression",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "python"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_fuel_regression_crispmlq",
+            "name": "Flight Fuel-Burn Prediction",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "python"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_bank_customer_clustering_dashboard",
+            "name": "Bank Customer Clustering and Financial Analytics Dashboard",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "python"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_sample_sales_data",
+            "name": "Sample Sales Data Generator and EDA Toolkit",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "python"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_text_to_sql_project",
+            "name": "Text-to-SQL Project",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "python"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_genai_pyspark_pipeline",
+            "name": "Synthetic Data Generation and PySpark Analytics Pipeline",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "python"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "python"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_smartfraud_classifier",
+            "name": "SmartFraud Classifier",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "python"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_imdb_movie_analysis",
+            "name": "IMDb Movie Analysis",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "python"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "experience",
+            "record_id": "experience_ediglobe_ai_intern",
+            "name": "Ediglobe",
+            "match_type": "direct",
+            "matched_evidence": [
+              "python"
+            ],
+            "source": "experience.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from Python, Telecom Churn Logistic Regression, Flight Fuel-Burn Prediction. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "vector databases",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "ChromaDB",
+            "status": "verified",
+            "match_type": "direct",
+            "category": "generative_ai",
+            "source": "skills.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "vector databases",
+              "chromadb"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from ChromaDB, Student Performance RAG Chatbot. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "rag",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "RAG",
+            "status": "verified",
+            "match_type": "direct",
+            "category": "generative_ai",
+            "source": "skills.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "rag",
+              "retrieval augmented generation",
+              "retrieval-augmented generation",
+              "semantic retrieval"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from RAG, Student Performance RAG Chatbot. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "embeddings",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "Embeddings",
+            "status": "verified",
+            "match_type": "direct",
+            "category": "generative_ai",
+            "source": "skills.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "embedding",
+              "embeddings"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from Embeddings, Student Performance RAG Chatbot. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "generative ai",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "Generative AI",
+            "status": "verified",
+            "match_type": "direct",
+            "category": "generative_ai",
+            "source": "skills.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_text_to_sql_project",
+            "name": "Text-to-SQL Project",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "generative ai",
+              "ai application"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_genai_pyspark_pipeline",
+            "name": "Synthetic Data Generation and PySpark Analytics Pipeline",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "genai"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "generative ai"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_ai_resume_jd_match_tool",
+            "name": "AI Resume-JD Match Tool",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "generative ai",
+              "ai application"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from Generative AI, Text-to-SQL Project, Synthetic Data Generation and PySpark Analytics Pipeline. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "llm integration",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "Ollama",
+            "status": "verified",
+            "match_type": "direct",
+            "category": "generative_ai",
+            "source": "skills.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_text_to_sql_project",
+            "name": "Text-to-SQL Project",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "gemini api",
+              "openai-compatible"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "llm",
+              "ollama"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from Ollama, Text-to-SQL Project, Student Performance RAG Chatbot. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "nlp",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "project",
+            "record_id": "project_text_to_sql_project",
+            "name": "Text-to-SQL Project",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "nlp"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from Text-to-SQL Project. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "streamlit",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "Streamlit",
+            "status": "verified",
+            "match_type": "direct",
+            "category": "web_development",
+            "source": "skills.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_telecom_churn_logistic_regression",
+            "name": "Telecom Churn Logistic Regression",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "streamlit"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_fuel_regression_crispmlq",
+            "name": "Flight Fuel-Burn Prediction",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "streamlit"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_bank_customer_clustering_dashboard",
+            "name": "Bank Customer Clustering and Financial Analytics Dashboard",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "streamlit"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "streamlit"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from Streamlit, Telecom Churn Logistic Regression, Flight Fuel-Burn Prediction. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "chromadb",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "ChromaDB",
+            "status": "verified",
+            "match_type": "direct",
+            "category": "generative_ai",
+            "source": "skills.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "chromadb"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from ChromaDB, Student Performance RAG Chatbot. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "ollama",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "Ollama",
+            "status": "verified",
+            "match_type": "direct",
+            "category": "generative_ai",
+            "source": "skills.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "ollama"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from Ollama, Student Performance RAG Chatbot. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "git",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "Git",
+            "status": "candidate_provided",
+            "match_type": "direct",
+            "category": "tools_and_platforms",
+            "source": "skills.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from Git. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "github",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "project",
+            "record_id": "project_telecom_churn_logistic_regression",
+            "name": "Telecom Churn Logistic Regression",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_fuel_regression_crispmlq",
+            "name": "Flight Fuel-Burn Prediction",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_bank_customer_clustering_dashboard",
+            "name": "Bank Customer Clustering and Financial Analytics Dashboard",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_sample_sales_data",
+            "name": "Sample Sales Data Generator and EDA Toolkit",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_text_to_sql_project",
+            "name": "Text-to-SQL Project",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_genai_pyspark_pipeline",
+            "name": "Synthetic Data Generation and PySpark Analytics Pipeline",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_retail_mini_etl",
+            "name": "Retail Mini ETL",
+            "project_status": "unknown",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_ai_resume_jd_match_tool",
+            "name": "AI Resume-JD Match Tool",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_vibe_kpi_demo",
+            "name": "vibe-kpi-demo-",
+            "project_status": "unknown",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_smartfraud_classifier",
+            "name": "SmartFraud Classifier",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_weather_app",
+            "name": "Weather App",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_imdb_movie_analysis",
+            "name": "IMDb Movie Analysis",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from Telecom Churn Logistic Regression, Flight Fuel-Burn Prediction, Bank Customer Clustering and Financial Analytics Dashboard. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "prompt engineering",
+        "classification": "uncertain",
+        "match_type": "semantic",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "prompt design"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: related semantic evidence from Student Performance RAG Chatbot. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "ai evaluation",
+        "classification": "uncertain",
+        "match_type": "semantic",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "project",
+            "record_id": "project_telecom_churn_logistic_regression",
+            "name": "Telecom Churn Logistic Regression",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "model evaluation"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_smartfraud_classifier",
+            "name": "SmartFraud Classifier",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "model evaluation"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: related semantic evidence from Telecom Churn Logistic Regression, SmartFraud Classifier. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "semantic search",
+        "classification": "uncertain",
+        "match_type": "semantic",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "semantic retrieval"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: related semantic evidence from Student Performance RAG Chatbot. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "data science",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "project",
+            "record_id": "project_telecom_churn_logistic_regression",
+            "name": "Telecom Churn Logistic Regression",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "data science",
+              "analytics"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_fuel_regression_crispmlq",
+            "name": "Flight Fuel-Burn Prediction",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "data science",
+              "analytics"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_bank_customer_clustering_dashboard",
+            "name": "Bank Customer Clustering and Financial Analytics Dashboard",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "data science",
+              "analytics"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_sample_sales_data",
+            "name": "Sample Sales Data Generator and EDA Toolkit",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "data science"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_genai_pyspark_pipeline",
+            "name": "Synthetic Data Generation and PySpark Analytics Pipeline",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "analytics"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_smartfraud_classifier",
+            "name": "SmartFraud Classifier",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "data science",
+              "analytics"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_imdb_movie_analysis",
+            "name": "IMDb Movie Analysis",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "data science"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from Telecom Churn Logistic Regression, Flight Fuel-Burn Prediction, Bank Customer Clustering and Financial Analytics Dashboard. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "machine learning",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "project",
+            "record_id": "project_telecom_churn_logistic_regression",
+            "name": "Telecom Churn Logistic Regression",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "machine learning",
+              "ml"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_fuel_regression_crispmlq",
+            "name": "Flight Fuel-Burn Prediction",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "machine learning",
+              "ml"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_bank_customer_clustering_dashboard",
+            "name": "Bank Customer Clustering and Financial Analytics Dashboard",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "machine learning"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "machine learning"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_smartfraud_classifier",
+            "name": "SmartFraud Classifier",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "machine learning"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "experience",
+            "record_id": "experience_ediglobe_ai_intern",
+            "name": "Ediglobe",
+            "match_type": "direct",
+            "matched_evidence": [
+              "ml"
+            ],
+            "source": "experience.json"
+          },
+          {
+            "type": "experience",
+            "record_id": "experience_eduskills_ai_ml_virtual_internship",
+            "name": "EduSkills",
+            "match_type": "direct",
+            "matched_evidence": [
+              "ml"
+            ],
+            "source": "experience.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from Telecom Churn Logistic Regression, Flight Fuel-Burn Prediction, Bank Customer Clustering and Financial Analytics Dashboard. Actual profile technologies are preserved."
+      }
+    ],
+    "partial_requirements": [],
+    "unsupported_requirements": [
+      {
+        "requirement": "langchain",
+        "classification": "uncertain",
+        "match_type": null,
+        "evidence_status": "UNSUPPORTED",
+        "evidence": [],
+        "explanation": "No matching skill, project, or experience evidence was found in the profile."
+      },
+      {
+        "requirement": "faiss",
+        "classification": "uncertain",
+        "match_type": null,
+        "evidence_status": "UNSUPPORTED",
+        "evidence": [],
+        "explanation": "No matching skill, project, or experience evidence was found in the profile."
+      },
+      {
+        "requirement": "docker",
+        "classification": "uncertain",
+        "match_type": null,
+        "evidence_status": "UNSUPPORTED",
+        "evidence": [],
+        "explanation": "No matching skill, project, or experience evidence was found in the profile."
+      },
+      {
+        "requirement": "document processing",
+        "classification": "uncertain",
+        "match_type": null,
+        "evidence_status": "UNSUPPORTED",
+        "evidence": [],
+        "explanation": "No matching skill, project, or experience evidence was found in the profile."
+      }
+    ],
+    "unknown_requirements": []
+  },
+  "gap_analysis": {
+    "strong_evidence": [
+      {
+        "requirement": "python",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "Python",
+            "status": "verified",
+            "match_type": "direct",
+            "category": "programming_languages",
+            "source": "skills.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_telecom_churn_logistic_regression",
+            "name": "Telecom Churn Logistic Regression",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "python"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_fuel_regression_crispmlq",
+            "name": "Flight Fuel-Burn Prediction",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "python"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_bank_customer_clustering_dashboard",
+            "name": "Bank Customer Clustering and Financial Analytics Dashboard",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "python"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_sample_sales_data",
+            "name": "Sample Sales Data Generator and EDA Toolkit",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "python"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_text_to_sql_project",
+            "name": "Text-to-SQL Project",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "python"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_genai_pyspark_pipeline",
+            "name": "Synthetic Data Generation and PySpark Analytics Pipeline",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "python"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "python"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_smartfraud_classifier",
+            "name": "SmartFraud Classifier",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "python"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_imdb_movie_analysis",
+            "name": "IMDb Movie Analysis",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "python"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "experience",
+            "record_id": "experience_ediglobe_ai_intern",
+            "name": "Ediglobe",
+            "match_type": "direct",
+            "matched_evidence": [
+              "python"
+            ],
+            "source": "experience.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from Python, Telecom Churn Logistic Regression, Flight Fuel-Burn Prediction. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "vector databases",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "ChromaDB",
+            "status": "verified",
+            "match_type": "direct",
+            "category": "generative_ai",
+            "source": "skills.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "vector databases",
+              "chromadb"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from ChromaDB, Student Performance RAG Chatbot. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "rag",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "RAG",
+            "status": "verified",
+            "match_type": "direct",
+            "category": "generative_ai",
+            "source": "skills.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "rag",
+              "retrieval augmented generation",
+              "retrieval-augmented generation",
+              "semantic retrieval"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from RAG, Student Performance RAG Chatbot. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "embeddings",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "Embeddings",
+            "status": "verified",
+            "match_type": "direct",
+            "category": "generative_ai",
+            "source": "skills.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "embedding",
+              "embeddings"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from Embeddings, Student Performance RAG Chatbot. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "generative ai",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "Generative AI",
+            "status": "verified",
+            "match_type": "direct",
+            "category": "generative_ai",
+            "source": "skills.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_text_to_sql_project",
+            "name": "Text-to-SQL Project",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "generative ai",
+              "ai application"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_genai_pyspark_pipeline",
+            "name": "Synthetic Data Generation and PySpark Analytics Pipeline",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "genai"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "generative ai"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_ai_resume_jd_match_tool",
+            "name": "AI Resume-JD Match Tool",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "generative ai",
+              "ai application"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from Generative AI, Text-to-SQL Project, Synthetic Data Generation and PySpark Analytics Pipeline. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "llm integration",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "Ollama",
+            "status": "verified",
+            "match_type": "direct",
+            "category": "generative_ai",
+            "source": "skills.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_text_to_sql_project",
+            "name": "Text-to-SQL Project",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "gemini api",
+              "openai-compatible"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "llm",
+              "ollama"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from Ollama, Text-to-SQL Project, Student Performance RAG Chatbot. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "nlp",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "project",
+            "record_id": "project_text_to_sql_project",
+            "name": "Text-to-SQL Project",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "nlp"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from Text-to-SQL Project. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "streamlit",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "Streamlit",
+            "status": "verified",
+            "match_type": "direct",
+            "category": "web_development",
+            "source": "skills.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_telecom_churn_logistic_regression",
+            "name": "Telecom Churn Logistic Regression",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "streamlit"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_fuel_regression_crispmlq",
+            "name": "Flight Fuel-Burn Prediction",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "streamlit"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_bank_customer_clustering_dashboard",
+            "name": "Bank Customer Clustering and Financial Analytics Dashboard",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "streamlit"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "streamlit"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from Streamlit, Telecom Churn Logistic Regression, Flight Fuel-Burn Prediction. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "chromadb",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "ChromaDB",
+            "status": "verified",
+            "match_type": "direct",
+            "category": "generative_ai",
+            "source": "skills.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "chromadb"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from ChromaDB, Student Performance RAG Chatbot. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "ollama",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "Ollama",
+            "status": "verified",
+            "match_type": "direct",
+            "category": "generative_ai",
+            "source": "skills.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "ollama"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from Ollama, Student Performance RAG Chatbot. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "git",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "Git",
+            "status": "candidate_provided",
+            "match_type": "direct",
+            "category": "tools_and_platforms",
+            "source": "skills.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from Git. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "github",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "project",
+            "record_id": "project_telecom_churn_logistic_regression",
+            "name": "Telecom Churn Logistic Regression",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_fuel_regression_crispmlq",
+            "name": "Flight Fuel-Burn Prediction",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_bank_customer_clustering_dashboard",
+            "name": "Bank Customer Clustering and Financial Analytics Dashboard",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_sample_sales_data",
+            "name": "Sample Sales Data Generator and EDA Toolkit",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_text_to_sql_project",
+            "name": "Text-to-SQL Project",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_genai_pyspark_pipeline",
+            "name": "Synthetic Data Generation and PySpark Analytics Pipeline",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_retail_mini_etl",
+            "name": "Retail Mini ETL",
+            "project_status": "unknown",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_ai_resume_jd_match_tool",
+            "name": "AI Resume-JD Match Tool",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_vibe_kpi_demo",
+            "name": "vibe-kpi-demo-",
+            "project_status": "unknown",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_smartfraud_classifier",
+            "name": "SmartFraud Classifier",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_weather_app",
+            "name": "Weather App",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_imdb_movie_analysis",
+            "name": "IMDb Movie Analysis",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from Telecom Churn Logistic Regression, Flight Fuel-Burn Prediction, Bank Customer Clustering and Financial Analytics Dashboard. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "prompt engineering",
+        "classification": "uncertain",
+        "match_type": "semantic",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "prompt design"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: related semantic evidence from Student Performance RAG Chatbot. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "ai evaluation",
+        "classification": "uncertain",
+        "match_type": "semantic",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "project",
+            "record_id": "project_telecom_churn_logistic_regression",
+            "name": "Telecom Churn Logistic Regression",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "model evaluation"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_smartfraud_classifier",
+            "name": "SmartFraud Classifier",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "model evaluation"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: related semantic evidence from Telecom Churn Logistic Regression, SmartFraud Classifier. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "semantic search",
+        "classification": "uncertain",
+        "match_type": "semantic",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "semantic retrieval"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: related semantic evidence from Student Performance RAG Chatbot. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "data science",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "project",
+            "record_id": "project_telecom_churn_logistic_regression",
+            "name": "Telecom Churn Logistic Regression",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "data science",
+              "analytics"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_fuel_regression_crispmlq",
+            "name": "Flight Fuel-Burn Prediction",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "data science",
+              "analytics"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_bank_customer_clustering_dashboard",
+            "name": "Bank Customer Clustering and Financial Analytics Dashboard",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "data science",
+              "analytics"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_sample_sales_data",
+            "name": "Sample Sales Data Generator and EDA Toolkit",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "data science"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_genai_pyspark_pipeline",
+            "name": "Synthetic Data Generation and PySpark Analytics Pipeline",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "analytics"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_smartfraud_classifier",
+            "name": "SmartFraud Classifier",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "data science",
+              "analytics"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_imdb_movie_analysis",
+            "name": "IMDb Movie Analysis",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "data science"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from Telecom Churn Logistic Regression, Flight Fuel-Burn Prediction, Bank Customer Clustering and Financial Analytics Dashboard. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "machine learning",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "project",
+            "record_id": "project_telecom_churn_logistic_regression",
+            "name": "Telecom Churn Logistic Regression",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "machine learning",
+              "ml"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_fuel_regression_crispmlq",
+            "name": "Flight Fuel-Burn Prediction",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "machine learning",
+              "ml"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_bank_customer_clustering_dashboard",
+            "name": "Bank Customer Clustering and Financial Analytics Dashboard",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "machine learning"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "machine learning"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_smartfraud_classifier",
+            "name": "SmartFraud Classifier",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "machine learning"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "experience",
+            "record_id": "experience_ediglobe_ai_intern",
+            "name": "Ediglobe",
+            "match_type": "direct",
+            "matched_evidence": [
+              "ml"
+            ],
+            "source": "experience.json"
+          },
+          {
+            "type": "experience",
+            "record_id": "experience_eduskills_ai_ml_virtual_internship",
+            "name": "EduSkills",
+            "match_type": "direct",
+            "matched_evidence": [
+              "ml"
+            ],
+            "source": "experience.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from Telecom Churn Logistic Regression, Flight Fuel-Burn Prediction, Bank Customer Clustering and Financial Analytics Dashboard. Actual profile technologies are preserved."
+      }
+    ],
+    "partial_related_evidence": [],
+    "missing_requirements": [
+      {
+        "requirement": "langchain",
+        "classification": "uncertain",
+        "match_type": null,
+        "evidence_status": "UNSUPPORTED",
+        "evidence": [],
+        "explanation": "No matching skill, project, or experience evidence was found in the profile."
+      },
+      {
+        "requirement": "faiss",
+        "classification": "uncertain",
+        "match_type": null,
+        "evidence_status": "UNSUPPORTED",
+        "evidence": [],
+        "explanation": "No matching skill, project, or experience evidence was found in the profile."
+      },
+      {
+        "requirement": "docker",
+        "classification": "uncertain",
+        "match_type": null,
+        "evidence_status": "UNSUPPORTED",
+        "evidence": [],
+        "explanation": "No matching skill, project, or experience evidence was found in the profile."
+      },
+      {
+        "requirement": "document processing",
+        "classification": "uncertain",
+        "match_type": null,
+        "evidence_status": "UNSUPPORTED",
+        "evidence": [],
+        "explanation": "No matching skill, project, or experience evidence was found in the profile."
+      }
+    ],
+    "unknown_requirements": [],
+    "potential_risks": [
+      {
+        "type": "gap",
+        "requirement": "langchain",
+        "message": "No profile evidence; do not add this technology or claim."
+      },
+      {
+        "type": "gap",
+        "requirement": "faiss",
+        "message": "No profile evidence; do not add this technology or claim."
+      },
+      {
+        "type": "gap",
+        "requirement": "docker",
+        "message": "No profile evidence; do not add this technology or claim."
+      },
+      {
+        "type": "gap",
+        "requirement": "document processing",
+        "message": "No profile evidence; do not add this technology or claim."
+      }
+    ]
+  },
+  "resume_plan": {
+    "skills_to_include": [
+      {
+        "name": "Python",
+        "category": "programming_languages",
+        "status": "verified",
+        "match_type": "direct",
+        "matched_requirement": "python",
+        "why": "SUPPORTED: direct evidence from Python, Telecom Churn Logistic Regression, Flight Fuel-Burn Prediction. Actual profile technologies are preserved."
+      },
+      {
+        "name": "ChromaDB",
+        "category": "generative_ai",
+        "status": "verified",
+        "match_type": "direct",
+        "matched_requirement": "vector databases",
+        "why": "SUPPORTED: direct evidence from ChromaDB, Student Performance RAG Chatbot. Actual profile technologies are preserved."
+      },
+      {
+        "name": "RAG",
+        "category": "generative_ai",
+        "status": "verified",
+        "match_type": "direct",
+        "matched_requirement": "rag",
+        "why": "SUPPORTED: direct evidence from RAG, Student Performance RAG Chatbot. Actual profile technologies are preserved."
+      },
+      {
+        "name": "Embeddings",
+        "category": "generative_ai",
+        "status": "verified",
+        "match_type": "direct",
+        "matched_requirement": "embeddings",
+        "why": "SUPPORTED: direct evidence from Embeddings, Student Performance RAG Chatbot. Actual profile technologies are preserved."
+      },
+      {
+        "name": "Generative AI",
+        "category": "generative_ai",
+        "status": "verified",
+        "match_type": "direct",
+        "matched_requirement": "generative ai",
+        "why": "SUPPORTED: direct evidence from Generative AI, Text-to-SQL Project, Synthetic Data Generation and PySpark Analytics Pipeline. Actual profile technologies are preserved."
+      },
+      {
+        "name": "Ollama",
+        "category": "generative_ai",
+        "status": "verified",
+        "match_type": "direct",
+        "matched_requirement": "llm integration",
+        "why": "SUPPORTED: direct evidence from Ollama, Text-to-SQL Project, Student Performance RAG Chatbot. Actual profile technologies are preserved."
+      },
+      {
+        "name": "Streamlit",
+        "category": "web_development",
+        "status": "verified",
+        "match_type": "direct",
+        "matched_requirement": "streamlit",
+        "why": "SUPPORTED: direct evidence from Streamlit, Telecom Churn Logistic Regression, Flight Fuel-Burn Prediction. Actual profile technologies are preserved."
+      },
+      {
+        "name": "ChromaDB",
+        "category": "generative_ai",
+        "status": "verified",
+        "match_type": "direct",
+        "matched_requirement": "chromadb",
+        "why": "SUPPORTED: direct evidence from ChromaDB, Student Performance RAG Chatbot. Actual profile technologies are preserved."
+      },
+      {
+        "name": "Ollama",
+        "category": "generative_ai",
+        "status": "verified",
+        "match_type": "direct",
+        "matched_requirement": "ollama",
+        "why": "SUPPORTED: direct evidence from Ollama, Student Performance RAG Chatbot. Actual profile technologies are preserved."
+      },
+      {
+        "name": "Git",
+        "category": "tools_and_platforms",
+        "status": "candidate_provided",
+        "match_type": "direct",
+        "matched_requirement": "git",
+        "why": "SUPPORTED: direct evidence from Git. Actual profile technologies are preserved."
+      }
+    ],
+    "projects_to_include": [
+      {
+        "record_id": "project_student_performance_rag",
+        "name": "Student Performance RAG Chatbot",
+        "project_status": "completed",
+        "github_availability": "github_verified",
+        "matched_requirements": [
+          "vector databases",
+          "rag",
+          "embeddings",
+          "generative ai",
+          "llm integration",
+          "chromadb",
+          "ollama",
+          "prompt engineering",
+          "semantic search"
+        ],
+        "direct_matches": 7,
+        "semantic_matches": 2,
+        "relevance_score": 25,
+        "selection_reason": "completed project with source-supported direct/semantic evidence"
+      },
+      {
+        "record_id": "project_text_to_sql_project",
+        "name": "Text-to-SQL Project",
+        "project_status": "completed",
+        "github_availability": "github_verified",
+        "matched_requirements": [
+          "generative ai",
+          "llm integration",
+          "nlp"
+        ],
+        "direct_matches": 2,
+        "semantic_matches": 1,
+        "relevance_score": 8,
+        "selection_reason": "completed project with source-supported direct/semantic evidence"
+      },
+      {
+        "record_id": "project_ai_resume_jd_match_tool",
+        "name": "AI Resume-JD Match Tool",
+        "project_status": "completed",
+        "github_availability": "github_verified",
+        "matched_requirements": [
+          "generative ai"
+        ],
+        "direct_matches": 1,
+        "semantic_matches": 0,
+        "relevance_score": 3,
+        "selection_reason": "completed project with source-supported direct/semantic evidence"
+      }
+    ],
+    "experience_to_include": [],
+    "experience_decisions": [
+      {
+        "record_id": "experience_ediglobe_ai_intern",
+        "organization": "Ediglobe",
+        "title": "Artificial Intelligence Intern",
+        "decision": "NOT RELEVANT ENOUGH FOR RESUME",
+        "matched_requirements": [],
+        "reason": "Actual responsibilities/evidence were compared; broad AI/Python wording alone is insufficient."
+      },
+      {
+        "record_id": "experience_eduskills_ai_ml_virtual_internship",
+        "organization": "EduSkills",
+        "title": "AI-ML Virtual Internship",
+        "decision": "NOT RELEVANT ENOUGH FOR RESUME",
+        "matched_requirements": [],
+        "reason": "Actual responsibilities/evidence were compared; broad AI/Python wording alone is insufficient."
+      }
+    ],
+    "experience_relevance_sufficient": false,
+    "third_project_fallback_used": true,
+    "education_to_include": [
+      {
+        "record_id": "education_biher_btech",
+        "institution": "Bharath Institute of Higher Education and Research",
+        "degree": "B.Tech",
+        "field_of_study": "Computer Science and Engineering",
+        "grade": "CGPA: 7.94",
+        "why": "Education is fixed and sourced from education.json."
+      },
+      {
+        "record_id": "education_harvest_higher_secondary",
+        "institution": "Harvest Public School",
+        "degree": "Higher Secondary (XII)",
+        "field_of_study": null,
+        "grade": "70.8%",
+        "why": "Education is fixed and sourced from education.json."
+      },
+      {
+        "record_id": "education_harvest_secondary",
+        "institution": "Harvest Public School",
+        "degree": "Secondary (X)",
+        "field_of_study": null,
+        "grade": "82.2%",
+        "why": "Education is fixed and sourced from education.json."
+      }
+    ],
+    "certifications_to_include": [],
+    "items_intentionally_excluded": {
+      "projects": [
+        {
+          "record_id": "project_fuel_regression_crispmlq",
+          "name": "Flight Fuel-Burn Prediction",
+          "project_status": "completed",
+          "eligible": true,
+          "reason": "no meaningful requirement-level evidence"
+        },
+        {
+          "record_id": "project_bank_customer_clustering_dashboard",
+          "name": "Bank Customer Clustering and Financial Analytics Dashboard",
+          "project_status": "completed",
+          "eligible": true,
+          "reason": "no meaningful requirement-level evidence"
+        },
+        {
+          "record_id": "project_sample_sales_data",
+          "name": "Sample Sales Data Generator and EDA Toolkit",
+          "project_status": "completed",
+          "eligible": true,
+          "reason": "no meaningful requirement-level evidence"
+        },
+        {
+          "record_id": "project_retail_mini_etl",
+          "name": "Retail Mini ETL",
+          "project_status": "unknown",
+          "eligible": false,
+          "reason": "lifecycle-ineligible; GitHub availability does not change this"
+        },
+        {
+          "record_id": "project_vibe_kpi_demo",
+          "name": "vibe-kpi-demo-",
+          "project_status": "unknown",
+          "eligible": false,
+          "reason": "lifecycle-ineligible; GitHub availability does not change this"
+        },
+        {
+          "record_id": "project_weather_app",
+          "name": "Weather App",
+          "project_status": "completed",
+          "eligible": true,
+          "reason": "no meaningful requirement-level evidence"
+        },
+        {
+          "record_id": "project_imdb_movie_analysis",
+          "name": "IMDb Movie Analysis",
+          "project_status": "completed",
+          "eligible": true,
+          "reason": "no meaningful requirement-level evidence"
+        }
+      ],
+      "note": "Excluded projects remain in the master profile and are not permanently ranked."
+    },
+    "supported_requirements": [
+      {
+        "requirement": "python",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "Python",
+            "status": "verified",
+            "match_type": "direct",
+            "category": "programming_languages",
+            "source": "skills.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_telecom_churn_logistic_regression",
+            "name": "Telecom Churn Logistic Regression",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "python"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_fuel_regression_crispmlq",
+            "name": "Flight Fuel-Burn Prediction",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "python"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_bank_customer_clustering_dashboard",
+            "name": "Bank Customer Clustering and Financial Analytics Dashboard",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "python"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_sample_sales_data",
+            "name": "Sample Sales Data Generator and EDA Toolkit",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "python"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_text_to_sql_project",
+            "name": "Text-to-SQL Project",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "python"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_genai_pyspark_pipeline",
+            "name": "Synthetic Data Generation and PySpark Analytics Pipeline",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "python"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "python"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_smartfraud_classifier",
+            "name": "SmartFraud Classifier",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "python"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_imdb_movie_analysis",
+            "name": "IMDb Movie Analysis",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "python"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "experience",
+            "record_id": "experience_ediglobe_ai_intern",
+            "name": "Ediglobe",
+            "match_type": "direct",
+            "matched_evidence": [
+              "python"
+            ],
+            "source": "experience.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from Python, Telecom Churn Logistic Regression, Flight Fuel-Burn Prediction. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "vector databases",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "ChromaDB",
+            "status": "verified",
+            "match_type": "direct",
+            "category": "generative_ai",
+            "source": "skills.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "vector databases",
+              "chromadb"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from ChromaDB, Student Performance RAG Chatbot. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "rag",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "RAG",
+            "status": "verified",
+            "match_type": "direct",
+            "category": "generative_ai",
+            "source": "skills.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "rag",
+              "retrieval augmented generation",
+              "retrieval-augmented generation",
+              "semantic retrieval"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from RAG, Student Performance RAG Chatbot. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "embeddings",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "Embeddings",
+            "status": "verified",
+            "match_type": "direct",
+            "category": "generative_ai",
+            "source": "skills.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "embedding",
+              "embeddings"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from Embeddings, Student Performance RAG Chatbot. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "generative ai",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "Generative AI",
+            "status": "verified",
+            "match_type": "direct",
+            "category": "generative_ai",
+            "source": "skills.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_text_to_sql_project",
+            "name": "Text-to-SQL Project",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "generative ai",
+              "ai application"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_genai_pyspark_pipeline",
+            "name": "Synthetic Data Generation and PySpark Analytics Pipeline",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "genai"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "generative ai"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_ai_resume_jd_match_tool",
+            "name": "AI Resume-JD Match Tool",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "generative ai",
+              "ai application"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from Generative AI, Text-to-SQL Project, Synthetic Data Generation and PySpark Analytics Pipeline. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "llm integration",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "Ollama",
+            "status": "verified",
+            "match_type": "direct",
+            "category": "generative_ai",
+            "source": "skills.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_text_to_sql_project",
+            "name": "Text-to-SQL Project",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "gemini api",
+              "openai-compatible"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "llm",
+              "ollama"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from Ollama, Text-to-SQL Project, Student Performance RAG Chatbot. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "nlp",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "project",
+            "record_id": "project_text_to_sql_project",
+            "name": "Text-to-SQL Project",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "nlp"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from Text-to-SQL Project. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "streamlit",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "Streamlit",
+            "status": "verified",
+            "match_type": "direct",
+            "category": "web_development",
+            "source": "skills.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_telecom_churn_logistic_regression",
+            "name": "Telecom Churn Logistic Regression",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "streamlit"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_fuel_regression_crispmlq",
+            "name": "Flight Fuel-Burn Prediction",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "streamlit"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_bank_customer_clustering_dashboard",
+            "name": "Bank Customer Clustering and Financial Analytics Dashboard",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "streamlit"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "streamlit"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from Streamlit, Telecom Churn Logistic Regression, Flight Fuel-Burn Prediction. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "chromadb",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "ChromaDB",
+            "status": "verified",
+            "match_type": "direct",
+            "category": "generative_ai",
+            "source": "skills.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "chromadb"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from ChromaDB, Student Performance RAG Chatbot. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "ollama",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "Ollama",
+            "status": "verified",
+            "match_type": "direct",
+            "category": "generative_ai",
+            "source": "skills.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "ollama"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from Ollama, Student Performance RAG Chatbot. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "git",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "Git",
+            "status": "candidate_provided",
+            "match_type": "direct",
+            "category": "tools_and_platforms",
+            "source": "skills.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from Git. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "github",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "project",
+            "record_id": "project_telecom_churn_logistic_regression",
+            "name": "Telecom Churn Logistic Regression",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_fuel_regression_crispmlq",
+            "name": "Flight Fuel-Burn Prediction",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_bank_customer_clustering_dashboard",
+            "name": "Bank Customer Clustering and Financial Analytics Dashboard",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_sample_sales_data",
+            "name": "Sample Sales Data Generator and EDA Toolkit",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_text_to_sql_project",
+            "name": "Text-to-SQL Project",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_genai_pyspark_pipeline",
+            "name": "Synthetic Data Generation and PySpark Analytics Pipeline",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_retail_mini_etl",
+            "name": "Retail Mini ETL",
+            "project_status": "unknown",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_ai_resume_jd_match_tool",
+            "name": "AI Resume-JD Match Tool",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_vibe_kpi_demo",
+            "name": "vibe-kpi-demo-",
+            "project_status": "unknown",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_smartfraud_classifier",
+            "name": "SmartFraud Classifier",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_weather_app",
+            "name": "Weather App",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_imdb_movie_analysis",
+            "name": "IMDb Movie Analysis",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "github"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from Telecom Churn Logistic Regression, Flight Fuel-Burn Prediction, Bank Customer Clustering and Financial Analytics Dashboard. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "prompt engineering",
+        "classification": "uncertain",
+        "match_type": "semantic",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "prompt design"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: related semantic evidence from Student Performance RAG Chatbot. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "ai evaluation",
+        "classification": "uncertain",
+        "match_type": "semantic",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "project",
+            "record_id": "project_telecom_churn_logistic_regression",
+            "name": "Telecom Churn Logistic Regression",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "model evaluation"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_smartfraud_classifier",
+            "name": "SmartFraud Classifier",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "model evaluation"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: related semantic evidence from Telecom Churn Logistic Regression, SmartFraud Classifier. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "semantic search",
+        "classification": "uncertain",
+        "match_type": "semantic",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "semantic retrieval"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: related semantic evidence from Student Performance RAG Chatbot. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "data science",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "project",
+            "record_id": "project_telecom_churn_logistic_regression",
+            "name": "Telecom Churn Logistic Regression",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "data science",
+              "analytics"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_fuel_regression_crispmlq",
+            "name": "Flight Fuel-Burn Prediction",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "data science",
+              "analytics"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_bank_customer_clustering_dashboard",
+            "name": "Bank Customer Clustering and Financial Analytics Dashboard",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "data science",
+              "analytics"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_sample_sales_data",
+            "name": "Sample Sales Data Generator and EDA Toolkit",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "data science"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_genai_pyspark_pipeline",
+            "name": "Synthetic Data Generation and PySpark Analytics Pipeline",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "analytics"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_smartfraud_classifier",
+            "name": "SmartFraud Classifier",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "data science",
+              "analytics"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_imdb_movie_analysis",
+            "name": "IMDb Movie Analysis",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "data science"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from Telecom Churn Logistic Regression, Flight Fuel-Burn Prediction, Bank Customer Clustering and Financial Analytics Dashboard. Actual profile technologies are preserved."
+      },
+      {
+        "requirement": "machine learning",
+        "classification": "uncertain",
+        "match_type": "direct",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "project",
+            "record_id": "project_telecom_churn_logistic_regression",
+            "name": "Telecom Churn Logistic Regression",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "machine learning",
+              "ml"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_fuel_regression_crispmlq",
+            "name": "Flight Fuel-Burn Prediction",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "direct",
+            "matched_evidence": [
+              "machine learning",
+              "ml"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_bank_customer_clustering_dashboard",
+            "name": "Bank Customer Clustering and Financial Analytics Dashboard",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "machine learning"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_student_performance_rag",
+            "name": "Student Performance RAG Chatbot",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "machine learning"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_smartfraud_classifier",
+            "name": "SmartFraud Classifier",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "machine learning"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "experience",
+            "record_id": "experience_ediglobe_ai_intern",
+            "name": "Ediglobe",
+            "match_type": "direct",
+            "matched_evidence": [
+              "ml"
+            ],
+            "source": "experience.json"
+          },
+          {
+            "type": "experience",
+            "record_id": "experience_eduskills_ai_ml_virtual_internship",
+            "name": "EduSkills",
+            "match_type": "direct",
+            "matched_evidence": [
+              "ml"
+            ],
+            "source": "experience.json"
+          }
+        ],
+        "explanation": "SUPPORTED: direct evidence from Telecom Churn Logistic Regression, Flight Fuel-Burn Prediction, Bank Customer Clustering and Financial Analytics Dashboard. Actual profile technologies are preserved."
+      }
+    ],
+    "partial_requirements": [],
+    "unsupported_requirements": [
+      {
+        "requirement": "langchain",
+        "classification": "uncertain",
+        "match_type": null,
+        "evidence_status": "UNSUPPORTED",
+        "evidence": [],
+        "explanation": "No matching skill, project, or experience evidence was found in the profile."
+      },
+      {
+        "requirement": "faiss",
+        "classification": "uncertain",
+        "match_type": null,
+        "evidence_status": "UNSUPPORTED",
+        "evidence": [],
+        "explanation": "No matching skill, project, or experience evidence was found in the profile."
+      },
+      {
+        "requirement": "docker",
+        "classification": "uncertain",
+        "match_type": null,
+        "evidence_status": "UNSUPPORTED",
+        "evidence": [],
+        "explanation": "No matching skill, project, or experience evidence was found in the profile."
+      },
+      {
+        "requirement": "document processing",
+        "classification": "uncertain",
+        "match_type": null,
+        "evidence_status": "UNSUPPORTED",
+        "evidence": [],
+        "explanation": "No matching skill, project, or experience evidence was found in the profile."
+      }
+    ],
+    "summary_direction": "Emphasize only the selected completed projects and actual technologies; preserve gaps rather than substituting unsupported tools.",
+    "evidence_notes": [
+      "SUPPORTED: direct evidence from Python, Telecom Churn Logistic Regression, Flight Fuel-Burn Prediction. Actual profile technologies are preserved.",
+      "SUPPORTED: direct evidence from ChromaDB, Student Performance RAG Chatbot. Actual profile technologies are preserved.",
+      "SUPPORTED: direct evidence from RAG, Student Performance RAG Chatbot. Actual profile technologies are preserved.",
+      "SUPPORTED: direct evidence from Embeddings, Student Performance RAG Chatbot. Actual profile technologies are preserved.",
+      "SUPPORTED: direct evidence from Generative AI, Text-to-SQL Project, Synthetic Data Generation and PySpark Analytics Pipeline. Actual profile technologies are preserved.",
+      "SUPPORTED: direct evidence from Ollama, Text-to-SQL Project, Student Performance RAG Chatbot. Actual profile technologies are preserved.",
+      "SUPPORTED: direct evidence from Text-to-SQL Project. Actual profile technologies are preserved.",
+      "SUPPORTED: direct evidence from Streamlit, Telecom Churn Logistic Regression, Flight Fuel-Burn Prediction. Actual profile technologies are preserved.",
+      "SUPPORTED: direct evidence from ChromaDB, Student Performance RAG Chatbot. Actual profile technologies are preserved.",
+      "SUPPORTED: direct evidence from Ollama, Student Performance RAG Chatbot. Actual profile technologies are preserved.",
+      "SUPPORTED: direct evidence from Git. Actual profile technologies are preserved.",
+      "SUPPORTED: direct evidence from Telecom Churn Logistic Regression, Flight Fuel-Burn Prediction, Bank Customer Clustering and Financial Analytics Dashboard. Actual profile technologies are preserved.",
+      "SUPPORTED: related semantic evidence from Student Performance RAG Chatbot. Actual profile technologies are preserved.",
+      "SUPPORTED: related semantic evidence from Telecom Churn Logistic Regression, SmartFraud Classifier. Actual profile technologies are preserved.",
+      "SUPPORTED: related semantic evidence from Student Performance RAG Chatbot. Actual profile technologies are preserved.",
+      "SUPPORTED: direct evidence from Telecom Churn Logistic Regression, Flight Fuel-Burn Prediction, Bank Customer Clustering and Financial Analytics Dashboard. Actual profile technologies are preserved.",
+      "SUPPORTED: direct evidence from Telecom Churn Logistic Regression, Flight Fuel-Burn Prediction, Bank Customer Clustering and Financial Analytics Dashboard. Actual profile technologies are preserved."
+    ],
+    "warnings": [
+      {
+        "type": "gap",
+        "requirement": "langchain",
+        "message": "No profile evidence; do not add this technology or claim."
+      },
+      {
+        "type": "gap",
+        "requirement": "faiss",
+        "message": "No profile evidence; do not add this technology or claim."
+      },
+      {
+        "type": "gap",
+        "requirement": "docker",
+        "message": "No profile evidence; do not add this technology or claim."
+      },
+      {
+        "type": "gap",
+        "requirement": "document processing",
+        "message": "No profile evidence; do not add this technology or claim."
+      }
+    ],
+    "project_selection_scope": "Dynamic for this JD only; completed lifecycle is mandatory and GitHub availability is independent.",
+    "llm_evidence": {
+      "standalone_skill_record": false,
+      "project_level_evidence": [
+        {
+          "record_id": "project_fuel_regression_crispmlq",
+          "name": "Flight Fuel-Burn Prediction",
+          "evidence": [
+            "Linear Regression, Ridge, Lasso and ElasticNet; CRISP-ML(Q) workflow"
+          ],
+          "claim_scope": "project-level evidence only"
+        },
+        {
+          "record_id": "project_genai_pyspark_pipeline",
+          "name": "Synthetic Data Generation and PySpark Analytics Pipeline",
+          "evidence": [
+            "Configurable pipeline; Spark-based aggregations; test coverage for generation and analytics"
+          ],
+          "claim_scope": "project-level evidence only"
+        },
+        {
+          "record_id": "project_student_performance_rag",
+          "name": "Student Performance RAG Chatbot",
+          "evidence": [
+            "Local LLM and embedding workflow; top-five retrieval by default; tests cover preprocessing, retrieval, vector storage and RAG"
+          ],
+          "claim_scope": "project-level evidence only"
+        }
+      ],
+      "model_used": null,
+      "validation_rule": "Deterministic profile evidence is authoritative; no external model was used."
+    }
+  },
+  "approval_checkpoint": {
+    "resume_generation_allowed": false,
+    "required_next_step": "Show this plan and wait for explicit user approval or requested changes."
+  },
+  "safety": {
+    "profile_data_modified": false,
+    "resume_generated": false,
+    "resume_docx_modified": false,
+    "ats_template_modified": false,
+    "external_model_used": false
+  }
+}

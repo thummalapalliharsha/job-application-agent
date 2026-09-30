@@ -1,0 +1,1661 @@
+{
+  "projects": [
+    {
+      "record_id": "project_telecom_churn_logistic_regression",
+      "status": "verified",
+      "sources": [
+        {
+          "source_id": "github_account",
+          "evidence_type": "github",
+          "evidence_location": "https://github.com/thummalapalliharsha/telecom-churn-logestic-regression",
+          "claims_supported": [
+            "repository name",
+            "repository URL",
+            "repository files"
+          ]
+        }
+      ],
+      "review_flags": [
+        "Final accuracy, recall, F1, and ROC-AUC values were not independently verified."
+      ],
+      "conflicts": [],
+      "name": "Telecom Churn Logistic Regression",
+      "project_type": "github_project",
+      "github_url": "https://github.com/thummalapalliharsha/telecom-churn-logestic-regression",
+      "classification_invariant": "project",
+      "source_status": "verified",
+      "documentation_level": "medium",
+      "purpose": "Predict telecom customer churn and identify customers at risk of leaving.",
+      "functionality": [
+        "data inspection and EDA",
+        "binary churn classification",
+        "preprocessing pipeline with scaling and one-hot encoding",
+        "class imbalance handling",
+        "GridSearchCV and optional Optuna optimization",
+        "classification metrics, confusion matrix and ROC-AUC evaluation",
+        "model artifact persistence",
+        "Streamlit risk-scoring interface",
+        "MySQL loading with CSV fallback"
+      ],
+      "technologies": [
+        "Python",
+        "Pandas",
+        "NumPy",
+        "Scikit-learn",
+        "Statsmodels",
+        "Matplotlib",
+        "SQLAlchemy",
+        "PyMySQL",
+        "Joblib",
+        "Streamlit",
+        "Optuna",
+        "MySQL"
+      ],
+      "frameworks_libraries_tools": [
+        "Python",
+        "Pandas",
+        "NumPy",
+        "Scikit-learn",
+        "Statsmodels",
+        "Matplotlib",
+        "SQLAlchemy",
+        "PyMySQL",
+        "Joblib",
+        "Streamlit",
+        "Optuna",
+        "MySQL"
+      ],
+      "technical_details": [
+        "Logistic regression; CRISP-ML(Q) workflow; class_weight balanced; pipeline-based preprocessing"
+      ],
+      "measurable_results": [
+        "Source code documents 1,500 rows and 8 columns; source code documents approximately 22% churn and 78% non-churn."
+      ],
+      "demonstrated_skills": [
+        "binary classification",
+        "logistic regression",
+        "imbalanced-data handling",
+        "feature preprocessing",
+        "hyperparameter optimization",
+        "model evaluation",
+        "database integration",
+        "Streamlit deployment"
+      ],
+      "supported_role_categories": [
+        "Machine Learning Intern",
+        "Data Science Intern",
+        "Data Analyst",
+        "Python Developer",
+        "Business Analytics Intern"
+      ],
+      "source_evidence": {
+        "readme_files": [],
+        "source_files": [
+          "app.py",
+          "churn_logistic_crispmlq.py"
+        ],
+        "dependency_files": [
+          "requirements.txt"
+        ],
+        "notebooks": [],
+        "data_files": [
+          "telecom_churn.csv"
+        ],
+        "configuration_files": []
+      },
+      "provenance": [
+        {
+          "source_id": "github_account",
+          "evidence_type": "github",
+          "evidence_location": "https://github.com/thummalapalliharsha/telecom-churn-logestic-regression",
+          "claims_supported": [
+            "repository implementation"
+          ]
+        }
+      ],
+      "duplicate_group_id": null,
+      "selection_metadata": {
+        "role_categories": [
+          "Machine Learning Intern",
+          "Data Science Intern",
+          "Data Analyst",
+          "Python Developer",
+          "Business Analytics Intern"
+        ],
+        "relevance_tags": [
+          "binary classification",
+          "logistic regression",
+          "imbalanced-data handling",
+          "feature preprocessing",
+          "hyperparameter optimization",
+          "model evaluation",
+          "database integration",
+          "Streamlit deployment"
+        ],
+        "evidence_strength": "high",
+        "available_for_resume": true,
+        "requires_review_before_claim": true,
+        "lifecycle_selection_rule": "only_completed_or_explicitly_allowed_in_progress",
+        "completed_status_required_for_standard_resume": true,
+        "idea_or_planned_excluded_from_final_resume": true,
+        "in_progress_requires_explicit_permission": true
+      },
+      "project_status": "completed",
+      "github_availability": "github_verified",
+      "lifecycle_review_required": false,
+      "lifecycle_notes": [
+        "Repository presence does not establish project completion; lifecycle status requires candidate confirmation.",
+        "Source files show an implemented pipeline and application, but do not explicitly state whether the project is completed or in progress; manual lifecycle confirmation required."
+      ]
+    },
+    {
+      "record_id": "project_fuel_regression_crispmlq",
+      "status": "verified",
+      "sources": [
+        {
+          "source_id": "github_account",
+          "evidence_type": "github",
+          "evidence_location": "https://github.com/thummalapalliharsha/fuel-regression-crispmlq",
+          "claims_supported": [
+            "repository name",
+            "repository URL",
+            "repository files"
+          ]
+        }
+      ],
+      "review_flags": [
+        "Repository-documented expected metrics should be labeled as expected unless independently reproduced."
+      ],
+      "conflicts": [],
+      "name": "Flight Fuel-Burn Prediction",
+      "project_type": "github_project",
+      "github_url": "https://github.com/thummalapalliharsha/fuel-regression-crispmlq",
+      "classification_invariant": "project",
+      "source_status": "verified",
+      "documentation_level": "high",
+      "purpose": "Predict flight fuel consumption to support fuel-loading decisions.",
+      "functionality": [
+        "linear and regularized regression",
+        "numerical and categorical preprocessing",
+        "MySQL storage with CSV fallback",
+        "train/test splitting",
+        "OLS regression estimates",
+        "GridSearchCV and optional Optuna optimization",
+        "MAE, MSE, RMSE, MAPE and R2 evaluation",
+        "model artifact persistence",
+        "Streamlit prediction interface with 5% contingency calculation"
+      ],
+      "technologies": [
+        "Python",
+        "Pandas",
+        "NumPy",
+        "Scikit-learn",
+        "Statsmodels",
+        "Matplotlib",
+        "SQLAlchemy",
+        "PyMySQL",
+        "Joblib",
+        "Streamlit",
+        "Optuna",
+        "MySQL"
+      ],
+      "frameworks_libraries_tools": [
+        "Python",
+        "Pandas",
+        "NumPy",
+        "Scikit-learn",
+        "Statsmodels",
+        "Matplotlib",
+        "SQLAlchemy",
+        "PyMySQL",
+        "Joblib",
+        "Streamlit",
+        "Optuna",
+        "MySQL"
+      ],
+      "technical_details": [
+        "Linear Regression, Ridge, Lasso and ElasticNet; CRISP-ML(Q) workflow"
+      ],
+      "measurable_results": [
+        "Repository documents 120 flights; source code documents 120 rows and 6 columns; source code states distance has approximately 0.99 correlation with fuel; README documents expected MAE approximately 90 kg, RMSE approximately 100 kg, MAPE approximately 1.5%, and R2 approximately 0.999."
+      ],
+      "demonstrated_skills": [
+        "regression",
+        "model comparison",
+        "regularization",
+        "hyperparameter tuning",
+        "database integration",
+        "model persistence",
+        "Streamlit serving"
+      ],
+      "supported_role_categories": [
+        "Data Science Intern",
+        "Machine Learning Intern",
+        "Data Analyst",
+        "Python Developer",
+        "Operations Analytics Intern"
+      ],
+      "source_evidence": {
+        "readme_files": [
+          "README_SETUP.md"
+        ],
+        "source_files": [
+          "app.py",
+          "fuel_regression_crispmlq.py"
+        ],
+        "dependency_files": [
+          "requirements.txt"
+        ],
+        "notebooks": [],
+        "data_files": [
+          "flight_fuel_logs.csv"
+        ],
+        "configuration_files": []
+      },
+      "provenance": [
+        {
+          "source_id": "github_account",
+          "evidence_type": "github",
+          "evidence_location": "https://github.com/thummalapalliharsha/fuel-regression-crispmlq",
+          "claims_supported": [
+            "repository implementation"
+          ]
+        }
+      ],
+      "duplicate_group_id": null,
+      "selection_metadata": {
+        "role_categories": [
+          "Data Science Intern",
+          "Machine Learning Intern",
+          "Data Analyst",
+          "Python Developer",
+          "Operations Analytics Intern"
+        ],
+        "relevance_tags": [
+          "regression",
+          "model comparison",
+          "regularization",
+          "hyperparameter tuning",
+          "database integration",
+          "model persistence",
+          "Streamlit serving"
+        ],
+        "evidence_strength": "high",
+        "available_for_resume": true,
+        "requires_review_before_claim": true,
+        "lifecycle_selection_rule": "only_completed_or_explicitly_allowed_in_progress",
+        "completed_status_required_for_standard_resume": true,
+        "idea_or_planned_excluded_from_final_resume": true,
+        "in_progress_requires_explicit_permission": true
+      },
+      "project_status": "completed",
+      "github_availability": "github_verified",
+      "lifecycle_review_required": false,
+      "lifecycle_notes": [
+        "Repository presence does not establish project completion; lifecycle status requires candidate confirmation.",
+        "Source files and setup documentation show an implemented pipeline and application, but do not explicitly state lifecycle status; manual confirmation required."
+      ]
+    },
+    {
+      "record_id": "project_bank_customer_clustering_dashboard",
+      "status": "verified",
+      "sources": [
+        {
+          "source_id": "github_account",
+          "evidence_type": "github",
+          "evidence_location": "https://github.com/thummalapalliharsha/clustering-analysis-dashboard",
+          "claims_supported": [
+            "repository name",
+            "repository URL",
+            "repository files"
+          ]
+        }
+      ],
+      "review_flags": [],
+      "conflicts": [],
+      "name": "Bank Customer Clustering and Financial Analytics Dashboard",
+      "project_type": "github_project",
+      "github_url": "https://github.com/thummalapalliharsha/clustering-analysis-dashboard",
+      "classification_invariant": "project",
+      "source_status": "verified",
+      "documentation_level": "high",
+      "purpose": "Segment credit-card customers into behavioral personas and provide financial analytics through an interactive dashboard.",
+      "functionality": [
+        "EDA",
+        "data cleaning and feature engineering",
+        "standardization",
+        "K-Means, Agglomerative and DBSCAN clustering",
+        "clustering benchmark",
+        "density-based outlier detection",
+        "PCA outputs",
+        "supervised train/validation/test preparation",
+        "interactive 2D/3D visualizations",
+        "dynamic controls",
+        "real-time persona classification"
+      ],
+      "technologies": [
+        "Python",
+        "Pandas",
+        "NumPy",
+        "Scikit-learn",
+        "Streamlit",
+        "Plotly",
+        "Joblib",
+        "Jupyter Notebook"
+      ],
+      "frameworks_libraries_tools": [
+        "Python",
+        "Pandas",
+        "NumPy",
+        "Scikit-learn",
+        "Streamlit",
+        "Plotly",
+        "Joblib",
+        "Jupyter Notebook"
+      ],
+      "technical_details": [
+        "Uses BALANCE, PURCHASES and CASH_ADVANCE as core behaviors; evaluates Silhouette, Davies-Bouldin and Calinski-Harabasz metrics"
+      ],
+      "measurable_results": [
+        "README documents 8,950 customer records and 18 original features; reports Silhouette improvement from 0.19 to 0.557; reports 415 DBSCAN outliers (4.6%); reports four K-Means personas; reports K-Means Silhouette 0.557, Davies-Bouldin 0.781, Calinski-Harabasz 8,452."
+      ],
+      "demonstrated_skills": [
+        "unsupervised learning",
+        "customer segmentation",
+        "clustering evaluation",
+        "outlier detection",
+        "PCA",
+        "feature engineering",
+        "data cleaning",
+        "interactive analytics",
+        "dashboard development"
+      ],
+      "supported_role_categories": [
+        "Data Analyst",
+        "Data Science Intern",
+        "Machine Learning Intern",
+        "Business Analyst",
+        "Financial Analytics Intern"
+      ],
+      "source_evidence": {
+        "readme_files": [
+          "README.md"
+        ],
+        "source_files": [
+          "app.py"
+        ],
+        "dependency_files": [],
+        "notebooks": [],
+        "data_files": [
+          "bank_customers.csv"
+        ],
+        "configuration_files": []
+      },
+      "provenance": [
+        {
+          "source_id": "github_account",
+          "evidence_type": "github",
+          "evidence_location": "https://github.com/thummalapalliharsha/clustering-analysis-dashboard",
+          "claims_supported": [
+            "repository implementation"
+          ]
+        }
+      ],
+      "duplicate_group_id": null,
+      "selection_metadata": {
+        "role_categories": [
+          "Data Analyst",
+          "Data Science Intern",
+          "Machine Learning Intern",
+          "Business Analyst",
+          "Financial Analytics Intern"
+        ],
+        "relevance_tags": [
+          "unsupervised learning",
+          "customer segmentation",
+          "clustering evaluation",
+          "outlier detection",
+          "PCA",
+          "feature engineering",
+          "data cleaning",
+          "interactive analytics",
+          "dashboard development"
+        ],
+        "evidence_strength": "high",
+        "available_for_resume": true,
+        "requires_review_before_claim": false,
+        "lifecycle_selection_rule": "only_completed_or_explicitly_allowed_in_progress",
+        "completed_status_required_for_standard_resume": true,
+        "idea_or_planned_excluded_from_final_resume": true,
+        "in_progress_requires_explicit_permission": true
+      },
+      "project_status": "completed",
+      "github_availability": "github_verified",
+      "lifecycle_review_required": false,
+      "lifecycle_notes": [
+        "Repository presence does not establish project completion; lifecycle status requires candidate confirmation.",
+        "README and application evidence show implemented functionality, but repository evidence does not explicitly establish completed versus in-progress status; manual confirmation required."
+      ]
+    },
+    {
+      "record_id": "project_sample_sales_data",
+      "status": "verified",
+      "sources": [
+        {
+          "source_id": "github_account",
+          "evidence_type": "github",
+          "evidence_location": "https://github.com/thummalapalliharsha/Sample_Sales_data",
+          "claims_supported": [
+            "repository name",
+            "repository URL",
+            "repository files"
+          ]
+        }
+      ],
+      "review_flags": [
+        "Dataset is synthetic; no real-business performance claim is supported."
+      ],
+      "conflicts": [],
+      "name": "Sample Sales Data Generator and EDA Toolkit",
+      "project_type": "github_project",
+      "github_url": "https://github.com/thummalapalliharsha/Sample_Sales_data",
+      "classification_invariant": "project",
+      "source_status": "verified",
+      "documentation_level": "high",
+      "purpose": "Generate synthetic sales data for exploratory data analysis practice.",
+      "functionality": [
+        "synthetic transaction generation",
+        "product/category/customer/quantity/price/revenue/date/region creation",
+        "controlled missing values",
+        "CSV export",
+        "D-Tale interactive EDA",
+        "YData Profiling and Sweetviz HTML reports"
+      ],
+      "technologies": [
+        "Python",
+        "Pandas",
+        "NumPy",
+        "D-Tale",
+        "YData Profiling",
+        "Sweetviz",
+        "HTML"
+      ],
+      "frameworks_libraries_tools": [
+        "Python",
+        "Pandas",
+        "NumPy",
+        "D-Tale",
+        "YData Profiling",
+        "Sweetviz",
+        "HTML"
+      ],
+      "technical_details": [
+        "Generator uses a fixed seed of 42; generates dates from 2023-01-01 to 2024-12-31; includes eight categories"
+      ],
+      "measurable_results": [
+        "Default generator creates 100,000 transaction rows; introduces approximately 5% missing prices and 2% missing regions."
+      ],
+      "demonstrated_skills": [
+        "synthetic data generation",
+        "EDA",
+        "missing-data analysis",
+        "data profiling",
+        "report generation"
+      ],
+      "supported_role_categories": [
+        "Data Analyst",
+        "Python Developer",
+        "Data Science Intern",
+        "Business Intelligence Intern"
+      ],
+      "source_evidence": {
+        "readme_files": [
+          "README.md"
+        ],
+        "source_files": [
+          "generate_sales_data.py",
+          "run_dtale.py",
+          "run_eda.py"
+        ],
+        "dependency_files": [],
+        "notebooks": [],
+        "data_files": [
+          "sales_data.csv"
+        ],
+        "configuration_files": []
+      },
+      "provenance": [
+        {
+          "source_id": "github_account",
+          "evidence_type": "github",
+          "evidence_location": "https://github.com/thummalapalliharsha/Sample_Sales_data",
+          "claims_supported": [
+            "repository implementation"
+          ]
+        }
+      ],
+      "duplicate_group_id": null,
+      "selection_metadata": {
+        "role_categories": [
+          "Data Analyst",
+          "Python Developer",
+          "Data Science Intern",
+          "Business Intelligence Intern"
+        ],
+        "relevance_tags": [
+          "synthetic data generation",
+          "EDA",
+          "missing-data analysis",
+          "data profiling",
+          "report generation"
+        ],
+        "evidence_strength": "high",
+        "available_for_resume": true,
+        "requires_review_before_claim": true,
+        "lifecycle_selection_rule": "only_completed_or_explicitly_allowed_in_progress",
+        "completed_status_required_for_standard_resume": true,
+        "idea_or_planned_excluded_from_final_resume": true,
+        "in_progress_requires_explicit_permission": true
+      },
+      "project_status": "completed",
+      "github_availability": "github_verified",
+      "lifecycle_review_required": false,
+      "lifecycle_notes": [
+        "Repository presence does not establish project completion; lifecycle status requires candidate confirmation.",
+        "Scripts and generated artifacts show implemented data-generation and EDA functionality, but do not explicitly establish lifecycle status; manual confirmation required."
+      ]
+    },
+    {
+      "record_id": "project_text_to_sql_project",
+      "status": "verified",
+      "sources": [
+        {
+          "source_id": "github_account",
+          "evidence_type": "github",
+          "evidence_location": "https://github.com/thummalapalliharsha/text_to_sql_project",
+          "claims_supported": [
+            "repository name",
+            "repository URL",
+            "repository files"
+          ]
+        }
+      ],
+      "review_flags": [
+        "External API model names in the repository were not independently verified."
+      ],
+      "conflicts": [],
+      "name": "Text-to-SQL Project",
+      "project_type": "github_project",
+      "github_url": "https://github.com/thummalapalliharsha/text_to_sql_project",
+      "classification_invariant": "project",
+      "source_status": "verified",
+      "documentation_level": "high",
+      "purpose": "Convert natural-language questions into SQL queries and execute them against a SQLite sales database.",
+      "functionality": [
+        "SQLite schema creation",
+        "natural-language-to-SQL generation",
+        "Gemini REST API integration",
+        "OpenAI-compatible fallback",
+        "code-fence removal",
+        "first-statement safety handling",
+        "query execution and result return"
+      ],
+      "technologies": [
+        "Python",
+        "SQLite",
+        "SQL",
+        "Google Gemini API",
+        "OpenAI-compatible client",
+        "Requests",
+        "Python-dotenv"
+      ],
+      "frameworks_libraries_tools": [
+        "Python",
+        "SQLite",
+        "SQL",
+        "Google Gemini API",
+        "OpenAI-compatible client",
+        "Requests",
+        "Python-dotenv"
+      ],
+      "technical_details": [
+        "Defines customers and orders tables; generated SQL is instructed to be SQLite-compatible"
+      ],
+      "measurable_results": [
+        "Sample database contains 5 customers and 10 orders; repository includes a total-sales-by-customer example."
+      ],
+      "demonstrated_skills": [
+        "NLP",
+        "generative AI integration",
+        "text-to-SQL",
+        "database design",
+        "API integration",
+        "query execution"
+      ],
+      "supported_role_categories": [
+        "Generative AI Intern",
+        "Python Developer",
+        "Data Analyst",
+        "AI Application Developer",
+        "Database/SQL Intern"
+      ],
+      "source_evidence": {
+        "readme_files": [
+          "README.md"
+        ],
+        "source_files": [
+          "create_db.py",
+          "text_to_sql.py"
+        ],
+        "dependency_files": [],
+        "notebooks": [],
+        "data_files": [
+          "sales.db"
+        ],
+        "configuration_files": [
+          ".env usage"
+        ]
+      },
+      "provenance": [
+        {
+          "source_id": "github_account",
+          "evidence_type": "github",
+          "evidence_location": "https://github.com/thummalapalliharsha/text_to_sql_project",
+          "claims_supported": [
+            "repository implementation"
+          ]
+        }
+      ],
+      "duplicate_group_id": null,
+      "selection_metadata": {
+        "role_categories": [
+          "Generative AI Intern",
+          "Python Developer",
+          "Data Analyst",
+          "AI Application Developer",
+          "Database/SQL Intern"
+        ],
+        "relevance_tags": [
+          "NLP",
+          "generative AI integration",
+          "text-to-SQL",
+          "database design",
+          "API integration",
+          "query execution"
+        ],
+        "evidence_strength": "high",
+        "available_for_resume": true,
+        "requires_review_before_claim": true,
+        "lifecycle_selection_rule": "only_completed_or_explicitly_allowed_in_progress",
+        "completed_status_required_for_standard_resume": true,
+        "idea_or_planned_excluded_from_final_resume": true,
+        "in_progress_requires_explicit_permission": true
+      },
+      "project_status": "completed",
+      "github_availability": "github_verified",
+      "lifecycle_review_required": false,
+      "lifecycle_notes": [
+        "Repository presence does not establish project completion; lifecycle status requires candidate confirmation.",
+        "README and source files show an implemented demo and database workflow, but do not explicitly establish lifecycle status; manual confirmation required."
+      ]
+    },
+    {
+      "record_id": "project_genai_pyspark_pipeline",
+      "status": "verified",
+      "sources": [
+        {
+          "source_id": "github_account",
+          "evidence_type": "github",
+          "evidence_location": "https://github.com/thummalapalliharsha/genai-pyspark-pipeline",
+          "claims_supported": [
+            "repository name",
+            "repository URL",
+            "repository files"
+          ]
+        }
+      ],
+      "review_flags": [
+        "Inspected evidence primarily supports synthetic data generation and PySpark analytics; no implemented GenAI component is asserted."
+      ],
+      "conflicts": [],
+      "name": "Synthetic Data Generation and PySpark Analytics Pipeline",
+      "project_type": "github_project",
+      "github_url": "https://github.com/thummalapalliharsha/genai-pyspark-pipeline",
+      "classification_invariant": "project",
+      "source_status": "verified",
+      "documentation_level": "high",
+      "purpose": "Generate synthetic e-commerce data and analyze it using PySpark.",
+      "functionality": [
+        "configurable customer/product/order generation",
+        "optional random seed",
+        "Parquet output",
+        "Spark loading",
+        "top-customer revenue analysis",
+        "category sales analysis",
+        "monthly trends",
+        "frequently purchased product combinations",
+        "unit tests"
+      ],
+      "technologies": [
+        "Python",
+        "PySpark",
+        "Pandas",
+        "NumPy",
+        "Faker",
+        "PyArrow",
+        "TQDM",
+        "Pytest",
+        "Parquet"
+      ],
+      "frameworks_libraries_tools": [
+        "Python",
+        "PySpark",
+        "Pandas",
+        "NumPy",
+        "Faker",
+        "PyArrow",
+        "TQDM",
+        "Pytest",
+        "Parquet"
+      ],
+      "technical_details": [
+        "Configurable pipeline; Spark-based aggregations; test coverage for generation and analytics"
+      ],
+      "measurable_results": [
+        "Default CLI supports 100,000 customers, 10,000 products and 5,000,000 orders."
+      ],
+      "demonstrated_skills": [
+        "big-data processing",
+        "Spark analytics",
+        "synthetic data generation",
+        "data engineering",
+        "Parquet storage",
+        "unit testing"
+      ],
+      "supported_role_categories": [
+        "Data Engineer Intern",
+        "Big Data Intern",
+        "Data Analyst",
+        "Python Developer",
+        "Data Platform Intern"
+      ],
+      "source_evidence": {
+        "readme_files": [
+          "README.md"
+        ],
+        "source_files": [],
+        "dependency_files": [
+          "requirements.txt"
+        ],
+        "notebooks": [],
+        "data_files": [],
+        "configuration_files": []
+      },
+      "provenance": [
+        {
+          "source_id": "github_account",
+          "evidence_type": "github",
+          "evidence_location": "https://github.com/thummalapalliharsha/genai-pyspark-pipeline",
+          "claims_supported": [
+            "repository implementation"
+          ]
+        }
+      ],
+      "duplicate_group_id": null,
+      "selection_metadata": {
+        "role_categories": [
+          "Data Engineer Intern",
+          "Big Data Intern",
+          "Data Analyst",
+          "Python Developer",
+          "Data Platform Intern"
+        ],
+        "relevance_tags": [
+          "big-data processing",
+          "Spark analytics",
+          "synthetic data generation",
+          "data engineering",
+          "Parquet storage",
+          "unit testing"
+        ],
+        "evidence_strength": "high",
+        "available_for_resume": true,
+        "requires_review_before_claim": true,
+        "lifecycle_selection_rule": "only_completed_or_explicitly_allowed_in_progress",
+        "completed_status_required_for_standard_resume": true,
+        "idea_or_planned_excluded_from_final_resume": true,
+        "in_progress_requires_explicit_permission": true
+      },
+      "project_status": "completed",
+      "github_availability": "github_verified",
+      "lifecycle_review_required": false,
+      "lifecycle_notes": [
+        "Repository presence does not establish project completion; lifecycle status requires candidate confirmation.",
+        "README and dependency evidence describe a pipeline, but do not explicitly establish lifecycle status; manual confirmation required."
+      ]
+    },
+    {
+      "record_id": "project_retail_mini_etl",
+      "status": "needs_review",
+      "sources": [
+        {
+          "source_id": "github_account",
+          "evidence_type": "github",
+          "evidence_location": "https://github.com/thummalapalliharsha/retail-mini-etl",
+          "claims_supported": [
+            "repository name",
+            "repository URL",
+            "repository files"
+          ]
+        }
+      ],
+      "review_flags": [
+        "Purpose, technologies, functionality, results and skills are not verifiable from inspected files."
+      ],
+      "conflicts": [],
+      "name": "Retail Mini ETL",
+      "project_type": "github_project",
+      "github_url": "https://github.com/thummalapalliharsha/retail-mini-etl",
+      "classification_invariant": "project",
+      "source_status": "needs_review",
+      "documentation_level": "low",
+      "purpose": "Repository exists, but the inspected README contains only the project title.",
+      "functionality": [],
+      "technologies": [],
+      "frameworks_libraries_tools": [],
+      "technical_details": [],
+      "measurable_results": [],
+      "demonstrated_skills": [],
+      "supported_role_categories": [],
+      "source_evidence": {
+        "readme_files": [
+          "README.md"
+        ],
+        "source_files": [],
+        "dependency_files": [],
+        "notebooks": [],
+        "data_files": [],
+        "configuration_files": []
+      },
+      "provenance": [
+        {
+          "source_id": "github_account",
+          "evidence_type": "github",
+          "evidence_location": "https://github.com/thummalapalliharsha/retail-mini-etl",
+          "claims_supported": [
+            "repository implementation"
+          ]
+        }
+      ],
+      "duplicate_group_id": null,
+      "selection_metadata": {
+        "role_categories": [],
+        "relevance_tags": [],
+        "evidence_strength": "low",
+        "available_for_resume": false,
+        "requires_review_before_claim": true,
+        "lifecycle_selection_rule": "only_completed_or_explicitly_allowed_in_progress",
+        "completed_status_required_for_standard_resume": true,
+        "idea_or_planned_excluded_from_final_resume": true,
+        "in_progress_requires_explicit_permission": true
+      },
+      "project_status": "unknown",
+      "github_availability": "github_verified",
+      "lifecycle_review_required": true,
+      "lifecycle_notes": [
+        "Repository presence does not establish project completion; lifecycle status requires candidate confirmation.",
+        "Only a title-level README was inspected; lifecycle status and substantive project state are not established; manual confirmation and additional source information required."
+      ]
+    },
+    {
+      "record_id": "project_student_performance_rag",
+      "status": "verified",
+      "sources": [
+        {
+          "source_id": "github_account",
+          "evidence_type": "github",
+          "evidence_location": "https://github.com/thummalapalliharsha/student-performance-rag",
+          "claims_supported": [
+            "repository name",
+            "repository URL",
+            "repository files"
+          ]
+        }
+      ],
+      "review_flags": [],
+      "conflicts": [],
+      "name": "Student Performance RAG Chatbot",
+      "project_type": "github_project",
+      "github_url": "https://github.com/thummalapalliharsha/student-performance-rag",
+      "classification_invariant": "project",
+      "source_status": "verified",
+      "documentation_level": "high",
+      "purpose": "Answer questions about student-performance records using a local retrieval-augmented generation system.",
+      "functionality": [
+        "dataset preprocessing",
+        "student profile document creation",
+        "local embeddings",
+        "ChromaDB vector storage",
+        "semantic retrieval",
+        "local Ollama response generation",
+        "anti-hallucination instructions",
+        "source display in Streamlit",
+        "Langfuse tracing",
+        "Promptfoo evaluation",
+        "Pytest tests"
+      ],
+      "technologies": [
+        "Python",
+        "Pandas",
+        "Streamlit",
+        "Ollama",
+        "llama3.2:3b",
+        "nomic-embed-text",
+        "ChromaDB",
+        "Langfuse",
+        "Promptfoo",
+        "Pytest"
+      ],
+      "frameworks_libraries_tools": [
+        "Python",
+        "Pandas",
+        "Streamlit",
+        "Ollama",
+        "llama3.2:3b",
+        "nomic-embed-text",
+        "ChromaDB",
+        "Langfuse",
+        "Promptfoo",
+        "Pytest"
+      ],
+      "technical_details": [
+        "Local LLM and embedding workflow; top-five retrieval by default; tests cover preprocessing, retrieval, vector storage and RAG"
+      ],
+      "measurable_results": [
+        "README documents 6,607 student records and 20 original columns; vector store indexes 6,607 student documents; retriever uses top five results by default."
+      ],
+      "demonstrated_skills": [
+        "RAG",
+        "local LLM deployment",
+        "embeddings",
+        "vector databases",
+        "semantic retrieval",
+        "prompt design",
+        "observability",
+        "LLM evaluation",
+        "testing"
+      ],
+      "supported_role_categories": [
+        "Generative AI Intern",
+        "Machine Learning Intern",
+        "AI Engineer Intern",
+        "Python Developer",
+        "Data Engineer Intern"
+      ],
+      "source_evidence": {
+        "readme_files": [
+          "README.md"
+        ],
+        "source_files": [],
+        "dependency_files": [
+          "requirements.txt"
+        ],
+        "notebooks": [],
+        "data_files": [],
+        "configuration_files": [
+          "Promptfoo/Langfuse configuration"
+        ]
+      },
+      "provenance": [
+        {
+          "source_id": "github_account",
+          "evidence_type": "github",
+          "evidence_location": "https://github.com/thummalapalliharsha/student-performance-rag",
+          "claims_supported": [
+            "repository implementation"
+          ]
+        }
+      ],
+      "duplicate_group_id": null,
+      "selection_metadata": {
+        "role_categories": [
+          "Generative AI Intern",
+          "Machine Learning Intern",
+          "AI Engineer Intern",
+          "Python Developer",
+          "Data Engineer Intern"
+        ],
+        "relevance_tags": [
+          "RAG",
+          "local LLM deployment",
+          "embeddings",
+          "vector databases",
+          "semantic retrieval",
+          "prompt design",
+          "observability",
+          "LLM evaluation",
+          "testing"
+        ],
+        "evidence_strength": "high",
+        "available_for_resume": true,
+        "requires_review_before_claim": false,
+        "lifecycle_selection_rule": "only_completed_or_explicitly_allowed_in_progress",
+        "completed_status_required_for_standard_resume": true,
+        "idea_or_planned_excluded_from_final_resume": true,
+        "in_progress_requires_explicit_permission": true
+      },
+      "project_status": "completed",
+      "github_availability": "github_verified",
+      "lifecycle_review_required": false,
+      "lifecycle_notes": [
+        "Repository presence does not establish project completion; lifecycle status requires candidate confirmation.",
+        "README and configuration/dependency evidence describe a RAG application, but do not explicitly establish completed versus in-progress status; manual confirmation required."
+      ]
+    },
+    {
+      "record_id": "project_ai_resume_jd_match_tool",
+      "status": "verified",
+      "sources": [
+        {
+          "source_id": "github_account",
+          "evidence_type": "github",
+          "evidence_location": "https://github.com/thummalapalliharsha/AI-Resume-JD-Match-Tool",
+          "claims_supported": [
+            "repository name",
+            "repository URL",
+            "repository files"
+          ]
+        }
+      ],
+      "review_flags": [
+        "Public workflow URL should be reviewed before inclusion in a public resume or portfolio."
+      ],
+      "conflicts": [],
+      "name": "AI Resume-JD Match Tool",
+      "project_type": "github_project",
+      "github_url": "https://github.com/thummalapalliharsha/AI-Resume-JD-Match-Tool",
+      "classification_invariant": "project",
+      "source_status": "verified",
+      "documentation_level": "high",
+      "purpose": "Compare a candidate resume with a job description and generate structured matching analysis.",
+      "functionality": [
+        "resume-file upload",
+        "job-description input",
+        "AI-assisted resume/JD analysis",
+        "skill and requirement comparison",
+        "structured output",
+        "n8n workflow automation"
+      ],
+      "technologies": [
+        "n8n",
+        "Generative AI",
+        "JSON",
+        "workflow automation"
+      ],
+      "frameworks_libraries_tools": [
+        "n8n",
+        "Generative AI",
+        "JSON",
+        "workflow automation"
+      ],
+      "technical_details": [
+        "Uses an n8n workflow; README includes a working n8n Cloud workflow link"
+      ],
+      "measurable_results": [],
+      "demonstrated_skills": [
+        "AI workflow design",
+        "workflow automation",
+        "structured output",
+        "resume/JD analysis"
+      ],
+      "supported_role_categories": [
+        "Generative AI Intern",
+        "Automation Intern",
+        "AI Application Developer",
+        "Workflow Automation Intern"
+      ],
+      "source_evidence": {
+        "readme_files": [
+          "README.md"
+        ],
+        "source_files": [],
+        "dependency_files": [],
+        "notebooks": [],
+        "data_files": [],
+        "configuration_files": [
+          "workflow JSON"
+        ]
+      },
+      "provenance": [
+        {
+          "source_id": "github_account",
+          "evidence_type": "github",
+          "evidence_location": "https://github.com/thummalapalliharsha/AI-Resume-JD-Match-Tool",
+          "claims_supported": [
+            "repository implementation"
+          ]
+        }
+      ],
+      "duplicate_group_id": null,
+      "selection_metadata": {
+        "role_categories": [
+          "Generative AI Intern",
+          "Automation Intern",
+          "AI Application Developer",
+          "Workflow Automation Intern"
+        ],
+        "relevance_tags": [
+          "AI workflow design",
+          "workflow automation",
+          "structured output",
+          "resume/JD analysis"
+        ],
+        "evidence_strength": "high",
+        "available_for_resume": true,
+        "requires_review_before_claim": true,
+        "lifecycle_selection_rule": "only_completed_or_explicitly_allowed_in_progress",
+        "completed_status_required_for_standard_resume": true,
+        "idea_or_planned_excluded_from_final_resume": true,
+        "in_progress_requires_explicit_permission": true
+      },
+      "project_status": "completed",
+      "github_availability": "github_verified",
+      "lifecycle_review_required": false,
+      "lifecycle_notes": [
+        "Repository presence does not establish project completion; lifecycle status requires candidate confirmation.",
+        "README and workflow JSON evidence show an automation workflow, but do not explicitly establish lifecycle status; manual confirmation required."
+      ]
+    },
+    {
+      "record_id": "project_vibe_kpi_demo",
+      "status": "needs_review",
+      "sources": [
+        {
+          "source_id": "github_account",
+          "evidence_type": "github",
+          "evidence_location": "https://github.com/thummalapalliharsha/vibe-kpi-demo-",
+          "claims_supported": [
+            "repository name",
+            "repository URL",
+            "repository files"
+          ]
+        }
+      ],
+      "review_flags": [
+        "Purpose, technologies, functionality, results and skills are not verifiable from inspected files."
+      ],
+      "conflicts": [],
+      "name": "vibe-kpi-demo-",
+      "project_type": "github_project",
+      "github_url": "https://github.com/thummalapalliharsha/vibe-kpi-demo-",
+      "classification_invariant": "project",
+      "source_status": "needs_review",
+      "documentation_level": "low",
+      "purpose": "Repository exists, but the inspected README contains only the project title.",
+      "functionality": [],
+      "technologies": [],
+      "frameworks_libraries_tools": [],
+      "technical_details": [],
+      "measurable_results": [],
+      "demonstrated_skills": [],
+      "supported_role_categories": [],
+      "source_evidence": {
+        "readme_files": [
+          "README.md"
+        ],
+        "source_files": [],
+        "dependency_files": [],
+        "notebooks": [],
+        "data_files": [],
+        "configuration_files": []
+      },
+      "provenance": [
+        {
+          "source_id": "github_account",
+          "evidence_type": "github",
+          "evidence_location": "https://github.com/thummalapalliharsha/vibe-kpi-demo-",
+          "claims_supported": [
+            "repository implementation"
+          ]
+        }
+      ],
+      "duplicate_group_id": null,
+      "selection_metadata": {
+        "role_categories": [],
+        "relevance_tags": [],
+        "evidence_strength": "low",
+        "available_for_resume": false,
+        "requires_review_before_claim": true,
+        "lifecycle_selection_rule": "only_completed_or_explicitly_allowed_in_progress",
+        "completed_status_required_for_standard_resume": true,
+        "idea_or_planned_excluded_from_final_resume": true,
+        "in_progress_requires_explicit_permission": true
+      },
+      "project_status": "unknown",
+      "github_availability": "github_verified",
+      "lifecycle_review_required": true,
+      "lifecycle_notes": [
+        "Repository presence does not establish project completion; lifecycle status requires candidate confirmation.",
+        "Only a title-level README was inspected; lifecycle status and substantive project state are not established; manual confirmation and additional source information required."
+      ]
+    },
+    {
+      "record_id": "project_smartfraud_classifier",
+      "status": "verified",
+      "sources": [
+        {
+          "source_id": "github_account",
+          "evidence_type": "github",
+          "evidence_location": "https://github.com/thummalapalliharsha/SmartFraud-Classifier",
+          "claims_supported": [
+            "repository name",
+            "repository URL",
+            "repository files"
+          ]
+        }
+      ],
+      "review_flags": [
+        "Resume claim of approximately 18% minority-class recall improvement was not independently verified from repository evidence.",
+        "Resume claim of reducing 30+ features to 12 was not independently verified from repository evidence."
+      ],
+      "conflicts": [
+        {
+          "topic": "algorithms",
+          "resume_claim": [
+            "Decision Tree",
+            "Random Forest"
+          ],
+          "github_claim": [
+            "Decision Tree",
+            "Random Forest",
+            "XGBoost"
+          ],
+          "resolution": "preserve_both_sources; do_not_silently_merge"
+        }
+      ],
+      "name": "SmartFraud Classifier",
+      "project_type": "github_project",
+      "github_url": "https://github.com/thummalapalliharsha/SmartFraud-Classifier",
+      "classification_invariant": "project",
+      "source_status": "verified",
+      "documentation_level": "high",
+      "purpose": "Detect fraudulent credit-card transactions and compare classification algorithms.",
+      "functionality": [
+        "Kaggle fraud dataset loading",
+        "EDA and preprocessing",
+        "Decision Tree",
+        "Random Forest",
+        "XGBoost",
+        "SMOTE usage",
+        "model evaluation",
+        "model artifact saving"
+      ],
+      "technologies": [
+        "Python",
+        "Pandas",
+        "NumPy",
+        "Scikit-learn",
+        "XGBoost",
+        "Matplotlib",
+        "Seaborn",
+        "Imbalanced-learn",
+        "Joblib",
+        "Jupyter Notebook"
+      ],
+      "frameworks_libraries_tools": [
+        "Python",
+        "Pandas",
+        "NumPy",
+        "Scikit-learn",
+        "XGBoost",
+        "Matplotlib",
+        "Seaborn",
+        "Imbalanced-learn",
+        "Joblib",
+        "Jupyter Notebook"
+      ],
+      "technical_details": [
+        "Binary fraud classification; notebooks include SMOTE and model comparison"
+      ],
+      "measurable_results": [
+        "README documents 284,807 transactions and 30 transaction-related features; notebook output shows 284,807 rows and 31 columns including target."
+      ],
+      "demonstrated_skills": [
+        "fraud detection",
+        "imbalanced classification",
+        "Decision Trees",
+        "Random Forest",
+        "XGBoost",
+        "SMOTE",
+        "model comparison",
+        "precision/recall/F1 evaluation"
+      ],
+      "supported_role_categories": [
+        "Machine Learning Intern",
+        "Data Science Intern",
+        "Data Analyst",
+        "Python Developer",
+        "Risk Analytics Intern"
+      ],
+      "source_evidence": {
+        "readme_files": [
+          "README.md"
+        ],
+        "source_files": [],
+        "dependency_files": [],
+        "notebooks": [
+          "RandomForest.ipynb",
+          "Xgboost.ipynb"
+        ],
+        "data_files": [
+          "creditcard.csv"
+        ],
+        "configuration_files": []
+      },
+      "provenance": [
+        {
+          "source_id": "github_account",
+          "evidence_type": "github",
+          "evidence_location": "https://github.com/thummalapalliharsha/SmartFraud-Classifier",
+          "claims_supported": [
+            "repository implementation"
+          ]
+        }
+      ],
+      "duplicate_group_id": "project_smartfraud_classifier",
+      "selection_metadata": {
+        "role_categories": [
+          "Machine Learning Intern",
+          "Data Science Intern",
+          "Data Analyst",
+          "Python Developer",
+          "Risk Analytics Intern"
+        ],
+        "relevance_tags": [
+          "fraud detection",
+          "imbalanced classification",
+          "Decision Trees",
+          "Random Forest",
+          "XGBoost",
+          "SMOTE",
+          "model comparison",
+          "precision/recall/F1 evaluation"
+        ],
+        "evidence_strength": "high",
+        "available_for_resume": true,
+        "requires_review_before_claim": true,
+        "lifecycle_selection_rule": "only_completed_or_explicitly_allowed_in_progress",
+        "completed_status_required_for_standard_resume": true,
+        "idea_or_planned_excluded_from_final_resume": true,
+        "in_progress_requires_explicit_permission": true
+      },
+      "project_status": "completed",
+      "github_availability": "github_verified",
+      "lifecycle_review_required": false,
+      "lifecycle_notes": [
+        "Repository presence does not establish project completion; lifecycle status requires candidate confirmation.",
+        "README and notebooks show implemented model-analysis artifacts, but do not explicitly establish lifecycle status; manual confirmation required."
+      ]
+    },
+    {
+      "record_id": "project_weather_app",
+      "status": "verified",
+      "sources": [
+        {
+          "source_id": "github_account",
+          "evidence_type": "github",
+          "evidence_location": "https://github.com/thummalapalliharsha/Weather-App",
+          "claims_supported": [
+            "repository name",
+            "repository URL",
+            "repository files"
+          ]
+        }
+      ],
+      "review_flags": [
+        "Source contains an exposed OpenWeather API key; do not reproduce or highlight the credential."
+      ],
+      "conflicts": [],
+      "name": "Weather App",
+      "project_type": "github_project",
+      "github_url": "https://github.com/thummalapalliharsha/Weather-App",
+      "classification_invariant": "project",
+      "source_status": "verified",
+      "documentation_level": "high",
+      "purpose": "Display weather information for a searched city or the user’s current location.",
+      "functionality": [
+        "city search",
+        "browser geolocation",
+        "OpenWeather API calls",
+        "temperature, humidity, feels-like and description display",
+        "weather icon display",
+        "responsive styling"
+      ],
+      "technologies": [
+        "HTML",
+        "CSS",
+        "JavaScript",
+        "OpenWeather API",
+        "Browser Geolocation API",
+        "Font Awesome",
+        "Google Fonts"
+      ],
+      "frameworks_libraries_tools": [
+        "HTML",
+        "CSS",
+        "JavaScript",
+        "OpenWeather API",
+        "Browser Geolocation API",
+        "Font Awesome",
+        "Google Fonts"
+      ],
+      "technical_details": [
+        "Uses asynchronous fetch calls and browser geolocation"
+      ],
+      "measurable_results": [],
+      "demonstrated_skills": [
+        "front-end development",
+        "API integration",
+        "asynchronous JavaScript",
+        "browser geolocation",
+        "responsive UI design"
+      ],
+      "supported_role_categories": [
+        "Front-End Developer Intern",
+        "Web Developer Intern",
+        "JavaScript Developer Intern"
+      ],
+      "source_evidence": {
+        "readme_files": [
+          "README.md"
+        ],
+        "source_files": [
+          "index.html",
+          "script.js",
+          "styles.css"
+        ],
+        "dependency_files": [],
+        "notebooks": [],
+        "data_files": [],
+        "configuration_files": []
+      },
+      "provenance": [
+        {
+          "source_id": "github_account",
+          "evidence_type": "github",
+          "evidence_location": "https://github.com/thummalapalliharsha/Weather-App",
+          "claims_supported": [
+            "repository implementation"
+          ]
+        }
+      ],
+      "duplicate_group_id": null,
+      "selection_metadata": {
+        "role_categories": [
+          "Front-End Developer Intern",
+          "Web Developer Intern",
+          "JavaScript Developer Intern"
+        ],
+        "relevance_tags": [
+          "front-end development",
+          "API integration",
+          "asynchronous JavaScript",
+          "browser geolocation",
+          "responsive UI design"
+        ],
+        "evidence_strength": "high",
+        "available_for_resume": true,
+        "requires_review_before_claim": true,
+        "lifecycle_selection_rule": "only_completed_or_explicitly_allowed_in_progress",
+        "completed_status_required_for_standard_resume": true,
+        "idea_or_planned_excluded_from_final_resume": true,
+        "in_progress_requires_explicit_permission": true
+      },
+      "project_status": "completed",
+      "github_availability": "github_verified",
+      "lifecycle_review_required": false,
+      "lifecycle_notes": [
+        "Repository presence does not establish project completion; lifecycle status requires candidate confirmation.",
+        "Front-end source files show implemented functionality, but do not explicitly establish lifecycle status; manual confirmation required."
+      ]
+    },
+    {
+      "record_id": "project_imdb_movie_analysis",
+      "status": "verified",
+      "sources": [
+        {
+          "source_id": "github_account",
+          "evidence_type": "github",
+          "evidence_location": "https://github.com/thummalapalliharsha/IMDb-Analysis",
+          "claims_supported": [
+            "repository name",
+            "repository URL",
+            "repository files"
+          ]
+        }
+      ],
+      "review_flags": [
+        "Resume claims of 5,000+ records, approximately 22% noise reduction, 10+ visualizations and director-impact analysis were not independently verified from inspected repository evidence."
+      ],
+      "conflicts": [
+        {
+          "topic": "classification",
+          "resume_claim": "project",
+          "github_claim": "project",
+          "resolution": "preserve_project_classification"
+        }
+      ],
+      "name": "IMDb Movie Analysis",
+      "project_type": "github_project",
+      "github_url": "https://github.com/thummalapalliharsha/IMDb-Analysis",
+      "classification_invariant": "project",
+      "source_status": "verified",
+      "documentation_level": "high",
+      "purpose": "Explore IMDb movie data and identify patterns involving ratings, genres, popularity and related attributes.",
+      "functionality": [
+        "IMDb dataset loading",
+        "notebook-based exploratory analysis",
+        "data inspection using Pandas and NumPy"
+      ],
+      "technologies": [
+        "Python",
+        "Pandas",
+        "NumPy",
+        "Jupyter Notebook"
+      ],
+      "frameworks_libraries_tools": [
+        "Python",
+        "Pandas",
+        "NumPy",
+        "Jupyter Notebook"
+      ],
+      "technical_details": [
+        "Notebook performs data loading and exploratory analysis"
+      ],
+      "measurable_results": [],
+      "demonstrated_skills": [
+        "exploratory data analysis",
+        "data loading",
+        "notebook analysis",
+        "data interpretation"
+      ],
+      "supported_role_categories": [
+        "Data Analyst",
+        "Data Science Intern",
+        "Python Intern"
+      ],
+      "source_evidence": {
+        "readme_files": [
+          "README.md"
+        ],
+        "source_files": [],
+        "dependency_files": [],
+        "notebooks": [
+          "IMDBanalysis.ipynb"
+        ],
+        "data_files": [
+          "IMDB.csv"
+        ],
+        "configuration_files": []
+      },
+      "provenance": [
+        {
+          "source_id": "github_account",
+          "evidence_type": "github",
+          "evidence_location": "https://github.com/thummalapalliharsha/IMDb-Analysis",
+          "claims_supported": [
+            "repository implementation"
+          ]
+        }
+      ],
+      "duplicate_group_id": "project_imdb_movie_analysis",
+      "selection_metadata": {
+        "role_categories": [
+          "Data Analyst",
+          "Data Science Intern",
+          "Python Intern"
+        ],
+        "relevance_tags": [
+          "exploratory data analysis",
+          "data loading",
+          "notebook analysis",
+          "data interpretation"
+        ],
+        "evidence_strength": "high",
+        "available_for_resume": true,
+        "requires_review_before_claim": true,
+        "lifecycle_selection_rule": "only_completed_or_explicitly_allowed_in_progress",
+        "completed_status_required_for_standard_resume": true,
+        "idea_or_planned_excluded_from_final_resume": true,
+        "in_progress_requires_explicit_permission": true
+      },
+      "project_status": "completed",
+      "github_availability": "github_verified",
+      "lifecycle_review_required": false,
+      "lifecycle_notes": [
+        "Repository presence does not establish project completion; lifecycle status requires candidate confirmation.",
+        "Notebook and dataset evidence show an analysis artifact, but do not explicitly establish lifecycle status; manual confirmation required."
+      ]
+    }
+  ],
+  "lifecycle_schema": {
+    "project_status_values": [
+      "idea",
+      "planned",
+      "in_progress",
+      "completed",
+      "unknown"
+    ],
+    "github_availability_values": [
+      "github_verified",
+      "github_not_uploaded",
+      "github_pending",
+      "github_unverified"
+    ],
+    "status_semantics": {
+      "project_status": "Independent lifecycle state; does not depend on GitHub availability.",
+      "github_availability": "Independent repository availability/evidence state; does not prove existence, completion, or quality.",
+      "unknown": "Lifecycle status has not been provided or verified and must be reviewed before resume selection."
+    }
+  }
+}

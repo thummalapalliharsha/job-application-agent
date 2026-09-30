@@ -1,0 +1,46 @@
+{
+  "documents": [
+    {
+      "application_id": "app_6fdf773e8f3c",
+      "company": "Cliquelog IT Solutions Pvt. Ltd",
+      "role": "Absolutely. Here’s the revised version with Cliquelog IT Solutions and positioned as a modern, beginner-friendly Full Stack + AI/Vibe Coding Internship Program.",
+      "kind": "resume",
+      "date": "2026-09-19T14:38:51.134220+00:00",
+      "docx": "output/resumes/cliquelog_it_solutions_pvt_ltd_absolutely_here_s_the_revised_version_with_cliquelog_it_solutions_and_positioned_app_6fdf773e8f3c_Final.docx",
+      "pdf": "output/resumes/cliquelog_it_solutions_pvt_ltd_absolutely_here_s_the_revised_version_with_cliquelog_it_solutions_and_positioned_app_6fdf773e8f3c_Final.pdf",
+      "selected_projects": [
+        "Weather App",
+        "Text-to-SQL Project",
+        "Student Performance RAG Chatbot"
+      ],
+      "selected_skills": [
+        "SQL",
+        "SQLite",
+        "MySQL",
+        "Text-to-SQL"
+      ],
+      "selected_certifications": []
+    },
+    {
+      "application_id": "app_6fdf773e8f3c",
+      "company": "Cliquelog IT Solutions Pvt. Ltd",
+      "role": "Absolutely. Here’s the revised version with Cliquelog IT Solutions and positioned as a modern, beginner-friendly Full Stack + AI/Vibe Coding Internship Program.",
+      "kind": "resume",
+      "date": "2026-09-19T14:41:58.141352+00:00",
+      "docx": "output/resumes/cliquelog_it_solutions_pvt_ltd_absolutely_here_s_the_revised_version_with_cliquelog_it_solutions_and_positioned_app_6fdf773e8f3c_Final.docx",
+      "pdf": "output/resumes/cliquelog_it_solutions_pvt_ltd_absolutely_here_s_the_revised_version_with_cliquelog_it_solutions_and_positioned_app_6fdf773e8f3c_Final.pdf",
+      "selected_projects": [
+        "Weather App",
+        "Text-to-SQL Project",
+        "Student Performance RAG Chatbot"
+      ],
+      "selected_skills": [
+        "SQL",
+        "SQLite",
+        "MySQL",
+        "Text-to-SQL"
+      ],
+      "selected_certifications": []
+    }
+  ]
+}

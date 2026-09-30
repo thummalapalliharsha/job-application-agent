@@ -1,0 +1,486 @@
+{
+  "applications": [
+    {
+      "application_id": "app_72c2494d0af6",
+      "company_name": "OATI",
+      "job_title": "AI Engineer",
+      "job_url": "https://www.linkedin.com/jobs/search-results/?currentJobId=4458501392&eBP=NON_CHARGEABLE_CHANNEL&refId=Tw7uyzcBtDm328MGe9vfrA%3D%3D&trackingId=yj1ZDC0z9dMAU1rbBS2F%2FQ%3D%3D&keywords=ai%20fresher%20&origin=BLENDED_SEARCH_RESULT_NAVIGATION_JOB_CARD&originToLandingJobPostings=4447509067%2C4461729056%2C4467501060",
+      "source_platform": "Linkedin",
+      "location": "Mohali",
+      "employment_type": "",
+      "job_description_reference": "job_descriptions/app_72c2494d0af6_ai_engineer.txt",
+      "job_description_text": "The Open Access Technology International (OATI) is seeking motivated individuals to join our AI Engineering team supporting power‑system applications. This role provides the opportunity to apply foundational machine‑learning and programming knowledge to real‑world energy‑sector challenges under the guidance of senior engineers and researchers.Responsibilities\nAssist in developing machine‑learning and neural‑network models for forecasting, anomaly detection, Text‑to‑SQL tasks, and data‑driven analysis.\nSupport the development and deployment of agentic AI components using frameworks such as LangChain and LangGraph.\nAssist in implementing retrieval‑augmented generation (RAG) pipelines that integrate external knowledge sources and vector databases.\nSupport fine‑tuning and evaluation of large language models using supervised techniques such as PEFT/LoRA and prompt‑engineering strategies.\nAssist in implementing Model Context Protocol (MCP) communication and long‑term memory mechanisms for AI agents.\nSupport model deployment, monitoring, and maintenance using tools such as MLflow and distributed inference frameworks.\nParticipate in data preparation, preprocessing, experimentation, and evaluation workflows.\nCollaborate with researchers, engineers, and data scientists to integrate models, validate results, and support product‑development activities.\nMinimum Qualifications\nBachelor’s degree in Computer Science, Artificial Intelligence, Machine Learning, Computer Engineering, or a closely related field.\nFoundational knowledge of Python and machine‑learning concepts.\nFamiliarity with ML frameworks such as PyTorch or TensorFlow.\nUnderstanding of data structures, algorithms, and neural‑network fundamentals.\nAbility to learn new tools and frameworks with guidance.\nStrong analytical and problem‑solving skills.\nEffective communication and teamwork abilities.\nPreferred (Not Required)\nCoursework or academic projects involving machine learning, LLMs, RAG, or data engineering.\nFamiliarity with vector databases, embeddings, or agentic AI frameworks.\nExperience with Git or SQL/NoSQL databases.\n\nRequirements added by the job poster\n\n• Bachelor's Degree",
+      "date_added": "2026-09-22",
+      "date_applied": null,
+      "current_status": "awaiting_resume_approval",
+      "status_history": [
+        {
+          "old_status": null,
+          "new_status": "awaiting_resume_approval",
+          "timestamp": "2026-09-22T15:49:51.075421+00:00",
+          "source": "application_assistant"
+        },
+        {
+          "old_status": "awaiting_resume_approval",
+          "new_status": "resume_ready",
+          "timestamp": "2026-09-22T15:50:38.596830+00:00",
+          "source": "explicit_user_approval"
+        },
+        {
+          "old_status": "awaiting_resume_approval",
+          "new_status": "resume_ready",
+          "timestamp": "2026-09-23T04:04:50.986389+00:00",
+          "source": "explicit_user_approval"
+        },
+        {
+          "old_status": "awaiting_resume_approval",
+          "new_status": "resume_ready",
+          "timestamp": "2026-09-23T04:45:43.819754+00:00",
+          "source": "explicit_user_approval"
+        }
+      ],
+      "resume_reference": "output\\resumes\\oati_ai_engineer_app_72c2494d0af6_Final.docx",
+      "cover_letter_reference": null,
+      "project_selection_mode": "manual",
+      "project_selection_source": "manual",
+      "project_selection_record_ids": [
+        "project_student_performance_rag",
+        "project_text_to_sql_project",
+        "project_smartfraud_classifier"
+      ],
+      "selected_projects": [
+        "Student Performance RAG Chatbot",
+        "Text-to-SQL Project",
+        "SmartFraud Classifier"
+      ],
+      "selected_skills": [
+        "Python",
+        "SQL",
+        "SQLite",
+        "MySQL",
+        "Text-to-SQL",
+        "ChromaDB",
+        "RAG",
+        "Embeddings",
+        "Ollama",
+        "Text-to-SQL",
+        "Git"
+      ],
+      "selected_certifications": [],
+      "experience_decision": [
+        {
+          "record_id": "experience_ediglobe_ai_intern",
+          "organization": "Ediglobe",
+          "title": "Artificial Intelligence Intern",
+          "decision": "INCLUDE",
+          "matched_requirements": [
+            "data preprocessing"
+          ],
+          "reason": "Actual responsibilities/evidence were compared; broad AI/Python wording alone is insufficient."
+        },
+        {
+          "record_id": "experience_eduskills_ai_ml_virtual_internship",
+          "organization": "EduSkills",
+          "title": "AI-ML Virtual Internship",
+          "decision": "NOT RELEVANT ENOUGH FOR RESUME",
+          "matched_requirements": [],
+          "reason": "Actual responsibilities/evidence were compared; broad AI/Python wording alone is insufficient."
+        }
+      ],
+      "requirements_summary": [
+        {
+          "canonical": "python",
+          "jd_phrases": [
+            "python"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "sql",
+          "jd_phrases": [
+            "sql"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "vector databases",
+          "jd_phrases": [
+            "vector databases"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "rag",
+          "jd_phrases": [
+            "rag",
+            "retrieval augmented generation"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "embeddings",
+          "jd_phrases": [
+            "embeddings"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "llm integration",
+          "jd_phrases": [
+            "llms"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "natural-language database querying",
+          "jd_phrases": [
+            "text to sql"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "data preprocessing",
+          "jd_phrases": [
+            "preprocessing"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "langchain",
+          "jd_phrases": [
+            "langchain"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "git",
+          "jd_phrases": [
+            "git"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "prompt engineering",
+          "jd_phrases": [
+            "prompt engineering"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "machine learning",
+          "jd_phrases": [
+            "machine learning",
+            "ml"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        }
+      ],
+      "supported_requirements": [
+        "python",
+        "sql",
+        "vector databases",
+        "rag",
+        "embeddings",
+        "llm integration",
+        "natural-language database querying",
+        "data preprocessing",
+        "git",
+        "prompt engineering",
+        "machine learning"
+      ],
+      "partial_requirements": [],
+      "unsupported_requirements": [
+        "langchain"
+      ],
+      "candidate_gap_summary": [
+        {
+          "requirement": "langchain",
+          "status": "unsupported",
+          "message": "No supporting profile evidence; do not add this claim."
+        }
+      ],
+      "application_checklist": {
+        "requirements": [
+          {
+            "item": "langchain",
+            "kind": "unsupported",
+            "status": "unsupported"
+          }
+        ],
+        "documents": [
+          {
+            "item": "Tailored resume",
+            "status": "pending"
+          },
+          {
+            "item": "Cover letter",
+            "status": "pending"
+          }
+        ],
+        "manual_actions": [
+          {
+            "item": "Submit application",
+            "status": "pending"
+          },
+          {
+            "item": "Upload resume",
+            "status": "pending"
+          },
+          {
+            "item": "Upload cover letter",
+            "status": "pending"
+          },
+          {
+            "item": "Complete application questions",
+            "status": "pending"
+          },
+          {
+            "item": "Verify contact information",
+            "status": "pending"
+          },
+          {
+            "item": "Final manual submission",
+            "status": "pending"
+          }
+        ]
+      },
+      "application_notes": [],
+      "follow_up_date": null,
+      "last_updated": "2026-09-23T17:52:32.827859+00:00",
+      "phase8_plan_reference": "output/reports/app_72c2494d0af6_phase8_plan.json",
+      "resume_generation_allowed": false,
+      "provenance": {
+        "job_source": "user_provided",
+        "candidate_source": "data/*.json",
+        "phase8_source": "output/reports/app_72c2494d0af6_phase8_plan.json"
+      },
+      "manual_submission_required": true,
+      "automatic_submission_enabled": false,
+      "working_resume_reference": "output\\resumes\\oati_ai_engineer_app_72c2494d0af6_Working.docx",
+      "working_resume_pdf_reference": "output\\resumes\\oati_ai_engineer_app_72c2494d0af6_Working.pdf",
+      "working_resume_docx_path": "output\\resumes\\oati_ai_engineer_app_72c2494d0af6_Working.docx",
+      "working_resume_pdf_path": "output\\resumes\\oati_ai_engineer_app_72c2494d0af6_Working.pdf",
+      "working_resume_docx_sha256": "dd472a4f8230a0ba79a3174bebedaaaf7c01d472e8a609c7f86a811926f48a6f",
+      "working_resume_pdf_sha256": "63f70978538e721044a1d998b81b262552ff2faed16f98aefb9d0864de379fd0",
+      "working_resume_generation_id": "gen_76f501bfd2f0456bb0a4ae53edaaf11c",
+      "working_resume_generated_at": "2026-09-23T17:50:35.061375+00:00",
+      "resume_validation_reference": "output\\reports\\app_72c2494d0af6_resume_validation.json",
+      "resume_working_artifact_stale": true,
+      "resume_pdf_reference": "output\\resumes\\oati_ai_engineer_app_72c2494d0af6_Final.pdf",
+      "resume_docx_path": "output\\resumes\\oati_ai_engineer_app_72c2494d0af6_Final.docx",
+      "resume_pdf_path": "output\\resumes\\oati_ai_engineer_app_72c2494d0af6_Final.pdf",
+      "resume_docx_sha256": "bd5e45a0a71d28b6dc875a852eac37b0cc8f3f1db538d1659cb9f5b8657b5d1b",
+      "resume_pdf_sha256": "4c098503abe49eabdaa27e6b3922f8fd9997d97d150c964ad1366563cdb950cc",
+      "resume_generation_id": "gen_9563b3c518bd4880b06076842d0f811c",
+      "resume_finalized_at": "2026-09-22T16:25:05.686225+00:00",
+      "resume_status": "final"
+    },
+    {
+      "application_id": "app_14a66f897623",
+      "company_name": "Rex.zone",
+      "job_title": "",
+      "job_url": "https://www.linkedin.com/jobs/search-results/?currentJobId=4388503331&eBP=NOT_ELIGIBLE_FOR_CHARGING&refId=LE7kw4suGyXLYJw69TY5Zw%3D%3D&trackingId=BJuksurrzS%2BFhAeyIPmBKQ%3D%3D&keywords=ai%20fresher%20&origin=JOB_SEARCH_PAGE_JOB_FILTER&referralSearchId=9Uo3cM4HnsecovHUKG4BvQ%3D%3D&f_SAL=f_SA_id_230001%3A276008",
+      "source_platform": "Linkedin",
+      "location": "",
+      "employment_type": "",
+      "job_description_reference": "job_descriptions\\app_14a66f897623_role.txt",
+      "job_description_text": "Rex.zone is hiring for entry-level STEM jobs in India supporting real AI/ML engineering workflows, including training data quality, RLHF evaluation, prompt evaluation, and QA evaluation for large language models. This is a remote, full-time role with structured workflows and calibration sessions.\n\nAbout The Role\n\nYou will support AI/ML teams by executing and improving data labeling and evaluation workflows used in LLM training pipelines across NLP, named entity recognition, computer vision annotation, and content safety labeling. You will follow annotation guidelines compliance, document edge cases, and help reduce ambiguity so models learn consistently.\n\nWhat You Will Do\n\nPerform data labeling for text and/or vision datasets to meet training data quality targets\nComplete RLHF-style preference ranking and response quality scoring to support model performance improvement\nRun prompt evaluation and QA evaluation to identify errors, hallucinations, policy violations, and formatting issues\nApply named entity recognition and taxonomy tagging using clear annotation guidelines compliance\nConduct content safety labeling for sensitive, policy, and restricted content categories\nAudit datasets for consistency, duplicates, label noise, and distribution gaps; propose fixes\nWrite concise rationales and escalate ambiguous cases to improve guidelines\nTrack throughput and quality metrics (accuracy, agreement rates) and participate in calibration sessions\nCollaborate with engineers and QA to validate changes to labeling rubrics and evaluation checklists\nSupport experimentation by comparing model outputs across variants and documenting findings\n\nRequired Skills\n\nSTEM fundamentals and strong analytical reasoning\nComfort with Python and SQL for basic data checks (filters, counts, joins) and simple scripts\nUnderstanding of NLP and/or computer vision annotation concepts\nExperience applying annotation guidelines compliance and documenting decisions\nAbility to perform QA evaluation, spot inconsistencies, and propose improvements\nClear written communication for rationales and issue reporting\n\nWorking Model\n\nRemote, distributed work with QA calibration and clear workflows.\n\nHigh accuracy and consistency are essential to improve training data quality.",
+      "date_added": "2026-09-26",
+      "date_applied": null,
+      "current_status": "resume_ready",
+      "status_history": [
+        {
+          "old_status": null,
+          "new_status": "awaiting_resume_approval",
+          "timestamp": "2026-09-26T14:43:56.606387+00:00",
+          "source": "application_assistant"
+        },
+        {
+          "old_status": "awaiting_resume_approval",
+          "new_status": "resume_ready",
+          "timestamp": "2026-09-26T14:44:06.818362+00:00",
+          "source": "explicit_user_approval"
+        }
+      ],
+      "resume_reference": "output\\resumes\\rex_zone_role_app_14a66f897623_Final.docx",
+      "cover_letter_reference": "output\\cover_letters\\rex_zone_role_app_14a66f897623.md",
+      "project_selection_mode": "automatic",
+      "project_selection_source": "automatic",
+      "project_selection_record_ids": [
+        "project_text_to_sql_project",
+        "project_student_performance_rag"
+      ],
+      "selected_projects": [
+        "Text-to-SQL Project",
+        "Student Performance RAG Chatbot"
+      ],
+      "selected_skills": [
+        "Python",
+        "SQL",
+        "SQLite",
+        "MySQL",
+        "Text-to-SQL",
+        "Ollama"
+      ],
+      "selected_certifications": [],
+      "experience_decision": [
+        {
+          "record_id": "experience_ediglobe_ai_intern",
+          "organization": "Ediglobe",
+          "title": "Artificial Intelligence Intern",
+          "decision": "NOT RELEVANT ENOUGH FOR RESUME",
+          "matched_requirements": [],
+          "reason": "Actual responsibilities/evidence were compared; broad AI/Python wording alone is insufficient."
+        },
+        {
+          "record_id": "experience_eduskills_ai_ml_virtual_internship",
+          "organization": "EduSkills",
+          "title": "AI-ML Virtual Internship",
+          "decision": "NOT RELEVANT ENOUGH FOR RESUME",
+          "matched_requirements": [],
+          "reason": "Actual responsibilities/evidence were compared; broad AI/Python wording alone is insufficient."
+        }
+      ],
+      "requirements_summary": [
+        {
+          "canonical": "python",
+          "jd_phrases": [
+            "python"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "sql",
+          "jd_phrases": [
+            "sql"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "llm integration",
+          "jd_phrases": [
+            "llm"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "nlp",
+          "jd_phrases": [
+            "nlp"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "machine learning",
+          "jd_phrases": [
+            "ml"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        }
+      ],
+      "supported_requirements": [
+        "python",
+        "sql",
+        "llm integration",
+        "nlp",
+        "machine learning"
+      ],
+      "partial_requirements": [],
+      "unsupported_requirements": [],
+      "candidate_gap_summary": [],
+      "application_checklist": {
+        "requirements": [],
+        "documents": [
+          {
+            "item": "Tailored resume",
+            "status": "pending"
+          },
+          {
+            "item": "Cover letter",
+            "status": "ready"
+          }
+        ],
+        "manual_actions": [
+          {
+            "item": "Submit application",
+            "status": "pending"
+          },
+          {
+            "item": "Upload resume",
+            "status": "pending"
+          },
+          {
+            "item": "Upload cover letter",
+            "status": "pending"
+          },
+          {
+            "item": "Complete application questions",
+            "status": "pending"
+          },
+          {
+            "item": "Verify contact information",
+            "status": "pending"
+          },
+          {
+            "item": "Final manual submission",
+            "status": "pending"
+          }
+        ]
+      },
+      "application_notes": [],
+      "follow_up_date": null,
+      "last_updated": "2026-09-28T06:59:21.717980+00:00",
+      "phase8_plan_reference": "output\\reports\\app_14a66f897623_phase8_plan.json",
+      "resume_generation_allowed": true,
+      "provenance": {
+        "job_source": "user_provided",
+        "candidate_source": "data/*.json",
+        "phase8_source": "output\\reports\\app_14a66f897623_phase8_plan.json"
+      },
+      "manual_submission_required": true,
+      "automatic_submission_enabled": false,
+      "working_resume_reference": "output\\resumes\\rex_zone_role_app_14a66f897623_Working.docx",
+      "working_resume_pdf_reference": "output\\resumes\\rex_zone_role_app_14a66f897623_Working.pdf",
+      "working_resume_docx_path": "output\\resumes\\rex_zone_role_app_14a66f897623_Working.docx",
+      "working_resume_pdf_path": "output\\resumes\\rex_zone_role_app_14a66f897623_Working.pdf",
+      "working_resume_docx_sha256": "57b0609bdac84d599810d7366ea6407c2830f17489cf7918a999ccd9d4232f86",
+      "working_resume_pdf_sha256": "04c598f442deb12f3c77f1f96c3522ac955a4530184619ca91adfcb5e11d0e41",
+      "working_resume_generation_id": "gen_3afb2b60b0884579ae97a961a6490697",
+      "working_resume_generated_at": "2026-09-28T06:59:21.717980+00:00",
+      "resume_validation_reference": "output\\reports\\app_14a66f897623_resume_validation.json",
+      "resume_working_artifact_stale": false,
+      "resume_pdf_reference": "output\\resumes\\rex_zone_role_app_14a66f897623_Final.pdf",
+      "resume_docx_path": "output\\resumes\\rex_zone_role_app_14a66f897623_Final.docx",
+      "resume_pdf_path": "output\\resumes\\rex_zone_role_app_14a66f897623_Final.pdf",
+      "resume_docx_sha256": "ed3e17c4fbefdb349493954e337e7de6e3df67c8d1f722ea3fe6bdc629048c6e",
+      "resume_pdf_sha256": "6054419f5e2e74ed6b5442c2fc00ece9610c428236fa34c0458c03f72164c0ee",
+      "resume_generation_id": "gen_7683eac2e6334bcfa19e2a393da930f3",
+      "resume_finalized_at": "2026-09-26T14:45:29.623698+00:00",
+      "resume_status": "final",
+      "cover_letter_edited_at": "2026-09-27T09:33:23.472870+00:00",
+      "working_resume_revision_id": "rev_ab7adc5325d50511427d7a20",
+      "working_resume_revision_reference": "output\\resume_edits\\app_14a66f897623\\rev_ab7adc5325d50511427d7a20_548480e3a6.json",
+      "working_resume_source_plan_sha256": "186cfd32015495e0de7525d32703d01b679fdd108ff795d4354815cee010fbe9",
+      "working_resume_validated": true,
+      "working_resume_validated_at": "2026-09-27T11:55:12.101543+00:00",
+      "working_resume_validation_reference": "output\\reports\\app_14a66f897623_resume_document_validation_rev_ab7adc5325d50511427d7a20_548480e3a6.json"
+    }
+  ]
+}

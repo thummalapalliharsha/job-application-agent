@@ -1,0 +1,179 @@
+{
+  "generated_at": "2026-09-27T11:55:12.089550+00:00",
+  "jd_role": "Rex.zone is hiring for entry-level STEM jobs in India supporting real AI/ML engineering workflows, including training data quality, RLHF evaluation, prompt evaluation, and QA evaluation for large language models. This is a remote, full-time role with structured workflows and calibration sessions.",
+  "output_filename": "candidate.docx",
+  "page_count": 1,
+  "page_count_exactly_one": true,
+  "selected_projects": [
+    "Text-to-SQL Project",
+    "Student Performance RAG Chatbot"
+  ],
+  "selected_skills": [
+    "Python",
+    "SQL",
+    "SQLite",
+    "MySQL",
+    "Text-to-SQL",
+    "Ollama"
+  ],
+  "selected_certifications": [
+    "Artificial Intelligence Internship",
+    "AI-ML Virtual Internship",
+    "TCS iON Career Edge – Young Professional",
+    "Introduction to Internet of Things"
+  ],
+  "selected_experience": [],
+  "experience_included": false,
+  "summary_line_count": 5,
+  "skill_category_count": 4,
+  "contact_validation": {
+    "passed": true,
+    "missing": []
+  },
+  "hyperlink_validation": {
+    "passed": true,
+    "targets": [
+      "styles.xml",
+      "stylesWithEffects.xml",
+      "settings.xml",
+      "webSettings.xml",
+      "fontTable.xml",
+      "theme/theme1.xml",
+      "../customXml/item1.xml",
+      "numbering.xml",
+      "tel:+919000657769",
+      "mailto:thummalapalliharsha@gmail.com",
+      "https://linkedin.com/in/thummalapalliharsha",
+      "https://github.com/thummalapalliharsha",
+      "https://github.com/thummalapalliharsha/text_to_sql_project",
+      "https://github.com/thummalapalliharsha/student-performance-rag"
+    ]
+  },
+  "ats_validation": {
+    "docx_valid": true,
+    "text_extractable": true,
+    "standard_headings_present": true,
+    "one_page": true,
+    "single_column": true,
+    "problematic_tables_or_textboxes": false,
+    "malformed_hyperlinks": false
+  },
+  "placeholder_validation": {
+    "passed": true,
+    "unresolved_placeholders": []
+  },
+  "duplicate_template_validation": {
+    "passed": true,
+    "duplicate_signals": []
+  },
+  "summary_validation": {
+    "passed": true,
+    "line_count": 5
+  },
+  "skills_validation": {
+    "passed": true,
+    "category_count": 4
+  },
+  "certification_validation": {
+    "passed": true,
+    "count": 4,
+    "minimum_required": 0,
+    "requirement_applies": false
+  },
+  "education_validation": {
+    "passed": true,
+    "all_records_included": true
+  },
+  "project_order_validation": {
+    "passed": true,
+    "expected_order": [
+      "Text-to-SQL Project",
+      "Student Performance RAG Chatbot"
+    ],
+    "positions": [
+      397,
+      1504
+    ]
+  },
+  "content_density": {
+    "text_characters": 2553,
+    "meaningful_bullet_count": 0,
+    "warning": false
+  },
+  "truth_provenance_validation": {
+    "all_projects_completed": true,
+    "unknown_or_planned_excluded": true,
+    "imdb_not_experience": true,
+    "ediglobe_eduskills_separate": true,
+    "unsupported_claims_detected": []
+  },
+  "warnings_issues": [],
+  "summary_format_validation": {
+    "passed": true,
+    "paragraph_count": 1,
+    "not_bulleted": true
+  },
+  "languages_validation": {
+    "passed": true,
+    "value": "English, Telugu, Hindi, Tamil"
+  },
+  "project_stack_validation": {
+    "passed": true,
+    "count": 2
+  },
+  "project_link_validation": {
+    "passed": true,
+    "verified_links": [
+      "https://github.com/thummalapalliharsha/text_to_sql_project",
+      "https://github.com/thummalapalliharsha/student-performance-rag"
+    ]
+  },
+  "final_status": "PASS",
+  "application_id": "app_14a66f897623",
+  "company_name": "Rex.zone",
+  "revision_id": "rev_ab7adc5325d50511427d7a20",
+  "source_plan_sha256": "186cfd32015495e0de7525d32703d01b679fdd108ff795d4354815cee010fbe9",
+  "source_generation_reference": "gen_28ca97d248f24ce7ab9a2e20c04152b0",
+  "working_docx_reference": "output\\resumes\\rex_zone_role_app_14a66f897623_Working_rev_ab7adc5325d50511427d7a20_548480e3a6.docx",
+  "working_pdf_reference": "output\\resumes\\rex_zone_role_app_14a66f897623_Working_rev_ab7adc5325d50511427d7a20_548480e3a6.pdf",
+  "working_docx_sha256": "c3c8dc40cc0146ddc911c665d075d429e2d80767cec9867054a75e918811dc88",
+  "working_pdf_sha256": "79ae5c8566ab49913ccb01921e1faa19479f274a7d54ef9962adf42e966f5201",
+  "claim_validation": {
+    "valid": true,
+    "errors": [],
+    "policy": "source-bound lexical, numeric, and protected-structure checks",
+    "claim_truth_semantically_verified": false,
+    "human_review_required": true
+  },
+  "model_validation": {
+    "valid": true,
+    "schema_version": 1,
+    "application_id": "app_14a66f897623",
+    "revision_id": "rev_ab7adc5325d50511427d7a20",
+    "source_reference_count": 36,
+    "claim_truth_semantically_verified": false
+  },
+  "checks": {
+    "one_page": true,
+    "existing_generator_validation": true,
+    "required_headings": true,
+    "single_column": true,
+    "no_tables_textboxes_drawings_or_images": true,
+    "contact": true,
+    "hyperlinks": true,
+    "project_links": true,
+    "project_order": true,
+    "selected_projects": true,
+    "project_stacks": true,
+    "skills": true,
+    "summary": true,
+    "languages": true,
+    "education": true,
+    "certifications": true,
+    "placeholders": true,
+    "extractable_text": true,
+    "truth_provenance": true,
+    "model_text_matches_pdf": true
+  },
+  "saved_at": "2026-09-27T11:55:12.101543+00:00"
+}

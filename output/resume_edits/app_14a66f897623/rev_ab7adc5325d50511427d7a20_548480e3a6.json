@@ -1,0 +1,2199 @@
+{
+  "sidecar_schema_version": 1,
+  "application_id": "app_14a66f897623",
+  "revision_id": "rev_ab7adc5325d50511427d7a20",
+  "document": {
+    "application_id": "app_14a66f897623",
+    "revision_id": "rev_ab7adc5325d50511427d7a20",
+    "schema_version": 1,
+    "source_plan_reference": "output/reports/app_14a66f897623_phase8_plan.json",
+    "source_plan_sha256": "186cfd32015495e0de7525d32703d01b679fdd108ff795d4354815cee010fbe9",
+    "source_generation_reference": "gen_28ca97d248f24ce7ab9a2e20c04152b0",
+    "created_at": "2026-09-27T11:55:05.484695+00:00",
+    "status": "working",
+    "content": {
+      "sections": [
+        {
+          "id": "section_contact_header",
+          "type": "contact_header",
+          "title": null,
+          "required": true,
+          "formatting": {},
+          "blocks": [
+            {
+              "id": "blk_816faf7a451567a6",
+              "type": "contact_name",
+              "edit_policy": "protected",
+              "formatting": {
+                "font_size_pt": 18,
+                "bold": true,
+                "alignment": "center",
+                "line_spacing": 1
+              },
+              "source_refs": [
+                {
+                  "source_type": "profile_field",
+                  "source_id": "/profile/name"
+                }
+              ],
+              "runs": [
+                {
+                  "text": "THUMMALAPALLI HARSHA",
+                  "marks": [],
+                  "source_refs": [
+                    {
+                      "source_type": "profile_field",
+                      "source_id": "/profile/name"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "blk_ba37b2d64e460a9b",
+              "type": "contact_details",
+              "edit_policy": "protected",
+              "formatting": {
+                "font_size_pt": 10,
+                "alignment": "center",
+                "line_spacing": 1,
+                "space_after_pt": 1
+              },
+              "source_refs": [
+                {
+                  "source_type": "profile_field",
+                  "source_id": "/profile/contact/email"
+                },
+                {
+                  "source_type": "profile_field",
+                  "source_id": "/profile/contact/phone"
+                },
+                {
+                  "source_type": "profile_field",
+                  "source_id": "/profile/location"
+                }
+              ],
+              "runs": [
+                {
+                  "text": "+91 9000657769",
+                  "marks": [
+                    {
+                      "type": "link",
+                      "href": "tel:+919000657769"
+                    }
+                  ],
+                  "source_refs": [
+                    {
+                      "source_type": "profile_field",
+                      "source_id": "/profile/contact/phone"
+                    }
+                  ]
+                },
+                {
+                  "text": " | ",
+                  "marks": [],
+                  "source_refs": []
+                },
+                {
+                  "text": "Khammam, Telangana",
+                  "marks": [],
+                  "source_refs": [
+                    {
+                      "source_type": "profile_field",
+                      "source_id": "/profile/location"
+                    }
+                  ]
+                },
+                {
+                  "text": " | ",
+                  "marks": [],
+                  "source_refs": []
+                },
+                {
+                  "text": "thummalapalliharsha@gmail.com",
+                  "marks": [
+                    {
+                      "type": "link",
+                      "href": "mailto:thummalapalliharsha@gmail.com"
+                    }
+                  ],
+                  "source_refs": [
+                    {
+                      "source_type": "profile_field",
+                      "source_id": "/profile/contact/email"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "blk_a7baa386de546576",
+              "type": "profile_links",
+              "edit_policy": "protected",
+              "formatting": {
+                "font_size_pt": 10,
+                "alignment": "center",
+                "line_spacing": 1,
+                "space_after_pt": 2
+              },
+              "source_refs": [
+                {
+                  "source_type": "profile_field",
+                  "source_id": "/profile/links/github"
+                },
+                {
+                  "source_type": "profile_field",
+                  "source_id": "/profile/links/linkedin"
+                }
+              ],
+              "runs": [
+                {
+                  "text": "LinkedIn: ",
+                  "marks": [],
+                  "source_refs": []
+                },
+                {
+                  "text": "linkedin.com/in/thummalapalliharsha",
+                  "marks": [
+                    {
+                      "type": "link",
+                      "href": "https://linkedin.com/in/thummalapalliharsha"
+                    }
+                  ],
+                  "source_refs": [
+                    {
+                      "source_type": "profile_field",
+                      "source_id": "/profile/links/linkedin"
+                    }
+                  ]
+                },
+                {
+                  "text": " | ",
+                  "marks": [],
+                  "source_refs": []
+                },
+                {
+                  "text": "GitHub: ",
+                  "marks": [],
+                  "source_refs": []
+                },
+                {
+                  "text": "github.com/thummalapalliharsha",
+                  "marks": [
+                    {
+                      "type": "link",
+                      "href": "https://github.com/thummalapalliharsha"
+                    }
+                  ],
+                  "source_refs": [
+                    {
+                      "source_type": "profile_field",
+                      "source_id": "/profile/links/github"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "section_professional_summary",
+          "type": "professional_summary",
+          "title": "PROFESSIONAL SUMMARY",
+          "required": true,
+          "formatting": {
+            "font_size_pt": 13,
+            "bold": true,
+            "line_spacing": 1,
+            "space_before_pt": 5,
+            "space_after_pt": 1
+          },
+          "blocks": [
+            {
+              "id": "blk_83bb4da0034862f9",
+              "type": "summary_paragraph",
+              "edit_policy": "editable_source_backed",
+              "source_refs": [
+                {
+                  "source_type": "education",
+                  "source_id": "education_biher_btech"
+                },
+                {
+                  "source_type": "project",
+                  "source_id": "project_student_performance_rag"
+                },
+                {
+                  "source_type": "project",
+                  "source_id": "project_text_to_sql_project"
+                },
+                {
+                  "source_type": "skill",
+                  "source_id": "skill_groups/data_engineering/Pytest"
+                },
+                {
+                  "source_type": "skill",
+                  "source_id": "skill_groups/databases_and_sql/MySQL"
+                },
+                {
+                  "source_type": "skill",
+                  "source_id": "skill_groups/databases_and_sql/SQL"
+                },
+                {
+                  "source_type": "skill",
+                  "source_id": "skill_groups/databases_and_sql/SQLite"
+                },
+                {
+                  "source_type": "skill",
+                  "source_id": "skill_groups/generative_ai/ChromaDB"
+                },
+                {
+                  "source_type": "skill",
+                  "source_id": "skill_groups/generative_ai/Embeddings"
+                },
+                {
+                  "source_type": "skill",
+                  "source_id": "skill_groups/generative_ai/Generative%20AI"
+                },
+                {
+                  "source_type": "skill",
+                  "source_id": "skill_groups/generative_ai/Langfuse"
+                },
+                {
+                  "source_type": "skill",
+                  "source_id": "skill_groups/generative_ai/Ollama"
+                },
+                {
+                  "source_type": "skill",
+                  "source_id": "skill_groups/generative_ai/Promptfoo"
+                },
+                {
+                  "source_type": "skill",
+                  "source_id": "skill_groups/generative_ai/RAG"
+                },
+                {
+                  "source_type": "skill",
+                  "source_id": "skill_groups/generative_ai/Text-to-SQL"
+                },
+                {
+                  "source_type": "skill",
+                  "source_id": "skill_groups/machine_learning/Classification"
+                },
+                {
+                  "source_type": "skill",
+                  "source_id": "skill_groups/machine_learning/Pandas"
+                },
+                {
+                  "source_type": "skill",
+                  "source_id": "skill_groups/programming_languages/Python"
+                },
+                {
+                  "source_type": "skill",
+                  "source_id": "skill_groups/web_development/API%20integration"
+                },
+                {
+                  "source_type": "skill",
+                  "source_id": "skill_groups/web_development/Streamlit"
+                }
+              ],
+              "formatting": {
+                "font_size_pt": 11,
+                "alignment": "justify",
+                "line_spacing": 1
+              },
+              "runs": [
+                {
+                  "text": "Computer Science fresher focused on AI and retrieval applications, with hands-on experience in Text-to-SQL, Ollama, Generative AI, ChromaDB, Embeddings and LLM-powered application development. Built Text-to-SQL Project, Student Performance RAG Chatbot, applying Python and practical development techniques to real-world problems. Experience includes python, sql, nlp through project work. Seeking an entry-level opportunity to contribute to python, sql, nlp.",
+                  "marks": [],
+                  "source_refs": [
+                    {
+                      "source_type": "education",
+                      "source_id": "education_biher_btech"
+                    },
+                    {
+                      "source_type": "project",
+                      "source_id": "project_student_performance_rag"
+                    },
+                    {
+                      "source_type": "project",
+                      "source_id": "project_text_to_sql_project"
+                    },
+                    {
+                      "source_type": "skill",
+                      "source_id": "skill_groups/data_engineering/Pytest"
+                    },
+                    {
+                      "source_type": "skill",
+                      "source_id": "skill_groups/databases_and_sql/MySQL"
+                    },
+                    {
+                      "source_type": "skill",
+                      "source_id": "skill_groups/databases_and_sql/SQL"
+                    },
+                    {
+                      "source_type": "skill",
+                      "source_id": "skill_groups/databases_and_sql/SQLite"
+                    },
+                    {
+                      "source_type": "skill",
+                      "source_id": "skill_groups/generative_ai/ChromaDB"
+                    },
+                    {
+                      "source_type": "skill",
+                      "source_id": "skill_groups/generative_ai/Embeddings"
+                    },
+                    {
+                      "source_type": "skill",
+                      "source_id": "skill_groups/generative_ai/Generative%20AI"
+                    },
+                    {
+                      "source_type": "skill",
+                      "source_id": "skill_groups/generative_ai/Langfuse"
+                    },
+                    {
+                      "source_type": "skill",
+                      "source_id": "skill_groups/generative_ai/Ollama"
+                    },
+                    {
+                      "source_type": "skill",
+                      "source_id": "skill_groups/generative_ai/Promptfoo"
+                    },
+                    {
+                      "source_type": "skill",
+                      "source_id": "skill_groups/generative_ai/RAG"
+                    },
+                    {
+                      "source_type": "skill",
+                      "source_id": "skill_groups/generative_ai/Text-to-SQL"
+                    },
+                    {
+                      "source_type": "skill",
+                      "source_id": "skill_groups/machine_learning/Classification"
+                    },
+                    {
+                      "source_type": "skill",
+                      "source_id": "skill_groups/machine_learning/Pandas"
+                    },
+                    {
+                      "source_type": "skill",
+                      "source_id": "skill_groups/programming_languages/Python"
+                    },
+                    {
+                      "source_type": "skill",
+                      "source_id": "skill_groups/web_development/API%20integration"
+                    },
+                    {
+                      "source_type": "skill",
+                      "source_id": "skill_groups/web_development/Streamlit"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "section_skills",
+          "type": "skills",
+          "title": "SKILLS",
+          "required": true,
+          "formatting": {
+            "font_size_pt": 13,
+            "bold": true,
+            "line_spacing": 1,
+            "space_before_pt": 5,
+            "space_after_pt": 1
+          },
+          "blocks": [
+            {
+              "id": "blk_f206f0fc6d79b34f",
+              "type": "skill_group",
+              "edit_policy": "source_backed_read_only",
+              "formatting": {
+                "font_size_pt": 11,
+                "line_spacing": 1
+              },
+              "source_refs": [
+                {
+                  "source_type": "project",
+                  "source_id": "project_student_performance_rag"
+                },
+                {
+                  "source_type": "project",
+                  "source_id": "project_text_to_sql_project"
+                },
+                {
+                  "source_type": "skill",
+                  "source_id": "skill_groups/databases_and_sql/SQL"
+                },
+                {
+                  "source_type": "skill",
+                  "source_id": "skill_groups/programming_languages/Python"
+                }
+              ],
+              "label": "Programming",
+              "label_formatting": {
+                "font_size_pt": 12,
+                "bold": true
+              },
+              "items": [
+                {
+                  "id": "blk_dacfff0a35ba3a24",
+                  "text": "Python",
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_student_performance_rag"
+                    },
+                    {
+                      "source_type": "project",
+                      "source_id": "project_text_to_sql_project"
+                    },
+                    {
+                      "source_type": "skill",
+                      "source_id": "skill_groups/programming_languages/Python"
+                    }
+                  ],
+                  "edit_policy": "source_backed_read_only",
+                  "formatting": {
+                    "font_size_pt": 11,
+                    "line_spacing": 1
+                  }
+                },
+                {
+                  "id": "blk_8aa1977ef392776b",
+                  "text": "SQL",
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_text_to_sql_project"
+                    },
+                    {
+                      "source_type": "skill",
+                      "source_id": "skill_groups/databases_and_sql/SQL"
+                    }
+                  ],
+                  "edit_policy": "source_backed_read_only",
+                  "formatting": {
+                    "font_size_pt": 11,
+                    "line_spacing": 1
+                  }
+                }
+              ]
+            },
+            {
+              "id": "blk_90712c0fb01d08e3",
+              "type": "skill_group",
+              "edit_policy": "source_backed_read_only",
+              "formatting": {
+                "font_size_pt": 11,
+                "line_spacing": 1
+              },
+              "source_refs": [
+                {
+                  "source_type": "project",
+                  "source_id": "project_student_performance_rag"
+                },
+                {
+                  "source_type": "skill",
+                  "source_id": "skill_groups/machine_learning/Pandas"
+                },
+                {
+                  "source_type": "skill",
+                  "source_id": "skill_groups/web_development/Streamlit"
+                }
+              ],
+              "label": "Libraries / Frameworks",
+              "label_formatting": {
+                "font_size_pt": 12,
+                "bold": true
+              },
+              "items": [
+                {
+                  "id": "blk_d06142f24c83098e",
+                  "text": "Pandas",
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_student_performance_rag"
+                    },
+                    {
+                      "source_type": "skill",
+                      "source_id": "skill_groups/machine_learning/Pandas"
+                    }
+                  ],
+                  "edit_policy": "source_backed_read_only",
+                  "formatting": {
+                    "font_size_pt": 11,
+                    "line_spacing": 1
+                  }
+                },
+                {
+                  "id": "blk_9eb47b7b2ce396a5",
+                  "text": "Streamlit",
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_student_performance_rag"
+                    },
+                    {
+                      "source_type": "skill",
+                      "source_id": "skill_groups/web_development/Streamlit"
+                    }
+                  ],
+                  "edit_policy": "source_backed_read_only",
+                  "formatting": {
+                    "font_size_pt": 11,
+                    "line_spacing": 1
+                  }
+                }
+              ]
+            },
+            {
+              "id": "blk_f1e04a585f101aa3",
+              "type": "skill_group",
+              "edit_policy": "source_backed_read_only",
+              "formatting": {
+                "font_size_pt": 11,
+                "line_spacing": 1
+              },
+              "source_refs": [
+                {
+                  "source_type": "project",
+                  "source_id": "project_student_performance_rag"
+                },
+                {
+                  "source_type": "skill",
+                  "source_id": "skill_groups/generative_ai/Embeddings"
+                },
+                {
+                  "source_type": "skill",
+                  "source_id": "skill_groups/generative_ai/Generative%20AI"
+                },
+                {
+                  "source_type": "skill",
+                  "source_id": "skill_groups/generative_ai/Ollama"
+                },
+                {
+                  "source_type": "skill",
+                  "source_id": "skill_groups/generative_ai/RAG"
+                },
+                {
+                  "source_type": "skill",
+                  "source_id": "skill_groups/machine_learning/Classification"
+                }
+              ],
+              "label": "AI / Machine Learning",
+              "label_formatting": {
+                "font_size_pt": 12,
+                "bold": true
+              },
+              "items": [
+                {
+                  "id": "blk_54c5cc9be1d92179",
+                  "text": "RAG",
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_student_performance_rag"
+                    },
+                    {
+                      "source_type": "skill",
+                      "source_id": "skill_groups/generative_ai/RAG"
+                    }
+                  ],
+                  "edit_policy": "source_backed_read_only",
+                  "formatting": {
+                    "font_size_pt": 11,
+                    "line_spacing": 1
+                  }
+                },
+                {
+                  "id": "blk_bb08ea0eff1b7424",
+                  "text": "Embeddings",
+                  "source_refs": [
+                    {
+                      "source_type": "skill",
+                      "source_id": "skill_groups/generative_ai/Embeddings"
+                    }
+                  ],
+                  "edit_policy": "source_backed_read_only",
+                  "formatting": {
+                    "font_size_pt": 11,
+                    "line_spacing": 1
+                  }
+                },
+                {
+                  "id": "blk_ad51df954a8160ff",
+                  "text": "Generative AI",
+                  "source_refs": [
+                    {
+                      "source_type": "skill",
+                      "source_id": "skill_groups/generative_ai/Generative%20AI"
+                    }
+                  ],
+                  "edit_policy": "source_backed_read_only",
+                  "formatting": {
+                    "font_size_pt": 11,
+                    "line_spacing": 1
+                  }
+                },
+                {
+                  "id": "blk_03d130f15ff6b5d3",
+                  "text": "Ollama",
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_student_performance_rag"
+                    },
+                    {
+                      "source_type": "skill",
+                      "source_id": "skill_groups/generative_ai/Ollama"
+                    }
+                  ],
+                  "edit_policy": "source_backed_read_only",
+                  "formatting": {
+                    "font_size_pt": 11,
+                    "line_spacing": 1
+                  }
+                },
+                {
+                  "id": "blk_d49fac3d4fcdfda0",
+                  "text": "Classification",
+                  "source_refs": [
+                    {
+                      "source_type": "skill",
+                      "source_id": "skill_groups/machine_learning/Classification"
+                    }
+                  ],
+                  "edit_policy": "source_backed_read_only",
+                  "formatting": {
+                    "font_size_pt": 11,
+                    "line_spacing": 1
+                  }
+                }
+              ]
+            },
+            {
+              "id": "blk_cd78731503340bb5",
+              "type": "skill_group",
+              "edit_policy": "source_backed_read_only",
+              "formatting": {
+                "font_size_pt": 11,
+                "line_spacing": 1
+              },
+              "source_refs": [
+                {
+                  "source_type": "project",
+                  "source_id": "project_student_performance_rag"
+                },
+                {
+                  "source_type": "project",
+                  "source_id": "project_text_to_sql_project"
+                },
+                {
+                  "source_type": "skill",
+                  "source_id": "skill_groups/databases_and_sql/SQL"
+                },
+                {
+                  "source_type": "skill",
+                  "source_id": "skill_groups/databases_and_sql/SQLite"
+                },
+                {
+                  "source_type": "skill",
+                  "source_id": "skill_groups/generative_ai/ChromaDB"
+                }
+              ],
+              "label": "Databases",
+              "label_formatting": {
+                "font_size_pt": 12,
+                "bold": true
+              },
+              "items": [
+                {
+                  "id": "blk_bdd8f9b0649f184b",
+                  "text": "SQLite",
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_text_to_sql_project"
+                    },
+                    {
+                      "source_type": "skill",
+                      "source_id": "skill_groups/databases_and_sql/SQLite"
+                    }
+                  ],
+                  "edit_policy": "source_backed_read_only",
+                  "formatting": {
+                    "font_size_pt": 11,
+                    "line_spacing": 1
+                  }
+                },
+                {
+                  "id": "blk_957bcf456b537537",
+                  "text": "SQL",
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_text_to_sql_project"
+                    },
+                    {
+                      "source_type": "skill",
+                      "source_id": "skill_groups/databases_and_sql/SQL"
+                    }
+                  ],
+                  "edit_policy": "source_backed_read_only",
+                  "formatting": {
+                    "font_size_pt": 11,
+                    "line_spacing": 1
+                  }
+                },
+                {
+                  "id": "blk_2ca6b2a9fff5a0b3",
+                  "text": "ChromaDB",
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_student_performance_rag"
+                    },
+                    {
+                      "source_type": "skill",
+                      "source_id": "skill_groups/generative_ai/ChromaDB"
+                    }
+                  ],
+                  "edit_policy": "source_backed_read_only",
+                  "formatting": {
+                    "font_size_pt": 11,
+                    "line_spacing": 1
+                  }
+                }
+              ]
+            },
+            {
+              "id": "blk_3dfc957984751184",
+              "type": "skill_group",
+              "edit_policy": "source_backed_read_only",
+              "formatting": {
+                "font_size_pt": 11,
+                "line_spacing": 1
+              },
+              "source_refs": [
+                {
+                  "source_type": "project",
+                  "source_id": "project_text_to_sql_project"
+                },
+                {
+                  "source_type": "skill",
+                  "source_id": "skill_groups/web_development/API%20integration"
+                }
+              ],
+              "label": "APIs / Integration",
+              "label_formatting": {
+                "font_size_pt": 12,
+                "bold": true
+              },
+              "items": [
+                {
+                  "id": "blk_77e8b780dcd6ed7a",
+                  "text": "Google Gemini API",
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_text_to_sql_project"
+                    }
+                  ],
+                  "edit_policy": "source_backed_read_only",
+                  "formatting": {
+                    "font_size_pt": 11,
+                    "line_spacing": 1
+                  }
+                },
+                {
+                  "id": "blk_f1ddea316a4cf927",
+                  "text": "API integration",
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_text_to_sql_project"
+                    },
+                    {
+                      "source_type": "skill",
+                      "source_id": "skill_groups/web_development/API%20integration"
+                    }
+                  ],
+                  "edit_policy": "source_backed_read_only",
+                  "formatting": {
+                    "font_size_pt": 11,
+                    "line_spacing": 1
+                  }
+                },
+                {
+                  "id": "blk_d5c0483a3b92b19f",
+                  "text": "Requests",
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_text_to_sql_project"
+                    }
+                  ],
+                  "edit_policy": "source_backed_read_only",
+                  "formatting": {
+                    "font_size_pt": 11,
+                    "line_spacing": 1
+                  }
+                }
+              ]
+            },
+            {
+              "id": "blk_c84743c5a2bc9b5a",
+              "type": "skill_group",
+              "edit_policy": "source_backed_read_only",
+              "formatting": {
+                "font_size_pt": 11,
+                "line_spacing": 1
+              },
+              "source_refs": [
+                {
+                  "source_type": "skill",
+                  "source_id": "skill_groups/professional_and_language_skills/English"
+                },
+                {
+                  "source_type": "skill",
+                  "source_id": "skill_groups/professional_and_language_skills/Hindi"
+                },
+                {
+                  "source_type": "skill",
+                  "source_id": "skill_groups/professional_and_language_skills/Tamil"
+                },
+                {
+                  "source_type": "skill",
+                  "source_id": "skill_groups/professional_and_language_skills/Telugu"
+                }
+              ],
+              "label": "Languages",
+              "label_formatting": {
+                "font_size_pt": 12,
+                "bold": true
+              },
+              "items": [
+                {
+                  "id": "blk_ad3b4932722e499f",
+                  "text": "English",
+                  "source_refs": [
+                    {
+                      "source_type": "skill",
+                      "source_id": "skill_groups/professional_and_language_skills/English"
+                    }
+                  ],
+                  "edit_policy": "source_backed_read_only",
+                  "formatting": {
+                    "font_size_pt": 11,
+                    "line_spacing": 1
+                  }
+                },
+                {
+                  "id": "blk_2f2ebdc7993c3ccc",
+                  "text": "Telugu",
+                  "source_refs": [
+                    {
+                      "source_type": "skill",
+                      "source_id": "skill_groups/professional_and_language_skills/Telugu"
+                    }
+                  ],
+                  "edit_policy": "source_backed_read_only",
+                  "formatting": {
+                    "font_size_pt": 11,
+                    "line_spacing": 1
+                  }
+                },
+                {
+                  "id": "blk_ea98856f3a735ea1",
+                  "text": "Hindi",
+                  "source_refs": [
+                    {
+                      "source_type": "skill",
+                      "source_id": "skill_groups/professional_and_language_skills/Hindi"
+                    }
+                  ],
+                  "edit_policy": "source_backed_read_only",
+                  "formatting": {
+                    "font_size_pt": 11,
+                    "line_spacing": 1
+                  }
+                },
+                {
+                  "id": "blk_2fb3ee09effa1fa9",
+                  "text": "Tamil",
+                  "source_refs": [
+                    {
+                      "source_type": "skill",
+                      "source_id": "skill_groups/professional_and_language_skills/Tamil"
+                    }
+                  ],
+                  "edit_policy": "source_backed_read_only",
+                  "formatting": {
+                    "font_size_pt": 11,
+                    "line_spacing": 1
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "section_projects",
+          "type": "projects",
+          "title": "PROJECTS",
+          "required": true,
+          "formatting": {
+            "font_size_pt": 13,
+            "bold": true,
+            "line_spacing": 1,
+            "space_before_pt": 5,
+            "space_after_pt": 1
+          },
+          "blocks": [
+            {
+              "id": "blk_7d0745c506fd2077",
+              "type": "project_entry",
+              "edit_policy": "protected",
+              "formatting": {
+                "font_size_pt": 12,
+                "bold": true,
+                "line_spacing": 1
+              },
+              "source_refs": [
+                {
+                  "source_type": "project",
+                  "source_id": "project_text_to_sql_project"
+                }
+              ],
+              "project_id": "project_text_to_sql_project",
+              "runs": [
+                {
+                  "text": "Text-to-SQL Project",
+                  "marks": [],
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_text_to_sql_project"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "blk_4b74234910fd858d",
+              "type": "project_bullet",
+              "edit_policy": "editable_source_backed",
+              "source_refs": [
+                {
+                  "source_type": "project",
+                  "source_id": "project_text_to_sql_project"
+                }
+              ],
+              "project_id": "project_text_to_sql_project",
+              "bullet_index": 0,
+              "formatting": {
+                "font_size_pt": 11,
+                "line_spacing": 1,
+                "space_before_pt": 0.2,
+                "space_after_pt": 0.2,
+                "list_style": "bullet",
+                "left_indent_in": 0.16,
+                "first_line_indent_in": -0.12
+              },
+              "runs": [
+                {
+                  "text": "Built a Python workflow that converts natural language questions into SQLite-compatible SQL queries.",
+                  "marks": [],
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_text_to_sql_project"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "blk_b543aca6c528af31",
+              "type": "project_bullet",
+              "edit_policy": "editable_source_backed",
+              "source_refs": [
+                {
+                  "source_type": "project",
+                  "source_id": "project_text_to_sql_project"
+                }
+              ],
+              "project_id": "project_text_to_sql_project",
+              "bullet_index": 1,
+              "formatting": {
+                "font_size_pt": 11,
+                "line_spacing": 1,
+                "space_before_pt": 0.2,
+                "space_after_pt": 0.2,
+                "list_style": "bullet",
+                "left_indent_in": 0.16,
+                "first_line_indent_in": -0.12
+              },
+              "runs": [
+                {
+                  "text": "Integrated a Gemini REST API with an OpenAI-compatible fallback and executed generated SQL against a customers/orders database.",
+                  "marks": [],
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_text_to_sql_project"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "blk_c7e164fcd19e4399",
+              "type": "project_bullet",
+              "edit_policy": "editable_source_backed",
+              "source_refs": [
+                {
+                  "source_type": "project",
+                  "source_id": "project_text_to_sql_project"
+                }
+              ],
+              "project_id": "project_text_to_sql_project",
+              "bullet_index": 2,
+              "formatting": {
+                "font_size_pt": 11,
+                "line_spacing": 1,
+                "space_before_pt": 0.2,
+                "space_after_pt": 0.2,
+                "list_style": "bullet",
+                "left_indent_in": 0.16,
+                "first_line_indent_in": -0.12
+              },
+              "runs": [
+                {
+                  "text": "Implemented structured API payloads, code-fence removal, first-statement handling, and query-result return.",
+                  "marks": [],
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_text_to_sql_project"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "blk_5cdf351cd8f02762",
+              "type": "project_tech_stack",
+              "edit_policy": "source_backed_read_only",
+              "formatting": {
+                "font_size_pt": 11,
+                "line_spacing": 1
+              },
+              "source_refs": [
+                {
+                  "source_type": "project",
+                  "source_id": "project_text_to_sql_project"
+                }
+              ],
+              "project_id": "project_text_to_sql_project",
+              "label": "Tech Stack: ",
+              "label_formatting": {
+                "font_size_pt": 12,
+                "bold": true
+              },
+              "items": [
+                {
+                  "id": "blk_d28578616252f547",
+                  "text": "Python",
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_text_to_sql_project"
+                    }
+                  ],
+                  "edit_policy": "source_backed_read_only",
+                  "formatting": {
+                    "font_size_pt": 11,
+                    "line_spacing": 1
+                  }
+                },
+                {
+                  "id": "blk_d7f34c7cf6558e53",
+                  "text": "SQLite",
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_text_to_sql_project"
+                    }
+                  ],
+                  "edit_policy": "source_backed_read_only",
+                  "formatting": {
+                    "font_size_pt": 11,
+                    "line_spacing": 1
+                  }
+                },
+                {
+                  "id": "blk_ee1bf90dffbed198",
+                  "text": "SQL",
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_text_to_sql_project"
+                    }
+                  ],
+                  "edit_policy": "source_backed_read_only",
+                  "formatting": {
+                    "font_size_pt": 11,
+                    "line_spacing": 1
+                  }
+                },
+                {
+                  "id": "blk_680c39b6f9d9462d",
+                  "text": "Google Gemini API",
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_text_to_sql_project"
+                    }
+                  ],
+                  "edit_policy": "source_backed_read_only",
+                  "formatting": {
+                    "font_size_pt": 11,
+                    "line_spacing": 1
+                  }
+                },
+                {
+                  "id": "blk_f8bd2fc730f1cd3b",
+                  "text": "OpenAI-compatible client",
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_text_to_sql_project"
+                    }
+                  ],
+                  "edit_policy": "source_backed_read_only",
+                  "formatting": {
+                    "font_size_pt": 11,
+                    "line_spacing": 1
+                  }
+                },
+                {
+                  "id": "blk_ffa24786740dd5e4",
+                  "text": "Requests",
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_text_to_sql_project"
+                    }
+                  ],
+                  "edit_policy": "source_backed_read_only",
+                  "formatting": {
+                    "font_size_pt": 11,
+                    "line_spacing": 1
+                  }
+                },
+                {
+                  "id": "blk_554568ad86fce7ad",
+                  "text": "Python-dotenv",
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_text_to_sql_project"
+                    }
+                  ],
+                  "edit_policy": "source_backed_read_only",
+                  "formatting": {
+                    "font_size_pt": 11,
+                    "line_spacing": 1
+                  }
+                }
+              ]
+            },
+            {
+              "id": "blk_f08ac2298207972d",
+              "type": "project_link",
+              "edit_policy": "protected",
+              "formatting": {
+                "font_size_pt": 11,
+                "line_spacing": 1,
+                "space_before_pt": 0.2,
+                "space_after_pt": 0.2
+              },
+              "source_refs": [
+                {
+                  "source_type": "project",
+                  "source_id": "project_text_to_sql_project"
+                }
+              ],
+              "project_id": "project_text_to_sql_project",
+              "runs": [
+                {
+                  "text": "Project Link: ",
+                  "marks": [],
+                  "source_refs": []
+                },
+                {
+                  "text": "https://github.com/thummalapalliharsha/text_to_sql_project",
+                  "marks": [
+                    {
+                      "type": "link",
+                      "href": "https://github.com/thummalapalliharsha/text_to_sql_project"
+                    }
+                  ],
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_text_to_sql_project"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "blk_769c462227a66e68",
+              "type": "project_entry",
+              "edit_policy": "protected",
+              "formatting": {
+                "font_size_pt": 12,
+                "bold": true,
+                "line_spacing": 1
+              },
+              "source_refs": [
+                {
+                  "source_type": "project",
+                  "source_id": "project_student_performance_rag"
+                }
+              ],
+              "project_id": "project_student_performance_rag",
+              "runs": [
+                {
+                  "text": "Student Performance RAG Chatbot",
+                  "marks": [],
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_student_performance_rag"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "blk_47c7b5128a50d579",
+              "type": "project_bullet",
+              "edit_policy": "editable_source_backed",
+              "source_refs": [
+                {
+                  "source_type": "project",
+                  "source_id": "project_student_performance_rag"
+                }
+              ],
+              "project_id": "project_student_performance_rag",
+              "bullet_index": 0,
+              "formatting": {
+                "font_size_pt": 11,
+                "line_spacing": 1,
+                "space_before_pt": 0.2,
+                "space_after_pt": 0.2,
+                "list_style": "bullet",
+                "left_indent_in": 0.16,
+                "first_line_indent_in": -0.12
+              },
+              "runs": [
+                {
+                  "text": "Built a local RAG chatbot over 6,607 student records using preprocessing and searchable student profiles.",
+                  "marks": [],
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_student_performance_rag"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "blk_175a8b5d5cef207f",
+              "type": "project_bullet",
+              "edit_policy": "editable_source_backed",
+              "source_refs": [
+                {
+                  "source_type": "project",
+                  "source_id": "project_student_performance_rag"
+                }
+              ],
+              "project_id": "project_student_performance_rag",
+              "bullet_index": 1,
+              "formatting": {
+                "font_size_pt": 11,
+                "line_spacing": 1,
+                "space_before_pt": 0.2,
+                "space_after_pt": 0.2,
+                "list_style": "bullet",
+                "left_indent_in": 0.16,
+                "first_line_indent_in": -0.12
+              },
+              "runs": [
+                {
+                  "text": "Generated embeddings, stored 6,607 student documents in ChromaDB, and performed semantic retrieval.",
+                  "marks": [],
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_student_performance_rag"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "blk_bbfc2c10f1655421",
+              "type": "project_bullet",
+              "edit_policy": "editable_source_backed",
+              "source_refs": [
+                {
+                  "source_type": "project",
+                  "source_id": "project_student_performance_rag"
+                }
+              ],
+              "project_id": "project_student_performance_rag",
+              "bullet_index": 2,
+              "formatting": {
+                "font_size_pt": 11,
+                "line_spacing": 1,
+                "space_before_pt": 0.2,
+                "space_after_pt": 0.2,
+                "list_style": "bullet",
+                "left_indent_in": 0.16,
+                "first_line_indent_in": -0.12
+              },
+              "runs": [
+                {
+                  "text": "Integrated Ollama with llama3.2:3b and used Langfuse tracing, Promptfoo evaluation, and Pytest testing.",
+                  "marks": [],
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_student_performance_rag"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "blk_efe98058ed849a77",
+              "type": "project_tech_stack",
+              "edit_policy": "source_backed_read_only",
+              "formatting": {
+                "font_size_pt": 11,
+                "line_spacing": 1
+              },
+              "source_refs": [
+                {
+                  "source_type": "project",
+                  "source_id": "project_student_performance_rag"
+                }
+              ],
+              "project_id": "project_student_performance_rag",
+              "label": "Tech Stack: ",
+              "label_formatting": {
+                "font_size_pt": 12,
+                "bold": true
+              },
+              "items": [
+                {
+                  "id": "blk_ed3eb92559f9808e",
+                  "text": "Python",
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_student_performance_rag"
+                    }
+                  ],
+                  "edit_policy": "source_backed_read_only",
+                  "formatting": {
+                    "font_size_pt": 11,
+                    "line_spacing": 1
+                  }
+                },
+                {
+                  "id": "blk_5c426cc9cbb5cfcb",
+                  "text": "Pandas",
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_student_performance_rag"
+                    }
+                  ],
+                  "edit_policy": "source_backed_read_only",
+                  "formatting": {
+                    "font_size_pt": 11,
+                    "line_spacing": 1
+                  }
+                },
+                {
+                  "id": "blk_294105e5ae2638d3",
+                  "text": "Streamlit",
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_student_performance_rag"
+                    }
+                  ],
+                  "edit_policy": "source_backed_read_only",
+                  "formatting": {
+                    "font_size_pt": 11,
+                    "line_spacing": 1
+                  }
+                },
+                {
+                  "id": "blk_c3dc663376feed94",
+                  "text": "Ollama",
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_student_performance_rag"
+                    }
+                  ],
+                  "edit_policy": "source_backed_read_only",
+                  "formatting": {
+                    "font_size_pt": 11,
+                    "line_spacing": 1
+                  }
+                },
+                {
+                  "id": "blk_dc5124f533ed2548",
+                  "text": "llama3.2:3b",
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_student_performance_rag"
+                    }
+                  ],
+                  "edit_policy": "source_backed_read_only",
+                  "formatting": {
+                    "font_size_pt": 11,
+                    "line_spacing": 1
+                  }
+                },
+                {
+                  "id": "blk_b6e6f0e3e7e615e4",
+                  "text": "nomic-embed-text",
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_student_performance_rag"
+                    }
+                  ],
+                  "edit_policy": "source_backed_read_only",
+                  "formatting": {
+                    "font_size_pt": 11,
+                    "line_spacing": 1
+                  }
+                },
+                {
+                  "id": "blk_34e03e31542a51ba",
+                  "text": "ChromaDB",
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_student_performance_rag"
+                    }
+                  ],
+                  "edit_policy": "source_backed_read_only",
+                  "formatting": {
+                    "font_size_pt": 11,
+                    "line_spacing": 1
+                  }
+                },
+                {
+                  "id": "blk_6778f2ef0cc345a5",
+                  "text": "Langfuse",
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_student_performance_rag"
+                    }
+                  ],
+                  "edit_policy": "source_backed_read_only",
+                  "formatting": {
+                    "font_size_pt": 11,
+                    "line_spacing": 1
+                  }
+                }
+              ]
+            },
+            {
+              "id": "blk_832121f01d6d4646",
+              "type": "project_link",
+              "edit_policy": "protected",
+              "formatting": {
+                "font_size_pt": 11,
+                "line_spacing": 1,
+                "space_before_pt": 0.2,
+                "space_after_pt": 0.2
+              },
+              "source_refs": [
+                {
+                  "source_type": "project",
+                  "source_id": "project_student_performance_rag"
+                }
+              ],
+              "project_id": "project_student_performance_rag",
+              "runs": [
+                {
+                  "text": "Project Link: ",
+                  "marks": [],
+                  "source_refs": []
+                },
+                {
+                  "text": "https://github.com/thummalapalliharsha/student-performance-rag",
+                  "marks": [
+                    {
+                      "type": "link",
+                      "href": "https://github.com/thummalapalliharsha/student-performance-rag"
+                    }
+                  ],
+                  "source_refs": [
+                    {
+                      "source_type": "project",
+                      "source_id": "project_student_performance_rag"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "section_education",
+          "type": "education",
+          "title": "EDUCATION",
+          "required": true,
+          "formatting": {
+            "font_size_pt": 13,
+            "bold": true,
+            "line_spacing": 1,
+            "space_before_pt": 5,
+            "space_after_pt": 1
+          },
+          "blocks": [
+            {
+              "id": "blk_1d4d9a8a1521a660",
+              "type": "education_line",
+              "edit_policy": "protected",
+              "formatting": {
+                "font_size_pt": 11,
+                "line_spacing": 1
+              },
+              "source_refs": [
+                {
+                  "source_type": "education",
+                  "source_id": "education_biher_btech"
+                }
+              ],
+              "education_id": "education_biher_btech",
+              "line_index": 0,
+              "runs": [
+                {
+                  "text": "Bharath Institute of Higher Education and Research — B.Tech",
+                  "marks": [],
+                  "source_refs": [
+                    {
+                      "source_type": "education",
+                      "source_id": "education_biher_btech"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "blk_dae0f336369b8677",
+              "type": "education_line",
+              "edit_policy": "protected",
+              "formatting": {
+                "font_size_pt": 11,
+                "line_spacing": 1
+              },
+              "source_refs": [
+                {
+                  "source_type": "education",
+                  "source_id": "education_biher_btech"
+                }
+              ],
+              "education_id": "education_biher_btech",
+              "line_index": 1,
+              "runs": [
+                {
+                  "text": "Computer Science and Engineering (2022–2026); CGPA: 7.94",
+                  "marks": [],
+                  "source_refs": [
+                    {
+                      "source_type": "education",
+                      "source_id": "education_biher_btech"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "blk_7eb47d1cc3caf6e4",
+              "type": "education_line",
+              "edit_policy": "protected",
+              "formatting": {
+                "font_size_pt": 11,
+                "line_spacing": 1
+              },
+              "source_refs": [
+                {
+                  "source_type": "education",
+                  "source_id": "education_harvest_higher_secondary"
+                }
+              ],
+              "education_id": "education_harvest_higher_secondary",
+              "line_index": 0,
+              "runs": [
+                {
+                  "text": "Harvest Public School — Class XII — CBSE (2022); 70.8%",
+                  "marks": [],
+                  "source_refs": [
+                    {
+                      "source_type": "education",
+                      "source_id": "education_harvest_higher_secondary"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "blk_89ea2d6f3ec34331",
+              "type": "education_line",
+              "edit_policy": "protected",
+              "formatting": {
+                "font_size_pt": 11,
+                "line_spacing": 1
+              },
+              "source_refs": [
+                {
+                  "source_type": "education",
+                  "source_id": "education_harvest_secondary"
+                }
+              ],
+              "education_id": "education_harvest_secondary",
+              "line_index": 0,
+              "runs": [
+                {
+                  "text": "Harvest Public School — Class X — CBSE (2020); 82.2%",
+                  "marks": [],
+                  "source_refs": [
+                    {
+                      "source_type": "education",
+                      "source_id": "education_harvest_secondary"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "section_certifications",
+          "type": "certifications",
+          "title": "CERTIFICATIONS",
+          "required": true,
+          "formatting": {
+            "font_size_pt": 13,
+            "bold": true,
+            "line_spacing": 1,
+            "space_before_pt": 5,
+            "space_after_pt": 1
+          },
+          "blocks": [
+            {
+              "id": "blk_efbaa2807e9ed5e7",
+              "type": "certification_entry",
+              "edit_policy": "protected",
+              "formatting": {
+                "font_size_pt": 11,
+                "line_spacing": 1,
+                "space_before_pt": 0.2,
+                "space_after_pt": 0.2,
+                "list_style": "bullet",
+                "left_indent_in": 0.16,
+                "first_line_indent_in": -0.12
+              },
+              "source_refs": [
+                {
+                  "source_type": "certification",
+                  "source_id": "credential_ediglobe_ai_internship"
+                }
+              ],
+              "certification_id": "credential_ediglobe_ai_internship",
+              "runs": [
+                {
+                  "text": "Artificial Intelligence Internship — Ediglobe (February 2024)",
+                  "marks": [],
+                  "source_refs": [
+                    {
+                      "source_type": "certification",
+                      "source_id": "credential_ediglobe_ai_internship"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "blk_ef4069f6a4967dc8",
+              "type": "certification_entry",
+              "edit_policy": "protected",
+              "formatting": {
+                "font_size_pt": 11,
+                "line_spacing": 1,
+                "space_before_pt": 0.2,
+                "space_after_pt": 0.2,
+                "list_style": "bullet",
+                "left_indent_in": 0.16,
+                "first_line_indent_in": -0.12
+              },
+              "source_refs": [
+                {
+                  "source_type": "certification",
+                  "source_id": "credential_eduskills_ai_ml_virtual_internship"
+                }
+              ],
+              "certification_id": "credential_eduskills_ai_ml_virtual_internship",
+              "runs": [
+                {
+                  "text": "AI-ML Virtual Internship — EduSkills (March 2025)",
+                  "marks": [],
+                  "source_refs": [
+                    {
+                      "source_type": "certification",
+                      "source_id": "credential_eduskills_ai_ml_virtual_internship"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "blk_c8c55cfeb4e1bd4b",
+              "type": "certification_entry",
+              "edit_policy": "protected",
+              "formatting": {
+                "font_size_pt": 11,
+                "line_spacing": 1,
+                "space_before_pt": 0.2,
+                "space_after_pt": 0.2,
+                "list_style": "bullet",
+                "left_indent_in": 0.16,
+                "first_line_indent_in": -0.12
+              },
+              "source_refs": [
+                {
+                  "source_type": "certification",
+                  "source_id": "credential_tcs_ion_career_edge"
+                }
+              ],
+              "certification_id": "credential_tcs_ion_career_edge",
+              "runs": [
+                {
+                  "text": "TCS iON Career Edge – Young Professional — TCS iON (March 2025)",
+                  "marks": [],
+                  "source_refs": [
+                    {
+                      "source_type": "certification",
+                      "source_id": "credential_tcs_ion_career_edge"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "blk_16d9b889d67c8428",
+              "type": "certification_entry",
+              "edit_policy": "protected",
+              "formatting": {
+                "font_size_pt": 11,
+                "line_spacing": 1,
+                "space_before_pt": 0.2,
+                "space_after_pt": 0.2,
+                "list_style": "bullet",
+                "left_indent_in": 0.16,
+                "first_line_indent_in": -0.12
+              },
+              "source_refs": [
+                {
+                  "source_type": "certification",
+                  "source_id": "credential_nptel_iot"
+                }
+              ],
+              "certification_id": "credential_nptel_iot",
+              "runs": [
+                {
+                  "text": "Introduction to Internet of Things — NPTEL (April 2025)",
+                  "marks": [],
+                  "source_refs": [
+                    {
+                      "source_type": "certification",
+                      "source_id": "credential_nptel_iot"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "source_references": [
+      {
+        "source_type": "certification",
+        "source_id": "credential_ediglobe_ai_internship"
+      },
+      {
+        "source_type": "certification",
+        "source_id": "credential_eduskills_ai_ml_virtual_internship"
+      },
+      {
+        "source_type": "certification",
+        "source_id": "credential_nptel_iot"
+      },
+      {
+        "source_type": "certification",
+        "source_id": "credential_tcs_ion_career_edge"
+      },
+      {
+        "source_type": "education",
+        "source_id": "education_biher_btech"
+      },
+      {
+        "source_type": "education",
+        "source_id": "education_harvest_higher_secondary"
+      },
+      {
+        "source_type": "education",
+        "source_id": "education_harvest_secondary"
+      },
+      {
+        "source_type": "profile_field",
+        "source_id": "/profile/contact/email"
+      },
+      {
+        "source_type": "profile_field",
+        "source_id": "/profile/contact/phone"
+      },
+      {
+        "source_type": "profile_field",
+        "source_id": "/profile/links/github"
+      },
+      {
+        "source_type": "profile_field",
+        "source_id": "/profile/links/linkedin"
+      },
+      {
+        "source_type": "profile_field",
+        "source_id": "/profile/location"
+      },
+      {
+        "source_type": "profile_field",
+        "source_id": "/profile/name"
+      },
+      {
+        "source_type": "project",
+        "source_id": "project_student_performance_rag"
+      },
+      {
+        "source_type": "project",
+        "source_id": "project_text_to_sql_project"
+      },
+      {
+        "source_type": "skill",
+        "source_id": "skill_groups/data_engineering/Pytest"
+      },
+      {
+        "source_type": "skill",
+        "source_id": "skill_groups/databases_and_sql/MySQL"
+      },
+      {
+        "source_type": "skill",
+        "source_id": "skill_groups/databases_and_sql/SQL"
+      },
+      {
+        "source_type": "skill",
+        "source_id": "skill_groups/databases_and_sql/SQLite"
+      },
+      {
+        "source_type": "skill",
+        "source_id": "skill_groups/generative_ai/ChromaDB"
+      },
+      {
+        "source_type": "skill",
+        "source_id": "skill_groups/generative_ai/Embeddings"
+      },
+      {
+        "source_type": "skill",
+        "source_id": "skill_groups/generative_ai/Generative%20AI"
+      },
+      {
+        "source_type": "skill",
+        "source_id": "skill_groups/generative_ai/Langfuse"
+      },
+      {
+        "source_type": "skill",
+        "source_id": "skill_groups/generative_ai/Ollama"
+      },
+      {
+        "source_type": "skill",
+        "source_id": "skill_groups/generative_ai/Promptfoo"
+      },
+      {
+        "source_type": "skill",
+        "source_id": "skill_groups/generative_ai/RAG"
+      },
+      {
+        "source_type": "skill",
+        "source_id": "skill_groups/generative_ai/Text-to-SQL"
+      },
+      {
+        "source_type": "skill",
+        "source_id": "skill_groups/machine_learning/Classification"
+      },
+      {
+        "source_type": "skill",
+        "source_id": "skill_groups/machine_learning/Pandas"
+      },
+      {
+        "source_type": "skill",
+        "source_id": "skill_groups/professional_and_language_skills/English"
+      },
+      {
+        "source_type": "skill",
+        "source_id": "skill_groups/professional_and_language_skills/Hindi"
+      },
+      {
+        "source_type": "skill",
+        "source_id": "skill_groups/professional_and_language_skills/Tamil"
+      },
+      {
+        "source_type": "skill",
+        "source_id": "skill_groups/professional_and_language_skills/Telugu"
+      },
+      {
+        "source_type": "skill",
+        "source_id": "skill_groups/programming_languages/Python"
+      },
+      {
+        "source_type": "skill",
+        "source_id": "skill_groups/web_development/API%20integration"
+      },
+      {
+        "source_type": "skill",
+        "source_id": "skill_groups/web_development/Streamlit"
+      }
+    ]
+  },
+  "saved_at": "2026-09-27T11:55:12.101543+00:00",
+  "working_docx_reference": "output\\resumes\\rex_zone_role_app_14a66f897623_Working_rev_ab7adc5325d50511427d7a20_548480e3a6.docx",
+  "working_pdf_reference": "output\\resumes\\rex_zone_role_app_14a66f897623_Working_rev_ab7adc5325d50511427d7a20_548480e3a6.pdf",
+  "working_docx_sha256": "c3c8dc40cc0146ddc911c665d075d429e2d80767cec9867054a75e918811dc88",
+  "working_pdf_sha256": "79ae5c8566ab49913ccb01921e1faa19479f274a7d54ef9962adf42e966f5201",
+  "source_plan_sha256": "186cfd32015495e0de7525d32703d01b679fdd108ff795d4354815cee010fbe9",
+  "source_generation_reference": "gen_28ca97d248f24ce7ab9a2e20c04152b0",
+  "validation_reference": "output\\reports\\app_14a66f897623_resume_document_validation_rev_ab7adc5325d50511427d7a20_548480e3a6.json",
+  "change_ledger": [
+    {
+      "block_id": "blk_4b74234910fd858d",
+      "block_type": "project_bullet",
+      "original_text": "Built a Python workflow that converts natural-language questions into SQLite-compatible SQL queries.",
+      "edited_text": "Built a Python workflow that converts natural language questions into SQLite-compatible SQL queries.",
+      "source_refs": [
+        {
+          "source_type": "project",
+          "source_id": "project_text_to_sql_project"
+        }
+      ],
+      "formatting_changed": false
+    }
+  ],
+  "validation": {
+    "generated_at": "2026-09-27T11:55:12.089550+00:00",
+    "jd_role": "Rex.zone is hiring for entry-level STEM jobs in India supporting real AI/ML engineering workflows, including training data quality, RLHF evaluation, prompt evaluation, and QA evaluation for large language models. This is a remote, full-time role with structured workflows and calibration sessions.",
+    "output_filename": "candidate.docx",
+    "page_count": 1,
+    "page_count_exactly_one": true,
+    "selected_projects": [
+      "Text-to-SQL Project",
+      "Student Performance RAG Chatbot"
+    ],
+    "selected_skills": [
+      "Python",
+      "SQL",
+      "SQLite",
+      "MySQL",
+      "Text-to-SQL",
+      "Ollama"
+    ],
+    "selected_certifications": [
+      "Artificial Intelligence Internship",
+      "AI-ML Virtual Internship",
+      "TCS iON Career Edge – Young Professional",
+      "Introduction to Internet of Things"
+    ],
+    "selected_experience": [],
+    "experience_included": false,
+    "summary_line_count": 5,
+    "skill_category_count": 4,
+    "contact_validation": {
+      "passed": true,
+      "missing": []
+    },
+    "hyperlink_validation": {
+      "passed": true,
+      "targets": [
+        "styles.xml",
+        "stylesWithEffects.xml",
+        "settings.xml",
+        "webSettings.xml",
+        "fontTable.xml",
+        "theme/theme1.xml",
+        "../customXml/item1.xml",
+        "numbering.xml",
+        "tel:+919000657769",
+        "mailto:thummalapalliharsha@gmail.com",
+        "https://linkedin.com/in/thummalapalliharsha",
+        "https://github.com/thummalapalliharsha",
+        "https://github.com/thummalapalliharsha/text_to_sql_project",
+        "https://github.com/thummalapalliharsha/student-performance-rag"
+      ]
+    },
+    "ats_validation": {
+      "docx_valid": true,
+      "text_extractable": true,
+      "standard_headings_present": true,
+      "one_page": true,
+      "single_column": true,
+      "problematic_tables_or_textboxes": false,
+      "malformed_hyperlinks": false
+    },
+    "placeholder_validation": {
+      "passed": true,
+      "unresolved_placeholders": []
+    },
+    "duplicate_template_validation": {
+      "passed": true,
+      "duplicate_signals": []
+    },
+    "summary_validation": {
+      "passed": true,
+      "line_count": 5
+    },
+    "skills_validation": {
+      "passed": true,
+      "category_count": 4
+    },
+    "certification_validation": {
+      "passed": true,
+      "count": 4,
+      "minimum_required": 0,
+      "requirement_applies": false
+    },
+    "education_validation": {
+      "passed": true,
+      "all_records_included": true
+    },
+    "project_order_validation": {
+      "passed": true,
+      "expected_order": [
+        "Text-to-SQL Project",
+        "Student Performance RAG Chatbot"
+      ],
+      "positions": [
+        397,
+        1504
+      ]
+    },
+    "content_density": {
+      "text_characters": 2553,
+      "meaningful_bullet_count": 0,
+      "warning": false
+    },
+    "truth_provenance_validation": {
+      "all_projects_completed": true,
+      "unknown_or_planned_excluded": true,
+      "imdb_not_experience": true,
+      "ediglobe_eduskills_separate": true,
+      "unsupported_claims_detected": []
+    },
+    "warnings_issues": [],
+    "summary_format_validation": {
+      "passed": true,
+      "paragraph_count": 1,
+      "not_bulleted": true
+    },
+    "languages_validation": {
+      "passed": true,
+      "value": "English, Telugu, Hindi, Tamil"
+    },
+    "project_stack_validation": {
+      "passed": true,
+      "count": 2
+    },
+    "project_link_validation": {
+      "passed": true,
+      "verified_links": [
+        "https://github.com/thummalapalliharsha/text_to_sql_project",
+        "https://github.com/thummalapalliharsha/student-performance-rag"
+      ]
+    },
+    "final_status": "PASS",
+    "application_id": "app_14a66f897623",
+    "company_name": "Rex.zone",
+    "revision_id": "rev_ab7adc5325d50511427d7a20",
+    "source_plan_sha256": "186cfd32015495e0de7525d32703d01b679fdd108ff795d4354815cee010fbe9",
+    "source_generation_reference": "gen_28ca97d248f24ce7ab9a2e20c04152b0",
+    "working_docx_reference": "output\\resumes\\rex_zone_role_app_14a66f897623_Working_rev_ab7adc5325d50511427d7a20_548480e3a6.docx",
+    "working_pdf_reference": "output\\resumes\\rex_zone_role_app_14a66f897623_Working_rev_ab7adc5325d50511427d7a20_548480e3a6.pdf",
+    "working_docx_sha256": "c3c8dc40cc0146ddc911c665d075d429e2d80767cec9867054a75e918811dc88",
+    "working_pdf_sha256": "79ae5c8566ab49913ccb01921e1faa19479f274a7d54ef9962adf42e966f5201",
+    "claim_validation": {
+      "valid": true,
+      "errors": [],
+      "policy": "source-bound lexical, numeric, and protected-structure checks",
+      "claim_truth_semantically_verified": false,
+      "human_review_required": true
+    },
+    "model_validation": {
+      "valid": true,
+      "schema_version": 1,
+      "application_id": "app_14a66f897623",
+      "revision_id": "rev_ab7adc5325d50511427d7a20",
+      "source_reference_count": 36,
+      "claim_truth_semantically_verified": false
+    },
+    "checks": {
+      "one_page": true,
+      "existing_generator_validation": true,
+      "required_headings": true,
+      "single_column": true,
+      "no_tables_textboxes_drawings_or_images": true,
+      "contact": true,
+      "hyperlinks": true,
+      "project_links": true,
+      "project_order": true,
+      "selected_projects": true,
+      "project_stacks": true,
+      "skills": true,
+      "summary": true,
+      "languages": true,
+      "education": true,
+      "certifications": true,
+      "placeholders": true,
+      "extractable_text": true,
+      "truth_provenance": true,
+      "model_text_matches_pdf": true
+    },
+    "saved_at": "2026-09-27T11:55:12.101543+00:00"
+  }
+}

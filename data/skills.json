@@ -1,0 +1,790 @@
+{
+  "skill_groups": [
+    {
+      "category": "programming_languages",
+      "skills": [
+        {
+          "name": "Python",
+          "status": "verified",
+          "evidence": [
+            {
+              "record_id": "telecom_churn_logistic_regression",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "fuel_regression_crispmlq",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "bank_customer_clustering_dashboard",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "sample_sales_data",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "text_to_sql_project",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "genai_pyspark_pipeline",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "student_performance_rag",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "smartfraud_classifier",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "imdb_movie_analysis",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "experience_ediglobe_ai_intern",
+              "source_id": "resume_docx",
+              "evidence_type": "explicitly_listed_by_candidate"
+            }
+          ],
+          "review_flags": []
+        }
+      ]
+    },
+    {
+      "category": "databases_and_sql",
+      "skills": [
+        {
+          "name": "SQL",
+          "status": "verified",
+          "evidence": [
+            {
+              "record_id": "text_to_sql_project",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "education_resume_skills",
+              "source_id": "resume_docx",
+              "evidence_type": "explicitly_listed_by_candidate"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "SQLite",
+          "status": "verified",
+          "evidence": [
+            {
+              "record_id": "text_to_sql_project",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "MySQL",
+          "status": "verified",
+          "evidence": [
+            {
+              "record_id": "telecom_churn_logistic_regression",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "fuel_regression_crispmlq",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            }
+          ],
+          "review_flags": []
+        }
+      ]
+    },
+    {
+      "category": "machine_learning",
+      "skills": [
+        {
+          "name": "Scikit-learn",
+          "status": "verified",
+          "evidence": [
+            {
+              "record_id": "telecom_churn_logistic_regression",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "fuel_regression_crispmlq",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "bank_customer_clustering_dashboard",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "smartfraud_classifier",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "Pandas",
+          "status": "verified",
+          "evidence": [
+            {
+              "record_id": "telecom_churn_logistic_regression",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "fuel_regression_crispmlq",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "bank_customer_clustering_dashboard",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "sample_sales_data",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "genai_pyspark_pipeline",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "student_performance_rag",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "smartfraud_classifier",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "imdb_movie_analysis",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "NumPy",
+          "status": "verified",
+          "evidence": [
+            {
+              "record_id": "telecom_churn_logistic_regression",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "fuel_regression_crispmlq",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "bank_customer_clustering_dashboard",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "sample_sales_data",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "genai_pyspark_pipeline",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "smartfraud_classifier",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "imdb_movie_analysis",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "Matplotlib",
+          "status": "verified",
+          "evidence": [
+            {
+              "record_id": "telecom_churn_logistic_regression",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "fuel_regression_crispmlq",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "smartfraud_classifier",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "Seaborn",
+          "status": "verified",
+          "evidence": [
+            {
+              "record_id": "smartfraud_classifier",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "XGBoost",
+          "status": "verified",
+          "evidence": [
+            {
+              "record_id": "smartfraud_classifier",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "SMOTE",
+          "status": "verified",
+          "evidence": [
+            {
+              "record_id": "smartfraud_classifier",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "Scikit-learn pipelines",
+          "status": "verified",
+          "evidence": [],
+          "review_flags": []
+        },
+        {
+          "name": "Regression",
+          "status": "verified",
+          "evidence": [
+            {
+              "record_id": "telecom_churn_logistic_regression",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "fuel_regression_crispmlq",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "Classification",
+          "status": "verified",
+          "evidence": [
+            {
+              "record_id": "telecom_churn_logistic_regression",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "smartfraud_classifier",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "Clustering",
+          "status": "verified",
+          "evidence": [
+            {
+              "record_id": "bank_customer_clustering_dashboard",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            }
+          ],
+          "review_flags": []
+        }
+      ]
+    },
+    {
+      "category": "generative_ai",
+      "skills": [
+        {
+          "name": "RAG",
+          "status": "verified",
+          "evidence": [
+            {
+              "record_id": "genai_pyspark_pipeline",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "student_performance_rag",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "Embeddings",
+          "status": "verified",
+          "evidence": [
+            {
+              "record_id": "student_performance_rag",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "ChromaDB",
+          "status": "verified",
+          "evidence": [
+            {
+              "record_id": "student_performance_rag",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "Ollama",
+          "status": "verified",
+          "evidence": [
+            {
+              "record_id": "student_performance_rag",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "Text-to-SQL",
+          "status": "verified",
+          "evidence": [
+            {
+              "record_id": "text_to_sql_project",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "Promptfoo",
+          "status": "verified",
+          "evidence": [
+            {
+              "record_id": "student_performance_rag",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "Langfuse",
+          "status": "verified",
+          "evidence": [
+            {
+              "record_id": "student_performance_rag",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "Generative AI",
+          "status": "verified",
+          "evidence": [
+            {
+              "record_id": "text_to_sql_project",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "ai_resume_jd_match_tool",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            }
+          ],
+          "review_flags": []
+        }
+      ]
+    },
+    {
+      "category": "data_engineering",
+      "skills": [
+        {
+          "name": "PySpark",
+          "status": "verified",
+          "evidence": [
+            {
+              "record_id": "genai_pyspark_pipeline",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "Parquet",
+          "status": "verified",
+          "evidence": [
+            {
+              "record_id": "genai_pyspark_pipeline",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "Faker",
+          "status": "verified",
+          "evidence": [
+            {
+              "record_id": "genai_pyspark_pipeline",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "Pytest",
+          "status": "verified",
+          "evidence": [
+            {
+              "record_id": "genai_pyspark_pipeline",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "student_performance_rag",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "SQLAlchemy",
+          "status": "verified",
+          "evidence": [
+            {
+              "record_id": "telecom_churn_logistic_regression",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "fuel_regression_crispmlq",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "PyArrow",
+          "status": "verified",
+          "evidence": [
+            {
+              "record_id": "genai_pyspark_pipeline",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            }
+          ],
+          "review_flags": []
+        }
+      ]
+    },
+    {
+      "category": "web_development",
+      "skills": [
+        {
+          "name": "HTML",
+          "status": "verified",
+          "evidence": [
+            {
+              "record_id": "sample_sales_data",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "weather_app",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "CSS",
+          "status": "verified",
+          "evidence": [
+            {
+              "record_id": "weather_app",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "JavaScript",
+          "status": "verified",
+          "evidence": [
+            {
+              "record_id": "weather_app",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "Streamlit",
+          "status": "verified",
+          "evidence": [
+            {
+              "record_id": "telecom_churn_logistic_regression",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "fuel_regression_crispmlq",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "bank_customer_clustering_dashboard",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "student_performance_rag",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "Plotly",
+          "status": "verified",
+          "evidence": [
+            {
+              "record_id": "bank_customer_clustering_dashboard",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "API integration",
+          "status": "verified",
+          "evidence": [
+            {
+              "record_id": "text_to_sql_project",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            },
+            {
+              "record_id": "weather_app",
+              "source_id": "github_account",
+              "evidence_type": "demonstrated_in_github_project"
+            }
+          ],
+          "review_flags": []
+        }
+      ]
+    },
+    {
+      "category": "tools_and_platforms",
+      "skills": [
+        {
+          "name": "Git",
+          "status": "candidate_provided",
+          "evidence": [
+            {
+              "record_id": "education_resume_skills",
+              "source_id": "resume_docx",
+              "evidence_type": "explicitly_listed_by_candidate"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "Visual Studio Code",
+          "status": "candidate_provided",
+          "evidence": [
+            {
+              "record_id": "education_resume_skills",
+              "source_id": "resume_docx",
+              "evidence_type": "explicitly_listed_by_candidate"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "PyCharm",
+          "status": "candidate_provided",
+          "evidence": [
+            {
+              "record_id": "education_resume_skills",
+              "source_id": "resume_docx",
+              "evidence_type": "explicitly_listed_by_candidate"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "Jupyter Notebook",
+          "status": "candidate_provided",
+          "evidence": [
+            {
+              "record_id": "education_resume_skills",
+              "source_id": "resume_docx",
+              "evidence_type": "explicitly_listed_by_candidate"
+            }
+          ],
+          "review_flags": []
+        }
+      ]
+    },
+    {
+      "category": "professional_and_language_skills",
+      "skills": [
+        {
+          "name": "Problem-Solving",
+          "status": "candidate_provided",
+          "evidence": [
+            {
+              "record_id": "education_resume_skills",
+              "source_id": "resume_docx",
+              "evidence_type": "explicitly_listed_by_candidate"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "Analytical Thinking",
+          "status": "candidate_provided",
+          "evidence": [
+            {
+              "record_id": "education_resume_skills",
+              "source_id": "resume_docx",
+              "evidence_type": "explicitly_listed_by_candidate"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "Team Collaboration",
+          "status": "candidate_provided",
+          "evidence": [
+            {
+              "record_id": "education_resume_skills",
+              "source_id": "resume_docx",
+              "evidence_type": "explicitly_listed_by_candidate"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "English",
+          "status": "candidate_provided",
+          "evidence": [
+            {
+              "record_id": "education_resume_skills",
+              "source_id": "resume_docx",
+              "evidence_type": "explicitly_listed_by_candidate"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "Telugu",
+          "status": "candidate_provided",
+          "evidence": [
+            {
+              "record_id": "education_resume_skills",
+              "source_id": "resume_docx",
+              "evidence_type": "explicitly_listed_by_candidate"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "Hindi",
+          "status": "candidate_provided",
+          "evidence": [
+            {
+              "record_id": "education_resume_skills",
+              "source_id": "resume_docx",
+              "evidence_type": "explicitly_listed_by_candidate"
+            }
+          ],
+          "review_flags": []
+        },
+        {
+          "name": "Tamil",
+          "status": "candidate_provided",
+          "evidence": [
+            {
+              "record_id": "education_resume_skills",
+              "source_id": "resume_docx",
+              "evidence_type": "explicitly_listed_by_candidate"
+            }
+          ],
+          "review_flags": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,135 @@
+{
+  "generated_at": "2026-09-17T13:47:40.046683+00:00",
+  "jd_role": "As a Software Engineer on the Intelligence team, you will work across the systems that turn raw sensor readings into decisions : data pipelines processing telemetry from thousands of pieces of equipment, machine learning models that predict how that equipment behaves, and an AI agent that answers operators' questions from live building data.",
+  "output_filename": "smartjoules_software_engineer_python_machine_learning_as_a_software_engineer_on_the_intelligence_team_you_will_work_across_the_systems_app_15fa2bb71400_Working.docx",
+  "page_count": 1,
+  "page_count_exactly_one": true,
+  "selected_projects": [
+    "SmartFraud Classifier",
+    "Telecom Churn Logistic Regression"
+  ],
+  "selected_skills": [
+    "Python",
+    "SQL",
+    "SQLite",
+    "MySQL",
+    "Text-to-SQL",
+    "RAG",
+    "Git",
+    "Pandas",
+    "NumPy",
+    "Scikit-learn",
+    "Scikit-learn pipelines",
+    "XGBoost"
+  ],
+  "selected_certifications": [],
+  "selected_experience": [
+    "experience_ediglobe_ai_intern"
+  ],
+  "experience_included": true,
+  "summary_line_count": 5,
+  "skill_category_count": 5,
+  "contact_validation": {
+    "passed": true,
+    "missing": []
+  },
+  "hyperlink_validation": {
+    "passed": true,
+    "targets": [
+      "styles.xml",
+      "stylesWithEffects.xml",
+      "settings.xml",
+      "webSettings.xml",
+      "fontTable.xml",
+      "theme/theme1.xml",
+      "../customXml/item1.xml",
+      "numbering.xml",
+      "tel:+919000657769",
+      "mailto:thummalapalliharsha@gmail.com",
+      "https://linkedin.com/in/thummalapalliharsha",
+      "https://github.com/thummalapalliharsha",
+      "https://github.com/thummalapalliharsha/SmartFraud-Classifier",
+      "https://github.com/thummalapalliharsha/telecom-churn-logestic-regression"
+    ]
+  },
+  "ats_validation": {
+    "docx_valid": true,
+    "text_extractable": true,
+    "standard_headings_present": true,
+    "one_page": true,
+    "single_column": true,
+    "problematic_tables_or_textboxes": false,
+    "malformed_hyperlinks": false
+  },
+  "placeholder_validation": {
+    "passed": true,
+    "unresolved_placeholders": []
+  },
+  "duplicate_template_validation": {
+    "passed": true,
+    "duplicate_signals": []
+  },
+  "summary_validation": {
+    "passed": true,
+    "line_count": 5
+  },
+  "skills_validation": {
+    "passed": true,
+    "category_count": 5
+  },
+  "certification_validation": {
+    "passed": true,
+    "count": 0,
+    "minimum_required": 0,
+    "requirement_applies": false
+  },
+  "education_validation": {
+    "passed": true,
+    "all_records_included": true
+  },
+  "project_order_validation": {
+    "passed": true,
+    "expected_order": [
+      "SmartFraud Classifier",
+      "Telecom Churn Logistic Regression"
+    ],
+    "positions": [
+      828,
+      1075
+    ]
+  },
+  "content_density": {
+    "text_characters": 1927,
+    "meaningful_bullet_count": 0,
+    "warning": false
+  },
+  "truth_provenance_validation": {
+    "all_projects_completed": true,
+    "unknown_or_planned_excluded": true,
+    "imdb_not_experience": true,
+    "ediglobe_eduskills_separate": true,
+    "unsupported_claims_detected": []
+  },
+  "warnings_issues": [],
+  "summary_format_validation": {
+    "passed": true,
+    "paragraph_count": 1,
+    "not_bulleted": true
+  },
+  "languages_validation": {
+    "passed": true,
+    "value": "English, Telugu, Hindi, Tamil"
+  },
+  "project_stack_validation": {
+    "passed": true,
+    "count": 2
+  },
+  "project_link_validation": {
+    "passed": true,
+    "verified_links": [
+      "https://github.com/thummalapalliharsha/SmartFraud-Classifier",
+      "https://github.com/thummalapalliharsha/telecom-churn-logestic-regression"
+    ]
+  },
+  "final_status": "PASS"
+}

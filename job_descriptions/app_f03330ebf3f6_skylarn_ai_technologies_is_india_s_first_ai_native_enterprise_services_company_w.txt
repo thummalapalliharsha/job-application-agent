@@ -1,0 +1,54 @@
+Skylarn AI Technologies is India's first AI-native enterprise services company. We train engineers on cutting-edge AI, build agentic software products, and deploy forward-deployed engineers to enterprise clients. Founded by a 20-year Microsoft Azure AI leader with an MIT CS degree, we combine world-class mentorship with real-world AI delivery.
+
+Responsibilities:
+
+Learn & Train (Months 1–3):
+
+Complete Skylarn's structured AI engineering curriculum — LLMs, RAG, agents, prompt engineering, and Python AI stacks
+Build hands-on mini-projects under the guidance of Senior AI Engineers
+Study and apply SDLC best practices: requirement gathering, design, development, testing, and deployment
+Participate in daily code reviews, stand-ups, and sprint ceremonies
+Build & Contribute (Months 3+):
+
+Develop features for Skylarn's AI products and enterprise client projects
+Write clean, well-documented Python code following team standards
+Debug and test AI components — agents, pipelines, and API integrations
+Contribute to Skylarn's growing reusable AI Skills Library
+Support Senior Engineers in client delivery and technical presentations
+Grow & Lead:
+
+Transition to a full-time Junior AI Engineer role upon successful completion of the training program
+Mentor the next cohort of engineers as you advance
+Shape Skylarn's engineering culture, coding standards, and team norms from day one
+Requirements:
+
+Experience: 0 to 1 year of experience.
+
+Academic & Technical Background:
+
+Bachelor's or Master's in Computer Science, Engineering, or a closely related field — strong academic record preferred (top 20% of class or equivalent)
+Foundational knowledge of AI/ML — coursework, projects, or self-study in machine learning, NLP, or deep learning
+Solid programming skills in Python; exposure to data structures, algorithms, and OOP  Understanding of the Software Development Life Cycle (SDLC) — from requirements to deployment
+Familiarity with Git, REST APIs, and basic cloud concepts (Azure, AWS, or GCP)
+Mindset & Soft Skills:
+
+Startup DNA — comfortable with ambiguity, fast-changing priorities, and wearing multiple hats
+Founding team mentality — you want to build something from scratch, not just execute tasks
+Strong written and verbal communication — able to explain technical ideas clearly
+Curiosity and a bias toward action — you explore, experiment, and learn quickly
+Collaborative and coachable — you take feedback well and improve fast
+Good to Have:
+
+Personal AI/ML projects, Kaggle competitions, or open-source contributions
+Experience with LangChain, Hugging Face, OpenAI API, or similar frameworks
+Exposure to any AI/ML internship, hackathon, or research project
+Azure or AWS cloud fundamentals certification
+Pay: ₹20,000.00 - ₹25,000.00 per month
+
+Benefits:
+
+Paid time off
+Ability to commute/relocate:
+
+Gopanpally, Hyderabad, Telangana: Reliably commute or planning to relocate before starting work (Preferred)
+Work Location: In person

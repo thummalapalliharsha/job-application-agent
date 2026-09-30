@@ -1,0 +1,674 @@
+{
+  "mode": "job_application_planning",
+  "candidate_positioning": "Fresher positioning based only on current JD relevance and source-supported profile evidence.",
+  "jd_analysis": {
+    "job_identity": {
+      "job_title": "Unspecified role",
+      "company": null,
+      "location": null,
+      "experience_level": null,
+      "employment_type": null,
+      "explicit_years_experience": []
+    },
+    "job_title": "Unspecified role",
+    "role_function": "Unspecified role",
+    "required_technical_skills": [],
+    "preferred_technical_skills": [],
+    "uncertain_technical_skills": [],
+    "requirements": [],
+    "skill_categories": {
+      "programming_languages": [],
+      "frameworks_libraries": [],
+      "databases": [],
+      "cloud_platforms": [],
+      "data_ml_ai": [],
+      "tools": []
+    },
+    "soft_skills_explicitly_requested": [],
+    "education_requirements": [],
+    "experience_requirements": [],
+    "responsibilities": [],
+    "domain_keywords": [],
+    "keywords_phrases": [],
+    "classification_notes": [
+      "Required/preferred is assigned only when the surrounding JD section or explicit wording supports it; otherwise classification is uncertain.",
+      "Semantic mappings identify related evidence but do not add unsupported technologies to the profile."
+    ]
+  },
+  "candidate_matching": [],
+  "evidence_summary": {
+    "supported_requirements": [],
+    "partial_requirements": [],
+    "unsupported_requirements": [],
+    "unknown_requirements": []
+  },
+  "gap_analysis": {
+    "strong_evidence": [],
+    "partial_related_evidence": [],
+    "missing_requirements": [],
+    "unknown_requirements": [],
+    "potential_risks": []
+  },
+  "resume_plan": {
+    "skills_to_include": [],
+    "projects_to_include": [
+      {
+        "record_id": "project_smartfraud_classifier",
+        "status": "verified",
+        "sources": [
+          {
+            "source_id": "github_account",
+            "evidence_type": "github",
+            "evidence_location": "https://github.com/thummalapalliharsha/SmartFraud-Classifier",
+            "claims_supported": [
+              "repository name",
+              "repository URL",
+              "repository files"
+            ]
+          }
+        ],
+        "review_flags": [
+          "Resume claim of approximately 18% minority-class recall improvement was not independently verified from repository evidence.",
+          "Resume claim of reducing 30+ features to 12 was not independently verified from repository evidence."
+        ],
+        "conflicts": [
+          {
+            "topic": "algorithms",
+            "resume_claim": [
+              "Decision Tree",
+              "Random Forest"
+            ],
+            "github_claim": [
+              "Decision Tree",
+              "Random Forest",
+              "XGBoost"
+            ],
+            "resolution": "preserve_both_sources; do_not_silently_merge"
+          }
+        ],
+        "name": "SmartFraud Classifier",
+        "project_type": "github_project",
+        "github_url": "https://github.com/thummalapalliharsha/SmartFraud-Classifier",
+        "classification_invariant": "project",
+        "source_status": "verified",
+        "documentation_level": "high",
+        "purpose": "Detect fraudulent credit-card transactions and compare classification algorithms.",
+        "functionality": [
+          "Kaggle fraud dataset loading",
+          "EDA and preprocessing",
+          "Decision Tree",
+          "Random Forest",
+          "XGBoost",
+          "SMOTE usage",
+          "model evaluation",
+          "model artifact saving"
+        ],
+        "technologies": [
+          "Python",
+          "Pandas",
+          "NumPy",
+          "Scikit-learn",
+          "XGBoost",
+          "Matplotlib",
+          "Seaborn",
+          "Imbalanced-learn",
+          "Joblib",
+          "Jupyter Notebook"
+        ],
+        "frameworks_libraries_tools": [
+          "Python",
+          "Pandas",
+          "NumPy",
+          "Scikit-learn",
+          "XGBoost",
+          "Matplotlib",
+          "Seaborn",
+          "Imbalanced-learn",
+          "Joblib",
+          "Jupyter Notebook"
+        ],
+        "technical_details": [
+          "Binary fraud classification; notebooks include SMOTE and model comparison"
+        ],
+        "measurable_results": [
+          "README documents 284,807 transactions and 30 transaction-related features; notebook output shows 284,807 rows and 31 columns including target."
+        ],
+        "demonstrated_skills": [
+          "fraud detection",
+          "imbalanced classification",
+          "Decision Trees",
+          "Random Forest",
+          "XGBoost",
+          "SMOTE",
+          "model comparison",
+          "precision/recall/F1 evaluation"
+        ],
+        "supported_role_categories": [
+          "Machine Learning Intern",
+          "Data Science Intern",
+          "Data Analyst",
+          "Python Developer",
+          "Risk Analytics Intern"
+        ],
+        "source_evidence": {
+          "readme_files": [
+            "README.md"
+          ],
+          "source_files": [],
+          "dependency_files": [],
+          "notebooks": [
+            "RandomForest.ipynb",
+            "Xgboost.ipynb"
+          ],
+          "data_files": [
+            "creditcard.csv"
+          ],
+          "configuration_files": []
+        },
+        "provenance": [
+          {
+            "source_id": "github_account",
+            "evidence_type": "github",
+            "evidence_location": "https://github.com/thummalapalliharsha/SmartFraud-Classifier",
+            "claims_supported": [
+              "repository implementation"
+            ]
+          }
+        ],
+        "duplicate_group_id": "project_smartfraud_classifier",
+        "selection_metadata": {
+          "role_categories": [
+            "Machine Learning Intern",
+            "Data Science Intern",
+            "Data Analyst",
+            "Python Developer",
+            "Risk Analytics Intern"
+          ],
+          "relevance_tags": [
+            "fraud detection",
+            "imbalanced classification",
+            "Decision Trees",
+            "Random Forest",
+            "XGBoost",
+            "SMOTE",
+            "model comparison",
+            "precision/recall/F1 evaluation"
+          ],
+          "evidence_strength": "high",
+          "available_for_resume": true,
+          "requires_review_before_claim": true,
+          "lifecycle_selection_rule": "only_completed_or_explicitly_allowed_in_progress",
+          "completed_status_required_for_standard_resume": true,
+          "idea_or_planned_excluded_from_final_resume": true,
+          "in_progress_requires_explicit_permission": true
+        },
+        "project_status": "completed",
+        "github_availability": "github_verified",
+        "lifecycle_review_required": false,
+        "lifecycle_notes": [
+          "Repository presence does not establish project completion; lifecycle status requires candidate confirmation.",
+          "README and notebooks show implemented model-analysis artifacts, but do not explicitly establish lifecycle status; manual confirmation required."
+        ]
+      },
+      {
+        "record_id": "project_ai_resume_jd_match_tool",
+        "status": "verified",
+        "sources": [
+          {
+            "source_id": "github_account",
+            "evidence_type": "github",
+            "evidence_location": "https://github.com/thummalapalliharsha/AI-Resume-JD-Match-Tool",
+            "claims_supported": [
+              "repository name",
+              "repository URL",
+              "repository files"
+            ]
+          }
+        ],
+        "review_flags": [
+          "Public workflow URL should be reviewed before inclusion in a public resume or portfolio."
+        ],
+        "conflicts": [],
+        "name": "AI Resume-JD Match Tool",
+        "project_type": "github_project",
+        "github_url": "https://github.com/thummalapalliharsha/AI-Resume-JD-Match-Tool",
+        "classification_invariant": "project",
+        "source_status": "verified",
+        "documentation_level": "high",
+        "purpose": "Compare a candidate resume with a job description and generate structured matching analysis.",
+        "functionality": [
+          "resume-file upload",
+          "job-description input",
+          "AI-assisted resume/JD analysis",
+          "skill and requirement comparison",
+          "structured output",
+          "n8n workflow automation"
+        ],
+        "technologies": [
+          "n8n",
+          "Generative AI",
+          "JSON",
+          "workflow automation"
+        ],
+        "frameworks_libraries_tools": [
+          "n8n",
+          "Generative AI",
+          "JSON",
+          "workflow automation"
+        ],
+        "technical_details": [
+          "Uses an n8n workflow; README includes a working n8n Cloud workflow link"
+        ],
+        "measurable_results": [],
+        "demonstrated_skills": [
+          "AI workflow design",
+          "workflow automation",
+          "structured output",
+          "resume/JD analysis"
+        ],
+        "supported_role_categories": [
+          "Generative AI Intern",
+          "Automation Intern",
+          "AI Application Developer",
+          "Workflow Automation Intern"
+        ],
+        "source_evidence": {
+          "readme_files": [
+            "README.md"
+          ],
+          "source_files": [],
+          "dependency_files": [],
+          "notebooks": [],
+          "data_files": [],
+          "configuration_files": [
+            "workflow JSON"
+          ]
+        },
+        "provenance": [
+          {
+            "source_id": "github_account",
+            "evidence_type": "github",
+            "evidence_location": "https://github.com/thummalapalliharsha/AI-Resume-JD-Match-Tool",
+            "claims_supported": [
+              "repository implementation"
+            ]
+          }
+        ],
+        "duplicate_group_id": null,
+        "selection_metadata": {
+          "role_categories": [
+            "Generative AI Intern",
+            "Automation Intern",
+            "AI Application Developer",
+            "Workflow Automation Intern"
+          ],
+          "relevance_tags": [
+            "AI workflow design",
+            "workflow automation",
+            "structured output",
+            "resume/JD analysis"
+          ],
+          "evidence_strength": "high",
+          "available_for_resume": true,
+          "requires_review_before_claim": true,
+          "lifecycle_selection_rule": "only_completed_or_explicitly_allowed_in_progress",
+          "completed_status_required_for_standard_resume": true,
+          "idea_or_planned_excluded_from_final_resume": true,
+          "in_progress_requires_explicit_permission": true
+        },
+        "project_status": "completed",
+        "github_availability": "github_verified",
+        "lifecycle_review_required": false,
+        "lifecycle_notes": [
+          "Repository presence does not establish project completion; lifecycle status requires candidate confirmation.",
+          "README and workflow JSON evidence show an automation workflow, but do not explicitly establish lifecycle status; manual confirmation required."
+        ]
+      },
+      {
+        "record_id": "project_student_performance_rag",
+        "status": "verified",
+        "sources": [
+          {
+            "source_id": "github_account",
+            "evidence_type": "github",
+            "evidence_location": "https://github.com/thummalapalliharsha/student-performance-rag",
+            "claims_supported": [
+              "repository name",
+              "repository URL",
+              "repository files"
+            ]
+          }
+        ],
+        "review_flags": [],
+        "conflicts": [],
+        "name": "Student Performance RAG Chatbot",
+        "project_type": "github_project",
+        "github_url": "https://github.com/thummalapalliharsha/student-performance-rag",
+        "classification_invariant": "project",
+        "source_status": "verified",
+        "documentation_level": "high",
+        "purpose": "Answer questions about student-performance records using a local retrieval-augmented generation system.",
+        "functionality": [
+          "dataset preprocessing",
+          "student profile document creation",
+          "local embeddings",
+          "ChromaDB vector storage",
+          "semantic retrieval",
+          "local Ollama response generation",
+          "anti-hallucination instructions",
+          "source display in Streamlit",
+          "Langfuse tracing",
+          "Promptfoo evaluation",
+          "Pytest tests"
+        ],
+        "technologies": [
+          "Python",
+          "Pandas",
+          "Streamlit",
+          "Ollama",
+          "llama3.2:3b",
+          "nomic-embed-text",
+          "ChromaDB",
+          "Langfuse",
+          "Promptfoo",
+          "Pytest"
+        ],
+        "frameworks_libraries_tools": [
+          "Python",
+          "Pandas",
+          "Streamlit",
+          "Ollama",
+          "llama3.2:3b",
+          "nomic-embed-text",
+          "ChromaDB",
+          "Langfuse",
+          "Promptfoo",
+          "Pytest"
+        ],
+        "technical_details": [
+          "Local LLM and embedding workflow; top-five retrieval by default; tests cover preprocessing, retrieval, vector storage and RAG"
+        ],
+        "measurable_results": [
+          "README documents 6,607 student records and 20 original columns; vector store indexes 6,607 student documents; retriever uses top five results by default."
+        ],
+        "demonstrated_skills": [
+          "RAG",
+          "local LLM deployment",
+          "embeddings",
+          "vector databases",
+          "semantic retrieval",
+          "prompt design",
+          "observability",
+          "LLM evaluation",
+          "testing"
+        ],
+        "supported_role_categories": [
+          "Generative AI Intern",
+          "Machine Learning Intern",
+          "AI Engineer Intern",
+          "Python Developer",
+          "Data Engineer Intern"
+        ],
+        "source_evidence": {
+          "readme_files": [
+            "README.md"
+          ],
+          "source_files": [],
+          "dependency_files": [
+            "requirements.txt"
+          ],
+          "notebooks": [],
+          "data_files": [],
+          "configuration_files": [
+            "Promptfoo/Langfuse configuration"
+          ]
+        },
+        "provenance": [
+          {
+            "source_id": "github_account",
+            "evidence_type": "github",
+            "evidence_location": "https://github.com/thummalapalliharsha/student-performance-rag",
+            "claims_supported": [
+              "repository implementation"
+            ]
+          }
+        ],
+        "duplicate_group_id": null,
+        "selection_metadata": {
+          "role_categories": [
+            "Generative AI Intern",
+            "Machine Learning Intern",
+            "AI Engineer Intern",
+            "Python Developer",
+            "Data Engineer Intern"
+          ],
+          "relevance_tags": [
+            "RAG",
+            "local LLM deployment",
+            "embeddings",
+            "vector databases",
+            "semantic retrieval",
+            "prompt design",
+            "observability",
+            "LLM evaluation",
+            "testing"
+          ],
+          "evidence_strength": "high",
+          "available_for_resume": true,
+          "requires_review_before_claim": false,
+          "lifecycle_selection_rule": "only_completed_or_explicitly_allowed_in_progress",
+          "completed_status_required_for_standard_resume": true,
+          "idea_or_planned_excluded_from_final_resume": true,
+          "in_progress_requires_explicit_permission": true
+        },
+        "project_status": "completed",
+        "github_availability": "github_verified",
+        "lifecycle_review_required": false,
+        "lifecycle_notes": [
+          "Repository presence does not establish project completion; lifecycle status requires candidate confirmation.",
+          "README and configuration/dependency evidence describe a RAG application, but do not explicitly establish completed versus in-progress status; manual confirmation required."
+        ]
+      }
+    ],
+    "experience_to_include": [],
+    "experience_decisions": [
+      {
+        "record_id": "experience_ediglobe_ai_intern",
+        "organization": "Ediglobe",
+        "title": "Artificial Intelligence Intern",
+        "decision": "NOT RELEVANT ENOUGH FOR RESUME",
+        "matched_requirements": [],
+        "reason": "Actual responsibilities/evidence were compared; broad AI/Python wording alone is insufficient."
+      },
+      {
+        "record_id": "experience_eduskills_ai_ml_virtual_internship",
+        "organization": "EduSkills",
+        "title": "AI-ML Virtual Internship",
+        "decision": "NOT RELEVANT ENOUGH FOR RESUME",
+        "matched_requirements": [],
+        "reason": "Actual responsibilities/evidence were compared; broad AI/Python wording alone is insufficient."
+      }
+    ],
+    "experience_relevance_sufficient": false,
+    "third_project_fallback_used": false,
+    "education_to_include": [
+      {
+        "record_id": "education_biher_btech",
+        "institution": "Bharath Institute of Higher Education and Research",
+        "degree": "B.Tech",
+        "field_of_study": "Computer Science and Engineering",
+        "grade": "CGPA: 7.94",
+        "why": "Education is fixed and sourced from education.json."
+      },
+      {
+        "record_id": "education_harvest_higher_secondary",
+        "institution": "Harvest Public School",
+        "degree": "Higher Secondary (XII)",
+        "field_of_study": null,
+        "grade": "70.8%",
+        "why": "Education is fixed and sourced from education.json."
+      },
+      {
+        "record_id": "education_harvest_secondary",
+        "institution": "Harvest Public School",
+        "degree": "Secondary (X)",
+        "field_of_study": null,
+        "grade": "82.2%",
+        "why": "Education is fixed and sourced from education.json."
+      }
+    ],
+    "certifications_to_include": [],
+    "items_intentionally_excluded": {
+      "projects": [
+        {
+          "record_id": "project_telecom_churn_logistic_regression",
+          "name": "Telecom Churn Logistic Regression",
+          "project_status": "completed",
+          "eligible": true,
+          "reason": "no meaningful requirement-level evidence"
+        },
+        {
+          "record_id": "project_fuel_regression_crispmlq",
+          "name": "Flight Fuel-Burn Prediction",
+          "project_status": "completed",
+          "eligible": true,
+          "reason": "no meaningful requirement-level evidence"
+        },
+        {
+          "record_id": "project_bank_customer_clustering_dashboard",
+          "name": "Bank Customer Clustering and Financial Analytics Dashboard",
+          "project_status": "completed",
+          "eligible": true,
+          "reason": "no meaningful requirement-level evidence"
+        },
+        {
+          "record_id": "project_sample_sales_data",
+          "name": "Sample Sales Data Generator and EDA Toolkit",
+          "project_status": "completed",
+          "eligible": true,
+          "reason": "no meaningful requirement-level evidence"
+        },
+        {
+          "record_id": "project_text_to_sql_project",
+          "name": "Text-to-SQL Project",
+          "project_status": "completed",
+          "eligible": true,
+          "reason": "no meaningful requirement-level evidence"
+        },
+        {
+          "record_id": "project_genai_pyspark_pipeline",
+          "name": "Synthetic Data Generation and PySpark Analytics Pipeline",
+          "project_status": "completed",
+          "eligible": true,
+          "reason": "no meaningful requirement-level evidence"
+        },
+        {
+          "record_id": "project_retail_mini_etl",
+          "name": "Retail Mini ETL",
+          "project_status": "unknown",
+          "eligible": false,
+          "reason": "lifecycle-ineligible; GitHub availability does not change this"
+        },
+        {
+          "record_id": "project_student_performance_rag",
+          "name": "Student Performance RAG Chatbot",
+          "project_status": "completed",
+          "eligible": true,
+          "reason": "no meaningful requirement-level evidence"
+        },
+        {
+          "record_id": "project_ai_resume_jd_match_tool",
+          "name": "AI Resume-JD Match Tool",
+          "project_status": "completed",
+          "eligible": true,
+          "reason": "no meaningful requirement-level evidence"
+        },
+        {
+          "record_id": "project_vibe_kpi_demo",
+          "name": "vibe-kpi-demo-",
+          "project_status": "unknown",
+          "eligible": false,
+          "reason": "lifecycle-ineligible; GitHub availability does not change this"
+        },
+        {
+          "record_id": "project_smartfraud_classifier",
+          "name": "SmartFraud Classifier",
+          "project_status": "completed",
+          "eligible": true,
+          "reason": "no meaningful requirement-level evidence"
+        },
+        {
+          "record_id": "project_weather_app",
+          "name": "Weather App",
+          "project_status": "completed",
+          "eligible": true,
+          "reason": "no meaningful requirement-level evidence"
+        },
+        {
+          "record_id": "project_imdb_movie_analysis",
+          "name": "IMDb Movie Analysis",
+          "project_status": "completed",
+          "eligible": true,
+          "reason": "no meaningful requirement-level evidence"
+        }
+      ],
+      "note": "Excluded projects remain in the master profile and are not permanently ranked."
+    },
+    "supported_requirements": [],
+    "partial_requirements": [],
+    "unsupported_requirements": [],
+    "summary_direction": "Emphasize only the selected completed projects and actual technologies; preserve gaps rather than substituting unsupported tools.",
+    "evidence_notes": [],
+    "warnings": [],
+    "project_selection_scope": "Dynamic for this JD only; completed lifecycle is mandatory and GitHub availability is independent.",
+    "llm_evidence": {
+      "standalone_skill_record": false,
+      "project_level_evidence": [
+        {
+          "record_id": "project_fuel_regression_crispmlq",
+          "name": "Flight Fuel-Burn Prediction",
+          "evidence": [
+            "Linear Regression, Ridge, Lasso and ElasticNet; CRISP-ML(Q) workflow"
+          ],
+          "claim_scope": "project-level evidence only"
+        },
+        {
+          "record_id": "project_genai_pyspark_pipeline",
+          "name": "Synthetic Data Generation and PySpark Analytics Pipeline",
+          "evidence": [
+            "Configurable pipeline; Spark-based aggregations; test coverage for generation and analytics"
+          ],
+          "claim_scope": "project-level evidence only"
+        },
+        {
+          "record_id": "project_student_performance_rag",
+          "name": "Student Performance RAG Chatbot",
+          "evidence": [
+            "Local LLM and embedding workflow; top-five retrieval by default; tests cover preprocessing, retrieval, vector storage and RAG"
+          ],
+          "claim_scope": "project-level evidence only"
+        }
+      ],
+      "model_used": null,
+      "validation_rule": "Deterministic profile evidence is authoritative; no external model was used."
+    },
+    "project_selection_source": "manual",
+    "project_selection_record_ids": [
+      "project_smartfraud_classifier",
+      "project_ai_resume_jd_match_tool",
+      "project_student_performance_rag"
+    ]
+  },
+  "approval_checkpoint": {
+    "resume_generation_allowed": false,
+    "required_next_step": "Show this plan and wait for explicit user approval or requested changes."
+  },
+  "safety": {
+    "profile_data_modified": false,
+    "resume_generated": false,
+    "resume_docx_modified": false,
+    "ats_template_modified": false,
+    "external_model_used": false
+  },
+  "project_selection_source": "manual"
+}

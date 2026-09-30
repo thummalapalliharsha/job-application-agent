@@ -1,0 +1,37 @@
+{
+  "valid_docx": true,
+  "python_docx_open": true,
+  "libreoffice_rendered": true,
+  "text_extraction_works": true,
+  "page_count": 1,
+  "corruption_detected": false,
+  "structure": {
+    "sections": 1,
+    "tables": 0,
+    "paragraphs": 27,
+    "has_placeholders": true,
+    "headings": [
+      "PROFESSIONAL SUMMARY",
+      "EDUCATION",
+      "SKILLS",
+      "PROJECTS",
+      "EXPERIENCE",
+      "CERTIFICATIONS",
+      "ACHIEVEMENTS"
+    ],
+    "page_size_emu": [
+      7772400,
+      10058400
+    ],
+    "margins_emu": [
+      304800,
+      177800,
+      228600,
+      228600
+    ]
+  },
+  "warnings": [],
+  "extracted_text_preview": "[FULL NAME]\n[PHONE] ⋄ [LOCATION] ⋄ [EMAIL] ⋄ [LINKEDIN] ⋄ [GITHUB]\n\nPROFESSIONAL SUMMARY\n[PROFESSIONAL SUMMARY]\n\nEDUCATION\n[INSTITUTION] [START YEAR–END YEAR]\n[DEGREE] – [FIELD OF STUDY]\n[GRADE / RELEVANT EDUCATION DETAIL]\n\nSKILLS\nTechnical Skills: [SKILLS]\nLibraries & Frameworks: [LIBRARIES / FRAMEWORKS]\nTools and Technologies: [TOOLS / TECHNOLOGIES]\nSoft Skills: [SOFT SKILLS]\nLanguages: [LANGUAGES]\n\nPROJECTS\n[PROJECT NAME] [PROJECT URL]\n• [PROJECT BULLET]\n• [PROJECT BULLET]\nTech Stack: [TECHNOLOGIES]\n\nEXPERIENCE\n[JOB TITLE] – [ORGANIZATION] ([START DATE] – [END DATE])\n• [RESPONSIBILITY OR VERIFIED OUTCOME]\n• [RESPONSIBILITY OR VERIFIED OUTCOME]\n\nCERTIFICATIONS\n• [CERTIFICATION / CREDENTIAL] – [ISSUER] ([DATE])\n\nACHIEVEMENTS\n• [ACHIEVEMENT] – [ISSUER / ORGANIZATION] ([DATE])\n\n\f",
+  "original_resume_sha256": "423fefc28c22f4d87632f771532a10fcdb166106315c73f5a83b236b7b451496",
+  "json_files_modified": false
+}

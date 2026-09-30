@@ -1,0 +1,135 @@
+{
+  "generated_at": "2026-09-18T16:31:52.624301+00:00",
+  "jd_role": "Absolutely. Hereâ€™s the revised version with Cliquelog IT Solutions and positioned as a modern, beginner-friendly Full Stack + AI/Vibe Coding Internship Program.",
+  "output_filename": "cliquelog_it_solutions_pvt_ltd_absolutely_here_s_the_revised_version_with_cliquelog_it_solutions_and_positioned_app_6fdf773e8f3c_Working.docx",
+  "page_count": 1,
+  "page_count_exactly_one": true,
+  "selected_projects": [
+    "Weather App",
+    "Text-to-SQL Project",
+    "Student Performance RAG Chatbot"
+  ],
+  "selected_skills": [
+    "SQL",
+    "SQLite",
+    "MySQL",
+    "Text-to-SQL"
+  ],
+  "selected_certifications": [
+    "Artificial Intelligence Internship",
+    "AI-ML Virtual Internship",
+    "TCS iON Career Edge – Young Professional",
+    "Introduction to Internet of Things"
+  ],
+  "selected_experience": [],
+  "experience_included": false,
+  "summary_line_count": 5,
+  "skill_category_count": 4,
+  "contact_validation": {
+    "passed": true,
+    "missing": []
+  },
+  "hyperlink_validation": {
+    "passed": true,
+    "targets": [
+      "styles.xml",
+      "stylesWithEffects.xml",
+      "settings.xml",
+      "webSettings.xml",
+      "fontTable.xml",
+      "theme/theme1.xml",
+      "../customXml/item1.xml",
+      "numbering.xml",
+      "tel:+919000657769",
+      "mailto:thummalapalliharsha@gmail.com",
+      "https://linkedin.com/in/thummalapalliharsha",
+      "https://github.com/thummalapalliharsha",
+      "https://github.com/thummalapalliharsha/Weather-App",
+      "https://github.com/thummalapalliharsha/text_to_sql_project",
+      "https://github.com/thummalapalliharsha/student-performance-rag"
+    ]
+  },
+  "ats_validation": {
+    "docx_valid": true,
+    "text_extractable": true,
+    "standard_headings_present": true,
+    "one_page": true,
+    "single_column": true,
+    "problematic_tables_or_textboxes": false,
+    "malformed_hyperlinks": false
+  },
+  "placeholder_validation": {
+    "passed": true,
+    "unresolved_placeholders": []
+  },
+  "duplicate_template_validation": {
+    "passed": true,
+    "duplicate_signals": []
+  },
+  "summary_validation": {
+    "passed": true,
+    "line_count": 5
+  },
+  "skills_validation": {
+    "passed": true,
+    "category_count": 4
+  },
+  "certification_validation": {
+    "passed": true,
+    "count": 4,
+    "minimum_required": 0,
+    "requirement_applies": false
+  },
+  "education_validation": {
+    "passed": true,
+    "all_records_included": true
+  },
+  "project_order_validation": {
+    "passed": true,
+    "expected_order": [
+      "Weather App",
+      "Text-to-SQL Project",
+      "Student Performance RAG Chatbot"
+    ],
+    "positions": [
+      788,
+      1025,
+      1555
+    ]
+  },
+  "content_density": {
+    "text_characters": 2584,
+    "meaningful_bullet_count": 0,
+    "warning": false
+  },
+  "truth_provenance_validation": {
+    "all_projects_completed": true,
+    "unknown_or_planned_excluded": true,
+    "imdb_not_experience": true,
+    "ediglobe_eduskills_separate": true,
+    "unsupported_claims_detected": []
+  },
+  "warnings_issues": [],
+  "summary_format_validation": {
+    "passed": true,
+    "paragraph_count": 1,
+    "not_bulleted": true
+  },
+  "languages_validation": {
+    "passed": true,
+    "value": "English, Telugu, Hindi, Tamil"
+  },
+  "project_stack_validation": {
+    "passed": true,
+    "count": 3
+  },
+  "project_link_validation": {
+    "passed": true,
+    "verified_links": [
+      "https://github.com/thummalapalliharsha/Weather-App",
+      "https://github.com/thummalapalliharsha/text_to_sql_project",
+      "https://github.com/thummalapalliharsha/student-performance-rag"
+    ]
+  },
+  "final_status": "PASS"
+}

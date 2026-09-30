@@ -1,0 +1,83 @@
+{
+  "education": [
+    {
+      "record_id": "education_biher_btech",
+      "status": "candidate_provided",
+      "sources": [
+        {
+          "source_id": "resume_docx",
+          "evidence_type": "resume",
+          "evidence_location": "education section",
+          "claims_supported": [
+            "Bharath Institute of Higher Education and Research",
+            "B.Tech Computer Science and Engineering",
+            "2022-2026",
+            "CGPA 7.94"
+          ]
+        }
+      ],
+      "review_flags": [],
+      "conflicts": [],
+      "institution": "Bharath Institute of Higher Education and Research",
+      "degree": "B.Tech",
+      "field_of_study": "Computer Science and Engineering",
+      "start_date": "2022",
+      "end_date": "2026",
+      "location": null,
+      "grade": "CGPA: 7.94",
+      "coursework": []
+    },
+    {
+      "record_id": "education_harvest_higher_secondary",
+      "status": "candidate_provided",
+      "sources": [
+        {
+          "source_id": "resume_docx",
+          "evidence_type": "resume",
+          "evidence_location": "education section",
+          "claims_supported": [
+            "Harvest Public School",
+            "CBSE",
+            "XII 2022 70.8%"
+          ]
+        }
+      ],
+      "review_flags": [],
+      "conflicts": [],
+      "institution": "Harvest Public School",
+      "degree": "Higher Secondary (XII)",
+      "field_of_study": null,
+      "start_date": null,
+      "end_date": "2022",
+      "location": null,
+      "grade": "70.8%",
+      "coursework": []
+    },
+    {
+      "record_id": "education_harvest_secondary",
+      "status": "candidate_provided",
+      "sources": [
+        {
+          "source_id": "resume_docx",
+          "evidence_type": "resume",
+          "evidence_location": "education section",
+          "claims_supported": [
+            "Harvest Public School",
+            "CBSE",
+            "X 2020 82.2%"
+          ]
+        }
+      ],
+      "review_flags": [],
+      "conflicts": [],
+      "institution": "Harvest Public School",
+      "degree": "Secondary (X)",
+      "field_of_study": null,
+      "start_date": null,
+      "end_date": "2020",
+      "location": null,
+      "grade": "82.2%",
+      "coursework": []
+    }
+  ]
+}

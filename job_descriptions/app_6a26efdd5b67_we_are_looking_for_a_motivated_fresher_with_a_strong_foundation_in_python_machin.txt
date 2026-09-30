@@ -1,0 +1,49 @@
+We are looking for a motivated fresher with a strong foundation in Python, Machine Learning, Artificial Intelligence, and Data Science. The candidate will work on data preprocessing, exploratory data analysis, machine learning models, and AI/LLM-based applications.
+
+Key Responsibilities
+
+Collect, clean, preprocess, and analyze structured datasets.
+Perform exploratory data analysis and identify meaningful patterns.
+Develop and evaluate supervised and unsupervised machine learning models.
+Apply classification and regression techniques to real-world problems.
+Evaluate models using appropriate metrics such as Accuracy, Precision, Recall, F1-score, and RMSE.
+Work with Python libraries such as Pandas, NumPy, and Scikit-learn.
+Develop AI/Generative AI applications using LLMs and APIs.
+Implement basic RAG pipelines using embeddings and vector databases.
+Work with SQL databases and write queries for data analysis.
+Build prototypes or dashboards using tools such as Streamlit.
+Perform model testing, debugging, and performance improvement.
+Document experiments, results, and technical implementations.
+
+Required Skills
+
+Python
+SQL
+Pandas and NumPy
+Scikit-learn
+Machine Learning fundamentals
+Data preprocessing and EDA
+Classification and regression
+Model evaluation
+Basic statistics
+Git/GitHub
+
+Good to Have
+
+Generative AI / LLMs
+RAG
+Embeddings
+Vector databases such as ChromaDB or FAISS
+LangChain
+Ollama
+Streamlit
+REST APIs
+Docker
+AI/ML evaluation tools
+
+Education
+
+B.Tech/B.E./M.Tech/M.Sc. in Computer Science, AI, Data Science, or a related field.
+
+Suitable Candidate
+A fresher who has completed academic/personal projects involving Machine Learning, Data Science, AI, or Generative AI, and can explain the data, methodology, models, evaluation, and results of their projects.

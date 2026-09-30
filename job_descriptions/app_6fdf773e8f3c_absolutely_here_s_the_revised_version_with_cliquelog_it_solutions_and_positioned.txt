@@ -1,0 +1,155 @@
+Absolutely. Here’s the revised version with Cliquelog IT Solutions and positioned as a modern, beginner-friendly Full Stack + AI/Vibe Coding Internship Program.
+
+Full Stack Development & AI Vibe Coding Internship Program
+
+Company: Cliquelog IT Solutions
+Duration: 2–3 Months
+Program Type: Practical Internship & Industry-Oriented Training
+Eligibility: Students, Freshers & Beginners
+
+About the Internship
+
+Cliquelog IT Solutions is offering a practical Full Stack Development & AI-Assisted Vibe Coding Internship Program for students and aspiring developers who want to learn how modern websites and web applications are built.
+
+The program is designed especially for beginners, including students with little or no previous programming experience.
+
+Rather than focusing only on theoretical coding, participants will learn how to use modern AI development tools, Vibe Coding techniques, frontend technologies, backend systems, databases and APIs to build complete working applications.
+
+What You Will Learn
+
+AI & Vibe Coding
+
+Introduction to AI-assisted software development
+Understanding Vibe Coding
+Using AI coding assistants effectively
+Creating applications with AI assistance
+Understanding AI-generated code
+Debugging and improving AI-generated code
+Writing effective prompts for development
+Building projects using modern AI development workflows
+Frontend Development
+
+HTML fundamentals
+CSS and responsive design
+JavaScript fundamentals
+Modern website development
+UI components and layouts
+Forms and user interactions
+Connecting websites to APIs
+Introduction to modern frontend frameworks
+Backend Development
+
+Understanding how backend systems work
+REST APIs
+Server-side concepts
+CRUD operations
+Authentication and authorization
+Connecting frontend and backend
+Basic backend security concepts
+Database Development
+
+Database fundamentals
+PostgreSQL basics
+Creating and managing tables
+Storing and retrieving data
+User management
+Connecting applications to databases
+Complete Full Stack Development
+
+Participants will learn how different parts of an application work together:
+
+Frontend → API → Backend → Database → Authentication → Deployment
+
+The objective is to help students understand the complete development lifecycle of a modern web application.
+
+Practical Projects
+
+The internship will be project-oriented.
+
+Participants will work on practical projects and learn how to take an idea from:
+
+Idea → Design → Development → Database → Testing → Deployment
+
+Students can use completed projects as part of their portfolio and demonstrate their practical development skills.
+
+Who Can Apply?
+
+This program is suitable for:
+
+Engineering students
+Computer Science students
+IT students
+Degree students
+Diploma students
+Students from non-CS backgrounds
+Recent graduates
+Freshers
+Beginners interested in technology
+Students interested in AI and Vibe Coding
+No Advanced Coding Skills Required
+
+You do not need to be an expert programmer to join.
+
+Basic computer knowledge, interest in technology and a willingness to learn are sufficient.
+
+Duration
+
+2–3 Months
+
+The duration may vary depending on the project, learning progress and program schedule.
+
+Internship Certificate
+
+Participants who successfully complete the required internship activities and projects will receive an Internship Certificate from Cliquelog IT Solutions.
+
+Program Fee
+
+₹3,000 per participant
+
+The fee covers participation in the internship/training program and associated learning activities.
+
+What You Will Gain
+
+By completing the program, participants will gain practical exposure to:
+
+Full Stack Web Development
+Frontend Development
+Backend Development
+APIs
+Databases
+Authentication
+Deployment
+AI-assisted development
+Vibe Coding
+Debugging
+Real-world project development
+The focus is on learning how to build complete applications, rather than simply memorizing programming syntax.
+
+Why Join?
+
+✅ Beginner-friendly
+✅ No advanced coding experience required
+✅ Learn AI-assisted development
+✅ Learn Vibe Coding
+✅ Learn frontend + backend development
+✅ Build practical projects
+✅ Learn database and API integration
+✅ Build a portfolio
+✅ Internship certificate upon successful completion
+✅ Industry-oriented learning experience
+
+Apply Now
+
+If you are a student or beginner who wants to learn Full Stack Development and the new generation of AI-assisted coding, this program is an opportunity to start building real applications and develop practical technology skills.
+
+Company: Cliquelog IT Solutions
+Program: Full Stack Development & AI Vibe Coding Internship
+Duration: 2–3 Months
+Fee: ₹3,000
+Certificate: Yes, upon successful completion
+
+Small but important point: if you’re posting this on Indeed, don’t use the ₹3,000-fee version as a conventional job/internship listing. A candidate-paid internship/training program can conflict with Indeed’s job-posting rules. For Indeed, I would create a separate genuine paid internship listing; use the above version for your own website, Instagram, college groups, WhatsApp, etc.
+
+Pay: ₹8,312.47 - ₹9,000.00 per month
+
+Work Location: Hybrid remote in Madhapur, Hyderabad, Telangana

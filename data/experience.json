@@ -1,0 +1,93 @@
+{
+  "experiences": [
+    {
+      "record_id": "experience_ediglobe_ai_intern",
+      "status": "candidate_provided",
+      "sources": [
+        {
+          "source_id": "resume_docx",
+          "evidence_type": "resume",
+          "evidence_location": "experience section",
+          "claims_supported": [
+            "organization",
+            "title",
+            "virtual format",
+            "February 2024 to March 2024",
+            "responsibilities",
+            "technologies",
+            "accuracy above 85%"
+          ]
+        }
+      ],
+      "review_flags": [
+        "The exact datasets and reproducibility of the stated accuracy were not independently verified."
+      ],
+      "conflicts": [],
+      "organization": "Ediglobe",
+      "title": "Artificial Intelligence Intern",
+      "experience_type": "employment_internship",
+      "work_mode": "virtual",
+      "start_date": "2024-02",
+      "end_date": "2024-03",
+      "description": [],
+      "responsibilities": [
+        "Implemented data preprocessing pipelines in Python.",
+        "Built and evaluated classification models using Scikit-learn.",
+        "Performed exploratory data analysis on structured datasets.",
+        "Documented ML workflows and model performance metrics."
+      ],
+      "technologies": [
+        "Python",
+        "Scikit-learn",
+        "Matplotlib",
+        "Seaborn"
+      ],
+      "outcomes": [
+        "Resume states accuracy scores above 85% on test datasets."
+      ],
+      "learning_outcomes": [],
+      "credential_details": {}
+    },
+    {
+      "record_id": "experience_eduskills_ai_ml_virtual_internship",
+      "status": "candidate_provided",
+      "sources": [
+        {
+          "source_id": "internship_pdf",
+          "evidence_type": "candidate_provided_document",
+          "evidence_location": "internship credential/document",
+          "claims_supported": [
+            "organization",
+            "title",
+            "10-week duration",
+            "January 2025 to March 2025",
+            "virtual format",
+            "AICTE association",
+            "Google for Developers association"
+          ]
+        }
+      ],
+      "review_flags": [],
+      "conflicts": [],
+      "organization": "EduSkills",
+      "title": "AI-ML Virtual Internship",
+      "experience_type": "structured_learning_internship",
+      "work_mode": "virtual",
+      "start_date": "2025-01",
+      "end_date": "2025-03",
+      "duration": "10 weeks",
+      "description": [],
+      "responsibilities": [],
+      "technologies": [],
+      "outcomes": [],
+      "learning_outcomes": [],
+      "credential_details": {
+        "program_support": "EduSkills",
+        "associated_organizations": [
+          "AICTE",
+          "Google for Developers"
+        ]
+      }
+    }
+  ]
+}

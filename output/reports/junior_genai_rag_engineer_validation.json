@@ -1,0 +1,135 @@
+{
+  "generated_at": "2026-09-16T09:13:56.093708+00:00",
+  "jd_role": "Job Title: Junior Generative AI / RAG Engineer — Fresher",
+  "output_filename": "Junior_Generative_AI_RAG_Engineer_Tailored_Resume.docx",
+  "page_count": 1,
+  "page_count_exactly_one": true,
+  "selected_projects": [
+    "Student Performance RAG Chatbot",
+    "Text-to-SQL Project",
+    "AI Resume-JD Match Tool"
+  ],
+  "selected_skills": [
+    "Python",
+    "RAG",
+    "Embeddings",
+    "ChromaDB",
+    "Ollama",
+    "Text-to-SQL",
+    "Generative AI",
+    "Streamlit",
+    "Git"
+  ],
+  "selected_certifications": [
+    "Altair RapidMiner Data Science Master",
+    "Artificial Intelligence Internship",
+    "AI-ML Virtual Internship",
+    "TCS iON Career Edge – Young Professional"
+  ],
+  "selected_experience": [],
+  "experience_included": false,
+  "summary_line_count": 5,
+  "skill_category_count": 5,
+  "contact_validation": {
+    "passed": true,
+    "missing": []
+  },
+  "hyperlink_validation": {
+    "passed": true,
+    "targets": [
+      "styles.xml",
+      "stylesWithEffects.xml",
+      "settings.xml",
+      "webSettings.xml",
+      "fontTable.xml",
+      "theme/theme1.xml",
+      "../customXml/item1.xml",
+      "numbering.xml",
+      "tel:+919000657769",
+      "mailto:thummalapalliharsha@gmail.com",
+      "https://linkedin.com/in/thummalapalliharsha",
+      "https://github.com/thummalapalliharsha"
+    ]
+  },
+  "ats_validation": {
+    "docx_valid": true,
+    "text_extractable": true,
+    "standard_headings_present": true,
+    "one_page": true,
+    "single_column": true,
+    "problematic_tables_or_textboxes": false,
+    "malformed_hyperlinks": false
+  },
+  "placeholder_validation": {
+    "passed": true,
+    "unresolved_placeholders": []
+  },
+  "duplicate_template_validation": {
+    "passed": true,
+    "duplicate_signals": []
+  },
+  "summary_validation": {
+    "passed": true,
+    "line_count": 5
+  },
+  "skills_validation": {
+    "passed": true,
+    "category_count": 5
+  },
+  "certification_validation": {
+    "passed": true,
+    "count": 4
+  },
+  "education_validation": {
+    "passed": true,
+    "all_records_included": true
+  },
+  "project_order_validation": {
+    "passed": true,
+    "expected_order": [
+      "Student Performance RAG Chatbot",
+      "Text-to-SQL Project",
+      "AI Resume-JD Match Tool"
+    ],
+    "positions": [
+      835,
+      1184,
+      1548
+    ]
+  },
+  "content_density": {
+    "text_characters": 2342,
+    "meaningful_bullet_count": 9,
+    "warning": false
+  },
+  "truth_provenance_validation": {
+    "all_projects_completed": true,
+    "unknown_or_planned_excluded": true,
+    "imdb_not_experience": true,
+    "ediglobe_eduskills_separate": true,
+    "unsupported_claims_detected": []
+  },
+  "warnings_issues": [],
+  "final_status": "PASS",
+  "approval_source": "explicit_user_approval",
+  "template_fallback_used": false,
+  "files_protected": [
+    "resumes/RESUME.docx",
+    "templates/ats_resume_template.docx",
+    "data/*.json"
+  ],
+  "visual_quality_validation": {
+    "passed": true,
+    "rendered_page_inspected": true,
+    "observations": [
+      "Single-column ATS layout preserved.",
+      "Readable typography and consistent section hierarchy.",
+      "Contact hyperlinks are visible and usable.",
+      "No problematic wrapping, crowding, or tiny text observed.",
+      "Education and certification sections retain the original resume information density.",
+      "Page is balanced for the mandatory one-page constraint."
+    ]
+  },
+  "phase6_status": "FROZEN",
+  "freeze_note": "Final hardening regression passed; future JD tailoring should change content selection rather than the frozen visual structure."
+}

@@ -1,0 +1,32 @@
+{
+  "phase": "Phase 7",
+  "checks": [
+    {
+      "name": "isolated apply creates project",
+      "passed": true
+    },
+    {
+      "name": "isolated apply preserves lifecycle separation",
+      "passed": true
+    },
+    {
+      "name": "isolated schema validation",
+      "passed": true
+    },
+    {
+      "name": "automated regression suite",
+      "passed": true
+    },
+    {
+      "name": "Phase 7 docs present",
+      "passed": true
+    },
+    {
+      "name": "live profile and frozen files unchanged",
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "live_hashes_unchanged": true,
+  "no_resume_regenerated": true
+}

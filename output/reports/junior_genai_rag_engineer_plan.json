@@ -1,0 +1,913 @@
+{
+  "mode": "job_application_planning",
+  "candidate_positioning": "Fresher positioning based only on JD-relevant, source-supported profile evidence; final wording requires approval.",
+  "jd_analysis": {
+    "job_title": "Job Title: Junior Generative AI / RAG Engineer — Fresher",
+    "role_function": "Engineer",
+    "required_technical_skills": [
+      "python",
+      "vector databases",
+      "rag",
+      "generative ai",
+      "llms",
+      "nlp",
+      "embeddings",
+      "git",
+      "github"
+    ],
+    "preferred_technical_skills": [
+      "streamlit",
+      "langchain",
+      "chromadb",
+      "faiss",
+      "ollama",
+      "vector databases",
+      "llm",
+      "prompt engineering",
+      "ai evaluation"
+    ],
+    "skill_categories": {
+      "programming_languages": {
+        "explicitly_required_or_mentioned": [
+          "python"
+        ],
+        "preferred": [],
+        "explicitly_required": [
+          "python"
+        ],
+        "not_explicitly_classified": []
+      },
+      "frameworks_libraries": {
+        "explicitly_required_or_mentioned": [
+          "streamlit",
+          "langchain",
+          "chromadb",
+          "faiss",
+          "ollama"
+        ],
+        "preferred": [
+          "streamlit",
+          "langchain",
+          "chromadb",
+          "faiss",
+          "ollama"
+        ],
+        "explicitly_required": [],
+        "not_explicitly_classified": []
+      },
+      "databases": {
+        "explicitly_required_or_mentioned": [
+          "vector databases"
+        ],
+        "preferred": [
+          "vector databases"
+        ],
+        "explicitly_required": [
+          "vector databases"
+        ],
+        "not_explicitly_classified": []
+      },
+      "cloud_platforms": {
+        "explicitly_required_or_mentioned": [
+          "docker"
+        ],
+        "preferred": [],
+        "explicitly_required": [],
+        "not_explicitly_classified": [
+          "docker"
+        ]
+      },
+      "data_ml_ai": {
+        "explicitly_required_or_mentioned": [
+          "data science",
+          "rag",
+          "retrieval-augmented generation",
+          "generative ai",
+          "llm",
+          "llms",
+          "nlp",
+          "embeddings",
+          "embedding",
+          "semantic search",
+          "prompt engineering",
+          "ai evaluation"
+        ],
+        "preferred": [
+          "llm",
+          "prompt engineering",
+          "ai evaluation"
+        ],
+        "explicitly_required": [
+          "rag",
+          "generative ai",
+          "llms",
+          "nlp",
+          "embeddings"
+        ],
+        "not_explicitly_classified": [
+          "data science",
+          "retrieval-augmented generation",
+          "embedding",
+          "semantic search"
+        ]
+      },
+      "tools": {
+        "explicitly_required_or_mentioned": [
+          "git",
+          "github"
+        ],
+        "preferred": [],
+        "explicitly_required": [
+          "git",
+          "github"
+        ],
+        "not_explicitly_classified": []
+      }
+    },
+    "soft_skills_explicitly_requested": [
+      "problem-solving",
+      "analytical"
+    ],
+    "education_requirements": [
+      "bachelor",
+      "computer science",
+      "degree",
+      "education"
+    ],
+    "experience_requirements": [
+      "experience",
+      "fresher"
+    ],
+    "responsibilities": [
+      "Responsibilities:",
+      "Assist in building and testing Generative AI and Retrieval-Augmented Generation (RAG) applications.",
+      "Work with Python for AI/ML application development.",
+      "Build document processing, chunking, embedding, and retrieval pipelines.",
+      "Collaborate with the team to debug and improve AI pipelines.",
+      "Document implementations and technical workflows.",
+      "Problem-solving and analytical skills"
+    ],
+    "domain_keywords": [
+      "python",
+      "streamlit",
+      "langchain",
+      "chromadb",
+      "faiss",
+      "ollama",
+      "vector databases",
+      "docker",
+      "data science",
+      "rag",
+      "retrieval-augmented generation",
+      "generative ai",
+      "llm",
+      "llms",
+      "nlp",
+      "embeddings",
+      "embedding",
+      "semantic search",
+      "prompt engineering",
+      "ai evaluation",
+      "git",
+      "github"
+    ],
+    "other_keywords": [
+      "Title",
+      "Junior",
+      "Generative",
+      "Engineer",
+      "Fresher",
+      "Description",
+      "looking",
+      "motivated",
+      "join",
+      "engineering",
+      "team",
+      "Responsibilities",
+      "Assist",
+      "building",
+      "testing",
+      "Retrieval-Augmented",
+      "Generation",
+      "applications",
+      "Work",
+      "with",
+      "Python",
+      "application",
+      "development",
+      "Build",
+      "document",
+      "processing",
+      "chunking",
+      "embedding",
+      "retrieval",
+      "pipelines",
+      "vector",
+      "databases",
+      "semantic",
+      "search",
+      "Integrate",
+      "LLMs",
+      "into",
+      "chatbot",
+      "workflows",
+      "Perform",
+      "evaluation",
+      "outputs",
+      "Collaborate",
+      "debug",
+      "improve",
+      "implementations",
+      "technical",
+      "Required",
+      "Skills",
+      "Basic"
+    ],
+    "classification_notes": [
+      "Only terms present in the supplied JD are extracted.",
+      "Terms not explicitly classified by the JD are recorded as mentioned, not required or preferred."
+    ]
+  },
+  "candidate_matching": [
+    {
+      "requirement": "python",
+      "result": "match_found",
+      "evidence": [
+        {
+          "type": "skill",
+          "name": "Python",
+          "status": "verified",
+          "category": "programming_languages"
+        },
+        {
+          "type": "project",
+          "record_id": "project_telecom_churn_logistic_regression",
+          "name": "Telecom Churn Logistic Regression",
+          "project_status": "completed",
+          "source_status": "verified"
+        },
+        {
+          "type": "project",
+          "record_id": "project_fuel_regression_crispmlq",
+          "name": "Flight Fuel-Burn Prediction",
+          "project_status": "completed",
+          "source_status": "verified"
+        },
+        {
+          "type": "project",
+          "record_id": "project_bank_customer_clustering_dashboard",
+          "name": "Bank Customer Clustering and Financial Analytics Dashboard",
+          "project_status": "completed",
+          "source_status": "verified"
+        },
+        {
+          "type": "project",
+          "record_id": "project_sample_sales_data",
+          "name": "Sample Sales Data Generator and EDA Toolkit",
+          "project_status": "completed",
+          "source_status": "verified"
+        },
+        {
+          "type": "project",
+          "record_id": "project_text_to_sql_project",
+          "name": "Text-to-SQL Project",
+          "project_status": "completed",
+          "source_status": "verified"
+        },
+        {
+          "type": "project",
+          "record_id": "project_genai_pyspark_pipeline",
+          "name": "Synthetic Data Generation and PySpark Analytics Pipeline",
+          "project_status": "completed",
+          "source_status": "verified"
+        },
+        {
+          "type": "project",
+          "record_id": "project_student_performance_rag",
+          "name": "Student Performance RAG Chatbot",
+          "project_status": "completed",
+          "source_status": "verified"
+        },
+        {
+          "type": "project",
+          "record_id": "project_smartfraud_classifier",
+          "name": "SmartFraud Classifier",
+          "project_status": "completed",
+          "source_status": "verified"
+        },
+        {
+          "type": "project",
+          "record_id": "project_imdb_movie_analysis",
+          "name": "IMDb Movie Analysis",
+          "project_status": "completed",
+          "source_status": "verified"
+        }
+      ]
+    },
+    {
+      "requirement": "vector databases",
+      "result": "match_found",
+      "evidence": [
+        {
+          "type": "project",
+          "record_id": "project_student_performance_rag",
+          "name": "Student Performance RAG Chatbot",
+          "project_status": "completed",
+          "source_status": "verified"
+        }
+      ]
+    },
+    {
+      "requirement": "rag",
+      "result": "match_found",
+      "evidence": [
+        {
+          "type": "skill",
+          "name": "RAG",
+          "status": "verified",
+          "category": "generative_ai"
+        },
+        {
+          "type": "project",
+          "record_id": "project_student_performance_rag",
+          "name": "Student Performance RAG Chatbot",
+          "project_status": "completed",
+          "source_status": "verified"
+        }
+      ]
+    },
+    {
+      "requirement": "generative ai",
+      "result": "match_found",
+      "evidence": [
+        {
+          "type": "skill",
+          "name": "Generative AI",
+          "status": "verified",
+          "category": "generative_ai"
+        },
+        {
+          "type": "project",
+          "record_id": "project_text_to_sql_project",
+          "name": "Text-to-SQL Project",
+          "project_status": "completed",
+          "source_status": "verified"
+        },
+        {
+          "type": "project",
+          "record_id": "project_student_performance_rag",
+          "name": "Student Performance RAG Chatbot",
+          "project_status": "completed",
+          "source_status": "verified"
+        },
+        {
+          "type": "project",
+          "record_id": "project_ai_resume_jd_match_tool",
+          "name": "AI Resume-JD Match Tool",
+          "project_status": "completed",
+          "source_status": "verified"
+        }
+      ]
+    },
+    {
+      "requirement": "llms",
+      "result": "no_evidence",
+      "evidence": []
+    },
+    {
+      "requirement": "nlp",
+      "result": "match_found",
+      "evidence": [
+        {
+          "type": "project",
+          "record_id": "project_text_to_sql_project",
+          "name": "Text-to-SQL Project",
+          "project_status": "completed",
+          "source_status": "verified"
+        }
+      ]
+    },
+    {
+      "requirement": "embeddings",
+      "result": "match_found",
+      "evidence": [
+        {
+          "type": "skill",
+          "name": "Embeddings",
+          "status": "verified",
+          "category": "generative_ai"
+        },
+        {
+          "type": "project",
+          "record_id": "project_student_performance_rag",
+          "name": "Student Performance RAG Chatbot",
+          "project_status": "completed",
+          "source_status": "verified"
+        }
+      ]
+    },
+    {
+      "requirement": "git",
+      "result": "partial_match",
+      "evidence": [
+        {
+          "type": "skill",
+          "name": "Git",
+          "status": "candidate_provided",
+          "category": "tools_and_platforms"
+        }
+      ]
+    },
+    {
+      "requirement": "github",
+      "result": "match_found",
+      "evidence": [
+        {
+          "type": "skill",
+          "name": "Git",
+          "status": "candidate_provided",
+          "category": "tools_and_platforms"
+        },
+        {
+          "type": "project",
+          "record_id": "project_telecom_churn_logistic_regression",
+          "name": "Telecom Churn Logistic Regression",
+          "project_status": "completed",
+          "source_status": "verified"
+        },
+        {
+          "type": "project",
+          "record_id": "project_fuel_regression_crispmlq",
+          "name": "Flight Fuel-Burn Prediction",
+          "project_status": "completed",
+          "source_status": "verified"
+        },
+        {
+          "type": "project",
+          "record_id": "project_bank_customer_clustering_dashboard",
+          "name": "Bank Customer Clustering and Financial Analytics Dashboard",
+          "project_status": "completed",
+          "source_status": "verified"
+        },
+        {
+          "type": "project",
+          "record_id": "project_sample_sales_data",
+          "name": "Sample Sales Data Generator and EDA Toolkit",
+          "project_status": "completed",
+          "source_status": "verified"
+        },
+        {
+          "type": "project",
+          "record_id": "project_text_to_sql_project",
+          "name": "Text-to-SQL Project",
+          "project_status": "completed",
+          "source_status": "verified"
+        },
+        {
+          "type": "project",
+          "record_id": "project_genai_pyspark_pipeline",
+          "name": "Synthetic Data Generation and PySpark Analytics Pipeline",
+          "project_status": "completed",
+          "source_status": "verified"
+        },
+        {
+          "type": "project",
+          "record_id": "project_retail_mini_etl",
+          "name": "Retail Mini ETL",
+          "project_status": "unknown",
+          "source_status": "needs_review"
+        },
+        {
+          "type": "project",
+          "record_id": "project_student_performance_rag",
+          "name": "Student Performance RAG Chatbot",
+          "project_status": "completed",
+          "source_status": "verified"
+        },
+        {
+          "type": "project",
+          "record_id": "project_ai_resume_jd_match_tool",
+          "name": "AI Resume-JD Match Tool",
+          "project_status": "completed",
+          "source_status": "verified"
+        },
+        {
+          "type": "project",
+          "record_id": "project_vibe_kpi_demo",
+          "name": "vibe-kpi-demo-",
+          "project_status": "unknown",
+          "source_status": "needs_review"
+        },
+        {
+          "type": "project",
+          "record_id": "project_smartfraud_classifier",
+          "name": "SmartFraud Classifier",
+          "project_status": "completed",
+          "source_status": "verified"
+        },
+        {
+          "type": "project",
+          "record_id": "project_weather_app",
+          "name": "Weather App",
+          "project_status": "completed",
+          "source_status": "verified"
+        },
+        {
+          "type": "project",
+          "record_id": "project_imdb_movie_analysis",
+          "name": "IMDb Movie Analysis",
+          "project_status": "completed",
+          "source_status": "verified"
+        }
+      ]
+    },
+    {
+      "requirement": "streamlit",
+      "result": "match_found",
+      "evidence": [
+        {
+          "type": "skill",
+          "name": "Streamlit",
+          "status": "verified",
+          "category": "web_development"
+        },
+        {
+          "type": "project",
+          "record_id": "project_telecom_churn_logistic_regression",
+          "name": "Telecom Churn Logistic Regression",
+          "project_status": "completed",
+          "source_status": "verified"
+        },
+        {
+          "type": "project",
+          "record_id": "project_fuel_regression_crispmlq",
+          "name": "Flight Fuel-Burn Prediction",
+          "project_status": "completed",
+          "source_status": "verified"
+        },
+        {
+          "type": "project",
+          "record_id": "project_bank_customer_clustering_dashboard",
+          "name": "Bank Customer Clustering and Financial Analytics Dashboard",
+          "project_status": "completed",
+          "source_status": "verified"
+        },
+        {
+          "type": "project",
+          "record_id": "project_student_performance_rag",
+          "name": "Student Performance RAG Chatbot",
+          "project_status": "completed",
+          "source_status": "verified"
+        }
+      ]
+    },
+    {
+      "requirement": "langchain",
+      "result": "no_evidence",
+      "evidence": []
+    },
+    {
+      "requirement": "chromadb",
+      "result": "match_found",
+      "evidence": [
+        {
+          "type": "skill",
+          "name": "ChromaDB",
+          "status": "verified",
+          "category": "generative_ai"
+        },
+        {
+          "type": "project",
+          "record_id": "project_student_performance_rag",
+          "name": "Student Performance RAG Chatbot",
+          "project_status": "completed",
+          "source_status": "verified"
+        }
+      ]
+    },
+    {
+      "requirement": "faiss",
+      "result": "no_evidence",
+      "evidence": []
+    },
+    {
+      "requirement": "ollama",
+      "result": "match_found",
+      "evidence": [
+        {
+          "type": "skill",
+          "name": "Ollama",
+          "status": "verified",
+          "category": "generative_ai"
+        },
+        {
+          "type": "project",
+          "record_id": "project_student_performance_rag",
+          "name": "Student Performance RAG Chatbot",
+          "project_status": "completed",
+          "source_status": "verified"
+        }
+      ]
+    },
+    {
+      "requirement": "vector databases",
+      "result": "match_found",
+      "evidence": [
+        {
+          "type": "project",
+          "record_id": "project_student_performance_rag",
+          "name": "Student Performance RAG Chatbot",
+          "project_status": "completed",
+          "source_status": "verified"
+        }
+      ]
+    },
+    {
+      "requirement": "llm",
+      "result": "match_found",
+      "evidence": [
+        {
+          "type": "project",
+          "record_id": "project_student_performance_rag",
+          "name": "Student Performance RAG Chatbot",
+          "project_status": "completed",
+          "source_status": "verified"
+        }
+      ]
+    },
+    {
+      "requirement": "prompt engineering",
+      "result": "no_evidence",
+      "evidence": []
+    },
+    {
+      "requirement": "ai evaluation",
+      "result": "no_evidence",
+      "evidence": []
+    }
+  ],
+  "resume_plan": {
+    "skills_to_include": [
+      {
+        "name": "Python",
+        "category": "programming_languages",
+        "status": "verified",
+        "why": "matches an explicit JD term"
+      },
+      {
+        "name": "RAG",
+        "category": "generative_ai",
+        "status": "verified",
+        "why": "matches an explicit JD term"
+      },
+      {
+        "name": "Embeddings",
+        "category": "generative_ai",
+        "status": "verified",
+        "why": "matches an explicit JD term"
+      },
+      {
+        "name": "ChromaDB",
+        "category": "generative_ai",
+        "status": "verified",
+        "why": "matches an explicit JD term"
+      },
+      {
+        "name": "Ollama",
+        "category": "generative_ai",
+        "status": "verified",
+        "why": "matches an explicit JD term"
+      },
+      {
+        "name": "Text-to-SQL",
+        "category": "generative_ai",
+        "status": "verified",
+        "why": "matches an explicit JD term"
+      },
+      {
+        "name": "Generative AI",
+        "category": "generative_ai",
+        "status": "verified",
+        "why": "matches an explicit JD term"
+      },
+      {
+        "name": "Streamlit",
+        "category": "web_development",
+        "status": "verified",
+        "why": "matches an explicit JD term"
+      },
+      {
+        "name": "Git",
+        "category": "tools_and_platforms",
+        "status": "candidate_provided",
+        "why": "matches an explicit JD term"
+      }
+    ],
+    "projects_to_include": [
+      {
+        "name": "Student Performance RAG Chatbot",
+        "record_id": "project_student_performance_rag",
+        "matched_jd_terms": [
+          "vector databases",
+          "rag",
+          "generative ai",
+          "embeddings",
+          "chromadb",
+          "ollama",
+          "llm",
+          "retrieval-augmented generation",
+          "embedding"
+        ],
+        "relevance_tier": "direct_genai_rag",
+        "reason": "completed project with direct GenAI/RAG source-supported JD overlap"
+      },
+      {
+        "name": "Text-to-SQL Project",
+        "record_id": "project_text_to_sql_project",
+        "matched_jd_terms": [
+          "generative ai",
+          "nlp"
+        ],
+        "relevance_tier": "direct_genai_rag",
+        "reason": "completed project with direct GenAI/RAG source-supported JD overlap"
+      },
+      {
+        "name": "AI Resume-JD Match Tool",
+        "record_id": "project_ai_resume_jd_match_tool",
+        "matched_jd_terms": [
+          "generative ai"
+        ],
+        "relevance_tier": "direct_genai_rag",
+        "reason": "completed project with direct GenAI/RAG source-supported JD overlap"
+      }
+    ],
+    "experience_to_include": [
+      {
+        "record_id": "experience_ediglobe_ai_intern",
+        "organization": "Ediglobe",
+        "title": "Artificial Intelligence Intern",
+        "why": "experience record overlaps JD terms",
+        "matched_terms": [
+          "python"
+        ]
+      }
+    ],
+    "education_to_include": [
+      {
+        "record_id": "education_biher_btech",
+        "institution": "Bharath Institute of Higher Education and Research",
+        "degree": "B.Tech",
+        "field_of_study": "Computer Science and Engineering",
+        "grade": "CGPA: 7.94",
+        "why": "matches the JD bachelor's/computer-science education requirement"
+      }
+    ],
+    "certifications_to_include": [
+      {
+        "record_id": "credential_altair_rapidminer",
+        "name": "Altair RapidMiner Data Science Master",
+        "issuer": "AICTE",
+        "matched_terms": [
+          "data science"
+        ]
+      }
+    ],
+    "items_intentionally_excluded": {
+      "projects": [
+        {
+          "name": "Telecom Churn Logistic Regression",
+          "record_id": "project_telecom_churn_logistic_regression",
+          "matched_jd_terms": [
+            "streamlit"
+          ],
+          "relevance_tier": "supporting_ml_data",
+          "reason": "supporting project not selected for the one-page GenAI/RAG plan"
+        },
+        {
+          "name": "Flight Fuel-Burn Prediction",
+          "record_id": "project_fuel_regression_crispmlq",
+          "matched_jd_terms": [
+            "streamlit"
+          ],
+          "relevance_tier": "supporting_ml_data",
+          "reason": "supporting project not selected for the one-page GenAI/RAG plan"
+        },
+        {
+          "name": "Bank Customer Clustering and Financial Analytics Dashboard",
+          "record_id": "project_bank_customer_clustering_dashboard",
+          "matched_jd_terms": [
+            "streamlit"
+          ],
+          "relevance_tier": "supporting_ml_data",
+          "reason": "supporting project not selected for the one-page GenAI/RAG plan"
+        },
+        {
+          "name": "Sample Sales Data Generator and EDA Toolkit",
+          "record_id": "project_sample_sales_data",
+          "reason": "no explicit JD overlap found"
+        },
+        {
+          "name": "Synthetic Data Generation and PySpark Analytics Pipeline",
+          "record_id": "project_genai_pyspark_pipeline",
+          "reason": "no explicit JD overlap found"
+        },
+        {
+          "name": "Retail Mini ETL",
+          "record_id": "project_retail_mini_etl",
+          "reason": "lifecycle-status-unknown"
+        },
+        {
+          "name": "vibe-kpi-demo-",
+          "record_id": "project_vibe_kpi_demo",
+          "reason": "lifecycle-status-unknown"
+        },
+        {
+          "name": "SmartFraud Classifier",
+          "record_id": "project_smartfraud_classifier",
+          "reason": "no explicit JD overlap found"
+        },
+        {
+          "name": "Weather App",
+          "record_id": "project_weather_app",
+          "reason": "no explicit JD overlap found"
+        },
+        {
+          "name": "IMDb Movie Analysis",
+          "record_id": "project_imdb_movie_analysis",
+          "reason": "no explicit JD overlap found"
+        }
+      ],
+      "note": "Excluded items remain in the master profile and are not permanently ranked."
+    },
+    "potential_concerns": [
+      {
+        "requirement": "llms",
+        "result": "no_evidence",
+        "evidence": []
+      },
+      {
+        "requirement": "git",
+        "result": "partial_match",
+        "evidence": [
+          {
+            "type": "skill",
+            "name": "Git",
+            "status": "candidate_provided",
+            "category": "tools_and_platforms"
+          }
+        ]
+      },
+      {
+        "requirement": "langchain",
+        "result": "no_evidence",
+        "evidence": []
+      },
+      {
+        "requirement": "faiss",
+        "result": "no_evidence",
+        "evidence": []
+      },
+      {
+        "requirement": "prompt engineering",
+        "result": "no_evidence",
+        "evidence": []
+      },
+      {
+        "requirement": "ai evaluation",
+        "result": "no_evidence",
+        "evidence": []
+      },
+      {
+        "type": "approval",
+        "message": "Human approval is required before any resume generation."
+      }
+    ],
+    "project_selection_scope": "For this JD, direct GenAI/RAG projects are preferred over broader supporting ML/data projects because the final resume must remain one page.",
+    "llm_evidence": {
+      "standalone_skill_record": false,
+      "project_level_evidence": [
+        {
+          "record_id": "project_student_performance_rag",
+          "name": "Student Performance RAG Chatbot",
+          "evidence": [
+            "Ollama local LLM integration",
+            "llama3.2:3b",
+            "RAG response generation"
+          ],
+          "claim_scope": "project-level evidence only"
+        }
+      ],
+      "resume_representation_rule": "Describe actual project-level local LLM integration only where supported; do not add LLM as a standalone skill record."
+    }
+  },
+  "approval_checkpoint": {
+    "resume_generation_allowed": false,
+    "required_next_step": "Show this plan and wait for explicit user approval or requested changes."
+  },
+  "safety": {
+    "profile_data_modified": false,
+    "resume_generated": false,
+    "resume_docx_modified": false,
+    "ats_template_modified": false
+  }
+}

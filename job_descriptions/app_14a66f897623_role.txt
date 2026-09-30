@@ -1,0 +1,33 @@
+Rex.zone is hiring for entry-level STEM jobs in India supporting real AI/ML engineering workflows, including training data quality, RLHF evaluation, prompt evaluation, and QA evaluation for large language models. This is a remote, full-time role with structured workflows and calibration sessions.
+
+About The Role
+
+You will support AI/ML teams by executing and improving data labeling and evaluation workflows used in LLM training pipelines across NLP, named entity recognition, computer vision annotation, and content safety labeling. You will follow annotation guidelines compliance, document edge cases, and help reduce ambiguity so models learn consistently.
+
+What You Will Do
+
+Perform data labeling for text and/or vision datasets to meet training data quality targets
+Complete RLHF-style preference ranking and response quality scoring to support model performance improvement
+Run prompt evaluation and QA evaluation to identify errors, hallucinations, policy violations, and formatting issues
+Apply named entity recognition and taxonomy tagging using clear annotation guidelines compliance
+Conduct content safety labeling for sensitive, policy, and restricted content categories
+Audit datasets for consistency, duplicates, label noise, and distribution gaps; propose fixes
+Write concise rationales and escalate ambiguous cases to improve guidelines
+Track throughput and quality metrics (accuracy, agreement rates) and participate in calibration sessions
+Collaborate with engineers and QA to validate changes to labeling rubrics and evaluation checklists
+Support experimentation by comparing model outputs across variants and documenting findings
+
+Required Skills
+
+STEM fundamentals and strong analytical reasoning
+Comfort with Python and SQL for basic data checks (filters, counts, joins) and simple scripts
+Understanding of NLP and/or computer vision annotation concepts
+Experience applying annotation guidelines compliance and documenting decisions
+Ability to perform QA evaluation, spot inconsistencies, and propose improvements
+Clear written communication for rationales and issue reporting
+
+Working Model
+
+Remote, distributed work with QA calibration and clear workflows.
+
+High accuracy and consistency are essential to improve training data quality.

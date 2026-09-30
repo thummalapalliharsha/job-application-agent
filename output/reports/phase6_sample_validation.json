@@ -1,0 +1,51 @@
+{
+  "page_count": 1,
+  "page_count_exactly_one": true,
+  "ats_validation": {
+    "text_extractable": true,
+    "standard_headings_present": true,
+    "blank_page": false,
+    "malformed_hyperlinks": false,
+    "one_page": true
+  },
+  "truth_provenance_validation": {
+    "all_selected_project_records_exist": true,
+    "no_noncompleted_project_presented": true,
+    "unsupported_claims_detected": []
+  },
+  "selected_projects": [
+    "Telecom Churn Logistic Regression",
+    "Sample Sales Data Generator and EDA Toolkit",
+    "IMDb Movie Analysis",
+    "Synthetic Data Generation and PySpark Analytics Pipeline",
+    "AI Resume-JD Match Tool",
+    "Weather App",
+    "Bank Customer Clustering and Financial Analytics Dashboard",
+    "Flight Fuel-Burn Prediction",
+    "SmartFraud Classifier",
+    "Text-to-SQL Project",
+    "Student Performance RAG Chatbot"
+  ],
+  "selected_skills": [
+    "Python",
+    "SQL",
+    "Scikit-learn",
+    "Pandas",
+    "NumPy",
+    "Scikit-learn pipelines",
+    "Regression",
+    "Classification",
+    "Text-to-SQL",
+    "PySpark",
+    "Streamlit",
+    "Git",
+    "Jupyter Notebook"
+  ],
+  "selected_experience": [
+    "experience_ediglobe_ai_intern"
+  ],
+  "warnings_issues": [],
+  "test_mode": true,
+  "approval_source": "explicit_phase6_test_exception",
+  "template_fallback_used": false
+}

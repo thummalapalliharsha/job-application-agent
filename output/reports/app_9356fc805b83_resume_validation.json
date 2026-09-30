@@ -1,0 +1,118 @@
+{
+  "generated_at": "2026-09-17T11:24:33.916972+00:00",
+  "jd_role": "We are looking for an enthusiastic and driven Fresher Python Developer to join our engineering team. In this role, you will learn from senior developers, write clean and effective code, and help build backend components for our software applications. This position is ideal for a recent graduate who loves coding, problem-solving, and building digital products. [1] (https://www.scribd.com/document/667821644/Python-Developer-JD), [2] (https://www.scribd.com/document/871676489/Python-Developer-Job-Description-Devangna-Pugalia), [3] (https://internshala.com/fresher-jobs/python-jobs-in-hyderabad/work-from-home/)Key ResponsibilitiesWrite Code: Create clean, readable, and scalable code using Python programming.Support Backend: Assist in developing and maintaining back-end components and server-side logic.Test & Debug: Test programs, fix bugs, and improve application performance under supervision.Integrate Systems: Help connect user-facing elements with server-side components and databases.Collaborate: Work with front-end developers, QA testers, and team leads to complete assigned tasks. [1] (https://in.indeed.com/hire/job-description/python-developer), [2] (https://www.scribd.com/document/871676489/Python-Developer-Job-Description-Devangna-Pugalia), [3] (https://www.scribd.com/document/667821644/Python-Developer-JD)Required Skills & QualificationsEducation: Bachelorâ€™s degree in Computer Science, IT, Software Engineering, or a related field (or equivalent certification).Core Python: Solid understanding of basic and object-oriented programming concepts in Python.Databases: Basic knowledge of relational databases like MySQL or PostgreSQL.Web Frameworks: Familiarity with at least one framework like Django Framework or Flask is a plus.Web Basics: Understanding of HTML, CSS, and JavaScript.Tools: Basic familiarity with version control systems like Git.Soft Skills: Good problem-solving mindset, eagerness to learn, and strong teamwork abilities. [1] (https://resources.workable.com/python-developer-job-description), [2] (https://business.linkedin.com/in/en/hire/resources/how-to-hire-guides/python-developer-job-description), [3] (https://www.imocha.io/job-description/junior-python-developer), [4] (https://arc.dev/job-descriptions/python-developer), [5] (https://internshala.com/blog/employer-python-developer-job-description/), [6] (https://www.scribd.com/document/871676489/Python-Developer-Job-Description-Devangna-Pugalia), [7] (https://www.scribd.com/document/667821644/Python-Developer-JD)",
+  "output_filename": "company_we_are_looking_for_an_enthusiastic_and_driven_fresher_python_developer_to_join_o_app_9356fc805b83_Working.docx",
+  "page_count": 1,
+  "page_count_exactly_one": true,
+  "selected_projects": [],
+  "selected_skills": [
+    "Python",
+    "SQL",
+    "SQLite",
+    "MySQL",
+    "Text-to-SQL",
+    "Git"
+  ],
+  "selected_certifications": [
+    "Artificial Intelligence Internship",
+    "AI-ML Virtual Internship",
+    "TCS iON Career Edge – Young Professional",
+    "Introduction to Internet of Things"
+  ],
+  "selected_experience": [],
+  "experience_included": false,
+  "summary_line_count": 5,
+  "skill_category_count": 4,
+  "contact_validation": {
+    "passed": true,
+    "missing": []
+  },
+  "hyperlink_validation": {
+    "passed": true,
+    "targets": [
+      "styles.xml",
+      "stylesWithEffects.xml",
+      "settings.xml",
+      "webSettings.xml",
+      "fontTable.xml",
+      "theme/theme1.xml",
+      "../customXml/item1.xml",
+      "numbering.xml",
+      "tel:+919000657769",
+      "mailto:thummalapalliharsha@gmail.com",
+      "https://linkedin.com/in/thummalapalliharsha",
+      "https://github.com/thummalapalliharsha"
+    ]
+  },
+  "ats_validation": {
+    "docx_valid": true,
+    "text_extractable": true,
+    "standard_headings_present": true,
+    "one_page": true,
+    "single_column": true,
+    "problematic_tables_or_textboxes": false,
+    "malformed_hyperlinks": false
+  },
+  "placeholder_validation": {
+    "passed": true,
+    "unresolved_placeholders": []
+  },
+  "duplicate_template_validation": {
+    "passed": true,
+    "duplicate_signals": []
+  },
+  "summary_validation": {
+    "passed": true,
+    "line_count": 5
+  },
+  "skills_validation": {
+    "passed": true,
+    "category_count": 4
+  },
+  "certification_validation": {
+    "passed": true,
+    "count": 4
+  },
+  "education_validation": {
+    "passed": true,
+    "all_records_included": true
+  },
+  "project_order_validation": {
+    "passed": true,
+    "expected_order": [],
+    "positions": []
+  },
+  "content_density": {
+    "text_characters": 1321,
+    "meaningful_bullet_count": 0,
+    "warning": true
+  },
+  "truth_provenance_validation": {
+    "all_projects_completed": true,
+    "unknown_or_planned_excluded": true,
+    "imdb_not_experience": true,
+    "ediglobe_eduskills_separate": true,
+    "unsupported_claims_detected": []
+  },
+  "warnings_issues": [
+    "Content density may be sparse."
+  ],
+  "summary_format_validation": {
+    "passed": true,
+    "paragraph_count": 1,
+    "not_bulleted": true
+  },
+  "languages_validation": {
+    "passed": true,
+    "value": "English, Telugu, Hindi, Tamil"
+  },
+  "project_stack_validation": {
+    "passed": true,
+    "count": 0
+  },
+  "project_link_validation": {
+    "passed": true,
+    "verified_links": []
+  },
+  "final_status": "FAIL"
+}

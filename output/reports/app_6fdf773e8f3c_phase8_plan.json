@@ -1,0 +1,1183 @@
+{
+  "mode": "job_application_planning",
+  "candidate_positioning": "Fresher positioning based only on current JD relevance and source-supported profile evidence.",
+  "jd_analysis": {
+    "job_identity": {
+      "job_title": "Absolutely. Here’s the revised version with Cliquelog IT Solutions and positioned as a modern, beginner-friendly Full Stack + AI/Vibe Coding Internship Program.",
+      "company": "Cliquelog IT Solutions",
+      "location": "Hybrid remote in Madhapur, Hyderabad, Telangana",
+      "experience_level": "fresher",
+      "employment_type": "Practical Internship & Industry-Oriented Training",
+      "explicit_years_experience": []
+    },
+    "job_title": "Absolutely. Here’s the revised version with Cliquelog IT Solutions and positioned as a modern, beginner-friendly Full Stack + AI/Vibe Coding Internship Program.",
+    "role_function": "Absolutely. Here’s the revised version with Cliquelog IT Solutions and positioned as a modern, beginner-friendly Full Stack + AI/Vibe Coding Internship Program.",
+    "required_technical_skills": [],
+    "preferred_technical_skills": [],
+    "uncertain_technical_skills": [
+      "sql"
+    ],
+    "requirements": [
+      {
+        "canonical": "sql",
+        "jd_phrases": [
+          "postgresql"
+        ],
+        "classification": "uncertain",
+        "match_classification": null
+      }
+    ],
+    "skill_categories": {
+      "programming_languages": [
+        "sql"
+      ],
+      "frameworks_libraries": [],
+      "databases": [
+        "sql"
+      ],
+      "cloud_platforms": [],
+      "data_ml_ai": [],
+      "tools": []
+    },
+    "soft_skills_explicitly_requested": [],
+    "education_requirements": [
+      "computer science",
+      "degree"
+    ],
+    "experience_requirements": [
+      "Internship",
+      "Internship",
+      "Internship",
+      "Internship",
+      "Internship",
+      "experience",
+      "internship",
+      "Internship",
+      "internship",
+      "Internship",
+      "internship",
+      "experience",
+      "Internship",
+      "experience",
+      "Internship",
+      "internship",
+      "internship",
+      "internship"
+    ],
+    "responsibilities": [
+      "Absolutely. Here’s the revised version with Cliquelog IT Solutions and positioned as a modern, beginner-friendly Full Stack + AI/Vibe Coding Internship Program.",
+      "Cliquelog IT Solutions is offering a practical Full Stack Development & AI-Assisted Vibe Coding Internship Program for students and aspiring developers who want to learn how modern websites and web applications are built.",
+      "The program is designed especially for beginners, including students with little or no previous programming experience.",
+      "Rather than focusing only on theoretical coding, participants will learn how to use modern AI development tools, Vibe Coding techniques, frontend technologies, backend systems, databases and APIs to build complete working applications.",
+      "Building projects using modern AI development workflows",
+      "The objective is to help students understand the complete development lifecycle of a modern web application.",
+      "The internship will be project-oriented.",
+      "Students can use completed projects as part of their portfolio and demonstrate their practical development skills.",
+      "You do not need to be an expert programmer to join.",
+      "Basic computer knowledge, interest in technology and a willingness to learn are sufficient.",
+      "The duration may vary depending on the project, learning progress and program schedule.",
+      "Participants who successfully complete the required internship activities and projects will receive an Internship Certificate from Cliquelog IT Solutions.",
+      "The fee covers participation in the internship/training program and associated learning activities.",
+      "The focus is on learning how to build complete applications, rather than simply memorizing programming syntax.",
+      "If you are a student or beginner who wants to learn Full Stack Development and the new generation of AI-assisted coding, this program is an opportunity to start building real applications and develop practical technology skills.",
+      "Small but important point: if you’re posting this on Indeed, don’t use the ₹3,000-fee version as a conventional job/internship listing. A candidate-paid internship/training program can conflict with Indeed’s job-posting rules. For Indeed, I would create a separate genuine paid internship listing; use the above version for your own website, Instagram, college groups, WhatsApp, etc.",
+      "Work Location: Hybrid remote in Madhapur, Hyderabad, Telangana"
+    ],
+    "domain_keywords": [
+      "sql"
+    ],
+    "keywords_phrases": [
+      "Absolutely",
+      "Here",
+      "the",
+      "revised",
+      "version",
+      "with",
+      "Cliquelog",
+      "Solutions",
+      "and",
+      "positioned",
+      "modern",
+      "beginner-friendly",
+      "Full",
+      "Stack",
+      "Vibe",
+      "Coding",
+      "Internship",
+      "Program",
+      "Development",
+      "Company",
+      "Duration",
+      "Months",
+      "Type",
+      "Practical",
+      "Industry-Oriented",
+      "Training",
+      "Eligibility",
+      "Students",
+      "Freshers",
+      "Beginners",
+      "About",
+      "offering",
+      "AI-Assisted",
+      "for",
+      "aspiring",
+      "developers",
+      "who",
+      "want",
+      "learn",
+      "how",
+      "websites",
+      "web",
+      "applications",
+      "are",
+      "built",
+      "designed",
+      "especially",
+      "including",
+      "little",
+      "previous",
+      "programming",
+      "experience",
+      "Rather",
+      "than",
+      "focusing",
+      "only",
+      "theoretical",
+      "participants",
+      "will",
+      "use",
+      "tools",
+      "techniques",
+      "frontend",
+      "technologies",
+      "backend",
+      "systems",
+      "databases",
+      "APIs",
+      "build",
+      "complete",
+      "working",
+      "What",
+      "You",
+      "Introduction",
+      "software",
+      "Understanding",
+      "Using",
+      "assistants",
+      "effectively",
+      "Creating",
+      "assistance",
+      "AI-generated",
+      "code",
+      "Debugging",
+      "improving",
+      "Writing",
+      "effective",
+      "prompts",
+      "Building",
+      "projects",
+      "workflows",
+      "HTML",
+      "fundamentals",
+      "CSS",
+      "responsive",
+      "design",
+      "JavaScript",
+      "website",
+      "components",
+      "layouts"
+    ],
+    "classification_notes": [
+      "Required/preferred is assigned only when the surrounding JD section or explicit wording supports it; otherwise classification is uncertain.",
+      "Semantic mappings identify related evidence but do not add unsupported technologies to the profile."
+    ]
+  },
+  "candidate_matching": [
+    {
+      "requirement": "sql",
+      "classification": "uncertain",
+      "match_type": "semantic",
+      "evidence_status": "SUPPORTED",
+      "evidence": [
+        {
+          "type": "skill",
+          "record_id": null,
+          "name": "SQL",
+          "status": "verified",
+          "match_type": "semantic",
+          "category": "databases_and_sql",
+          "source": "skills.json"
+        },
+        {
+          "type": "skill",
+          "record_id": null,
+          "name": "SQLite",
+          "status": "verified",
+          "match_type": "semantic",
+          "category": "databases_and_sql",
+          "source": "skills.json"
+        },
+        {
+          "type": "skill",
+          "record_id": null,
+          "name": "MySQL",
+          "status": "verified",
+          "match_type": "semantic",
+          "category": "databases_and_sql",
+          "source": "skills.json"
+        },
+        {
+          "type": "skill",
+          "record_id": null,
+          "name": "Text-to-SQL",
+          "status": "verified",
+          "match_type": "semantic",
+          "category": "generative_ai",
+          "source": "skills.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_telecom_churn_logistic_regression",
+          "name": "Telecom Churn Logistic Regression",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "semantic",
+          "matched_evidence": [
+            "mysql"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_fuel_regression_crispmlq",
+          "name": "Flight Fuel-Burn Prediction",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "semantic",
+          "matched_evidence": [
+            "mysql"
+          ],
+          "source": "projects.json"
+        },
+        {
+          "type": "project",
+          "record_id": "project_text_to_sql_project",
+          "name": "Text-to-SQL Project",
+          "project_status": "completed",
+          "github_availability": "github_verified",
+          "match_type": "semantic",
+          "matched_evidence": [
+            "sql",
+            "sqlite"
+          ],
+          "source": "projects.json"
+        }
+      ],
+      "explanation": "SUPPORTED: related semantic evidence from SQL, SQLite, MySQL. Actual profile technologies are preserved."
+    }
+  ],
+  "evidence_summary": {
+    "supported_requirements": [
+      {
+        "requirement": "sql",
+        "classification": "uncertain",
+        "match_type": "semantic",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "SQL",
+            "status": "verified",
+            "match_type": "semantic",
+            "category": "databases_and_sql",
+            "source": "skills.json"
+          },
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "SQLite",
+            "status": "verified",
+            "match_type": "semantic",
+            "category": "databases_and_sql",
+            "source": "skills.json"
+          },
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "MySQL",
+            "status": "verified",
+            "match_type": "semantic",
+            "category": "databases_and_sql",
+            "source": "skills.json"
+          },
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "Text-to-SQL",
+            "status": "verified",
+            "match_type": "semantic",
+            "category": "generative_ai",
+            "source": "skills.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_telecom_churn_logistic_regression",
+            "name": "Telecom Churn Logistic Regression",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "mysql"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_fuel_regression_crispmlq",
+            "name": "Flight Fuel-Burn Prediction",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "mysql"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_text_to_sql_project",
+            "name": "Text-to-SQL Project",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "sql",
+              "sqlite"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: related semantic evidence from SQL, SQLite, MySQL. Actual profile technologies are preserved."
+      }
+    ],
+    "partial_requirements": [],
+    "unsupported_requirements": [],
+    "unknown_requirements": []
+  },
+  "gap_analysis": {
+    "strong_evidence": [
+      {
+        "requirement": "sql",
+        "classification": "uncertain",
+        "match_type": "semantic",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "SQL",
+            "status": "verified",
+            "match_type": "semantic",
+            "category": "databases_and_sql",
+            "source": "skills.json"
+          },
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "SQLite",
+            "status": "verified",
+            "match_type": "semantic",
+            "category": "databases_and_sql",
+            "source": "skills.json"
+          },
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "MySQL",
+            "status": "verified",
+            "match_type": "semantic",
+            "category": "databases_and_sql",
+            "source": "skills.json"
+          },
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "Text-to-SQL",
+            "status": "verified",
+            "match_type": "semantic",
+            "category": "generative_ai",
+            "source": "skills.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_telecom_churn_logistic_regression",
+            "name": "Telecom Churn Logistic Regression",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "mysql"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_fuel_regression_crispmlq",
+            "name": "Flight Fuel-Burn Prediction",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "mysql"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_text_to_sql_project",
+            "name": "Text-to-SQL Project",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "sql",
+              "sqlite"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: related semantic evidence from SQL, SQLite, MySQL. Actual profile technologies are preserved."
+      }
+    ],
+    "partial_related_evidence": [],
+    "missing_requirements": [],
+    "unknown_requirements": [],
+    "potential_risks": []
+  },
+  "resume_plan": {
+    "skills_to_include": [
+      {
+        "name": "SQL",
+        "category": "databases_and_sql",
+        "status": "verified",
+        "match_type": "semantic",
+        "matched_requirement": "sql",
+        "why": "SUPPORTED: related semantic evidence from SQL, SQLite, MySQL. Actual profile technologies are preserved."
+      },
+      {
+        "name": "SQLite",
+        "category": "databases_and_sql",
+        "status": "verified",
+        "match_type": "semantic",
+        "matched_requirement": "sql",
+        "why": "SUPPORTED: related semantic evidence from SQL, SQLite, MySQL. Actual profile technologies are preserved."
+      },
+      {
+        "name": "MySQL",
+        "category": "databases_and_sql",
+        "status": "verified",
+        "match_type": "semantic",
+        "matched_requirement": "sql",
+        "why": "SUPPORTED: related semantic evidence from SQL, SQLite, MySQL. Actual profile technologies are preserved."
+      },
+      {
+        "name": "Text-to-SQL",
+        "category": "generative_ai",
+        "status": "verified",
+        "match_type": "semantic",
+        "matched_requirement": "sql",
+        "why": "SUPPORTED: related semantic evidence from SQL, SQLite, MySQL. Actual profile technologies are preserved."
+      }
+    ],
+    "projects_to_include": [
+      {
+        "record_id": "project_weather_app",
+        "status": "verified",
+        "sources": [
+          {
+            "source_id": "github_account",
+            "evidence_type": "github",
+            "evidence_location": "https://github.com/thummalapalliharsha/Weather-App",
+            "claims_supported": [
+              "repository name",
+              "repository URL",
+              "repository files"
+            ]
+          }
+        ],
+        "review_flags": [
+          "Source contains an exposed OpenWeather API key; do not reproduce or highlight the credential."
+        ],
+        "conflicts": [],
+        "name": "Weather App",
+        "project_type": "github_project",
+        "github_url": "https://github.com/thummalapalliharsha/Weather-App",
+        "classification_invariant": "project",
+        "source_status": "verified",
+        "documentation_level": "high",
+        "purpose": "Display weather information for a searched city or the user’s current location.",
+        "functionality": [
+          "city search",
+          "browser geolocation",
+          "OpenWeather API calls",
+          "temperature, humidity, feels-like and description display",
+          "weather icon display",
+          "responsive styling"
+        ],
+        "technologies": [
+          "HTML",
+          "CSS",
+          "JavaScript",
+          "OpenWeather API",
+          "Browser Geolocation API",
+          "Font Awesome",
+          "Google Fonts"
+        ],
+        "frameworks_libraries_tools": [
+          "HTML",
+          "CSS",
+          "JavaScript",
+          "OpenWeather API",
+          "Browser Geolocation API",
+          "Font Awesome",
+          "Google Fonts"
+        ],
+        "technical_details": [
+          "Uses asynchronous fetch calls and browser geolocation"
+        ],
+        "measurable_results": [],
+        "demonstrated_skills": [
+          "front-end development",
+          "API integration",
+          "asynchronous JavaScript",
+          "browser geolocation",
+          "responsive UI design"
+        ],
+        "supported_role_categories": [
+          "Front-End Developer Intern",
+          "Web Developer Intern",
+          "JavaScript Developer Intern"
+        ],
+        "source_evidence": {
+          "readme_files": [
+            "README.md"
+          ],
+          "source_files": [
+            "index.html",
+            "script.js",
+            "styles.css"
+          ],
+          "dependency_files": [],
+          "notebooks": [],
+          "data_files": [],
+          "configuration_files": []
+        },
+        "provenance": [
+          {
+            "source_id": "github_account",
+            "evidence_type": "github",
+            "evidence_location": "https://github.com/thummalapalliharsha/Weather-App",
+            "claims_supported": [
+              "repository implementation"
+            ]
+          }
+        ],
+        "duplicate_group_id": null,
+        "selection_metadata": {
+          "role_categories": [
+            "Front-End Developer Intern",
+            "Web Developer Intern",
+            "JavaScript Developer Intern"
+          ],
+          "relevance_tags": [
+            "front-end development",
+            "API integration",
+            "asynchronous JavaScript",
+            "browser geolocation",
+            "responsive UI design"
+          ],
+          "evidence_strength": "high",
+          "available_for_resume": true,
+          "requires_review_before_claim": true,
+          "lifecycle_selection_rule": "only_completed_or_explicitly_allowed_in_progress",
+          "completed_status_required_for_standard_resume": true,
+          "idea_or_planned_excluded_from_final_resume": true,
+          "in_progress_requires_explicit_permission": true
+        },
+        "project_status": "completed",
+        "github_availability": "github_verified",
+        "lifecycle_review_required": false,
+        "lifecycle_notes": [
+          "Repository presence does not establish project completion; lifecycle status requires candidate confirmation.",
+          "Front-end source files show implemented functionality, but do not explicitly establish lifecycle status; manual confirmation required."
+        ]
+      },
+      {
+        "record_id": "project_text_to_sql_project",
+        "status": "verified",
+        "sources": [
+          {
+            "source_id": "github_account",
+            "evidence_type": "github",
+            "evidence_location": "https://github.com/thummalapalliharsha/text_to_sql_project",
+            "claims_supported": [
+              "repository name",
+              "repository URL",
+              "repository files"
+            ]
+          }
+        ],
+        "review_flags": [
+          "External API model names in the repository were not independently verified."
+        ],
+        "conflicts": [],
+        "name": "Text-to-SQL Project",
+        "project_type": "github_project",
+        "github_url": "https://github.com/thummalapalliharsha/text_to_sql_project",
+        "classification_invariant": "project",
+        "source_status": "verified",
+        "documentation_level": "high",
+        "purpose": "Convert natural-language questions into SQL queries and execute them against a SQLite sales database.",
+        "functionality": [
+          "SQLite schema creation",
+          "natural-language-to-SQL generation",
+          "Gemini REST API integration",
+          "OpenAI-compatible fallback",
+          "code-fence removal",
+          "first-statement safety handling",
+          "query execution and result return"
+        ],
+        "technologies": [
+          "Python",
+          "SQLite",
+          "SQL",
+          "Google Gemini API",
+          "OpenAI-compatible client",
+          "Requests",
+          "Python-dotenv"
+        ],
+        "frameworks_libraries_tools": [
+          "Python",
+          "SQLite",
+          "SQL",
+          "Google Gemini API",
+          "OpenAI-compatible client",
+          "Requests",
+          "Python-dotenv"
+        ],
+        "technical_details": [
+          "Defines customers and orders tables; generated SQL is instructed to be SQLite-compatible"
+        ],
+        "measurable_results": [
+          "Sample database contains 5 customers and 10 orders; repository includes a total-sales-by-customer example."
+        ],
+        "demonstrated_skills": [
+          "NLP",
+          "generative AI integration",
+          "text-to-SQL",
+          "database design",
+          "API integration",
+          "query execution"
+        ],
+        "supported_role_categories": [
+          "Generative AI Intern",
+          "Python Developer",
+          "Data Analyst",
+          "AI Application Developer",
+          "Database/SQL Intern"
+        ],
+        "source_evidence": {
+          "readme_files": [
+            "README.md"
+          ],
+          "source_files": [
+            "create_db.py",
+            "text_to_sql.py"
+          ],
+          "dependency_files": [],
+          "notebooks": [],
+          "data_files": [
+            "sales.db"
+          ],
+          "configuration_files": [
+            ".env usage"
+          ]
+        },
+        "provenance": [
+          {
+            "source_id": "github_account",
+            "evidence_type": "github",
+            "evidence_location": "https://github.com/thummalapalliharsha/text_to_sql_project",
+            "claims_supported": [
+              "repository implementation"
+            ]
+          }
+        ],
+        "duplicate_group_id": null,
+        "selection_metadata": {
+          "role_categories": [
+            "Generative AI Intern",
+            "Python Developer",
+            "Data Analyst",
+            "AI Application Developer",
+            "Database/SQL Intern"
+          ],
+          "relevance_tags": [
+            "NLP",
+            "generative AI integration",
+            "text-to-SQL",
+            "database design",
+            "API integration",
+            "query execution"
+          ],
+          "evidence_strength": "high",
+          "available_for_resume": true,
+          "requires_review_before_claim": true,
+          "lifecycle_selection_rule": "only_completed_or_explicitly_allowed_in_progress",
+          "completed_status_required_for_standard_resume": true,
+          "idea_or_planned_excluded_from_final_resume": true,
+          "in_progress_requires_explicit_permission": true
+        },
+        "project_status": "completed",
+        "github_availability": "github_verified",
+        "lifecycle_review_required": false,
+        "lifecycle_notes": [
+          "Repository presence does not establish project completion; lifecycle status requires candidate confirmation.",
+          "README and source files show an implemented demo and database workflow, but do not explicitly establish lifecycle status; manual confirmation required."
+        ]
+      },
+      {
+        "record_id": "project_student_performance_rag",
+        "status": "verified",
+        "sources": [
+          {
+            "source_id": "github_account",
+            "evidence_type": "github",
+            "evidence_location": "https://github.com/thummalapalliharsha/student-performance-rag",
+            "claims_supported": [
+              "repository name",
+              "repository URL",
+              "repository files"
+            ]
+          }
+        ],
+        "review_flags": [],
+        "conflicts": [],
+        "name": "Student Performance RAG Chatbot",
+        "project_type": "github_project",
+        "github_url": "https://github.com/thummalapalliharsha/student-performance-rag",
+        "classification_invariant": "project",
+        "source_status": "verified",
+        "documentation_level": "high",
+        "purpose": "Answer questions about student-performance records using a local retrieval-augmented generation system.",
+        "functionality": [
+          "dataset preprocessing",
+          "student profile document creation",
+          "local embeddings",
+          "ChromaDB vector storage",
+          "semantic retrieval",
+          "local Ollama response generation",
+          "anti-hallucination instructions",
+          "source display in Streamlit",
+          "Langfuse tracing",
+          "Promptfoo evaluation",
+          "Pytest tests"
+        ],
+        "technologies": [
+          "Python",
+          "Pandas",
+          "Streamlit",
+          "Ollama",
+          "llama3.2:3b",
+          "nomic-embed-text",
+          "ChromaDB",
+          "Langfuse",
+          "Promptfoo",
+          "Pytest"
+        ],
+        "frameworks_libraries_tools": [
+          "Python",
+          "Pandas",
+          "Streamlit",
+          "Ollama",
+          "llama3.2:3b",
+          "nomic-embed-text",
+          "ChromaDB",
+          "Langfuse",
+          "Promptfoo",
+          "Pytest"
+        ],
+        "technical_details": [
+          "Local LLM and embedding workflow; top-five retrieval by default; tests cover preprocessing, retrieval, vector storage and RAG"
+        ],
+        "measurable_results": [
+          "README documents 6,607 student records and 20 original columns; vector store indexes 6,607 student documents; retriever uses top five results by default."
+        ],
+        "demonstrated_skills": [
+          "RAG",
+          "local LLM deployment",
+          "embeddings",
+          "vector databases",
+          "semantic retrieval",
+          "prompt design",
+          "observability",
+          "LLM evaluation",
+          "testing"
+        ],
+        "supported_role_categories": [
+          "Generative AI Intern",
+          "Machine Learning Intern",
+          "AI Engineer Intern",
+          "Python Developer",
+          "Data Engineer Intern"
+        ],
+        "source_evidence": {
+          "readme_files": [
+            "README.md"
+          ],
+          "source_files": [],
+          "dependency_files": [
+            "requirements.txt"
+          ],
+          "notebooks": [],
+          "data_files": [],
+          "configuration_files": [
+            "Promptfoo/Langfuse configuration"
+          ]
+        },
+        "provenance": [
+          {
+            "source_id": "github_account",
+            "evidence_type": "github",
+            "evidence_location": "https://github.com/thummalapalliharsha/student-performance-rag",
+            "claims_supported": [
+              "repository implementation"
+            ]
+          }
+        ],
+        "duplicate_group_id": null,
+        "selection_metadata": {
+          "role_categories": [
+            "Generative AI Intern",
+            "Machine Learning Intern",
+            "AI Engineer Intern",
+            "Python Developer",
+            "Data Engineer Intern"
+          ],
+          "relevance_tags": [
+            "RAG",
+            "local LLM deployment",
+            "embeddings",
+            "vector databases",
+            "semantic retrieval",
+            "prompt design",
+            "observability",
+            "LLM evaluation",
+            "testing"
+          ],
+          "evidence_strength": "high",
+          "available_for_resume": true,
+          "requires_review_before_claim": false,
+          "lifecycle_selection_rule": "only_completed_or_explicitly_allowed_in_progress",
+          "completed_status_required_for_standard_resume": true,
+          "idea_or_planned_excluded_from_final_resume": true,
+          "in_progress_requires_explicit_permission": true
+        },
+        "project_status": "completed",
+        "github_availability": "github_verified",
+        "lifecycle_review_required": false,
+        "lifecycle_notes": [
+          "Repository presence does not establish project completion; lifecycle status requires candidate confirmation.",
+          "README and configuration/dependency evidence describe a RAG application, but do not explicitly establish completed versus in-progress status; manual confirmation required."
+        ]
+      }
+    ],
+    "experience_to_include": [],
+    "experience_decisions": [
+      {
+        "record_id": "experience_ediglobe_ai_intern",
+        "organization": "Ediglobe",
+        "title": "Artificial Intelligence Intern",
+        "decision": "NOT RELEVANT ENOUGH FOR RESUME",
+        "matched_requirements": [],
+        "reason": "Actual responsibilities/evidence were compared; broad AI/Python wording alone is insufficient."
+      },
+      {
+        "record_id": "experience_eduskills_ai_ml_virtual_internship",
+        "organization": "EduSkills",
+        "title": "AI-ML Virtual Internship",
+        "decision": "NOT RELEVANT ENOUGH FOR RESUME",
+        "matched_requirements": [],
+        "reason": "Actual responsibilities/evidence were compared; broad AI/Python wording alone is insufficient."
+      }
+    ],
+    "experience_relevance_sufficient": false,
+    "third_project_fallback_used": false,
+    "education_to_include": [
+      {
+        "record_id": "education_biher_btech",
+        "institution": "Bharath Institute of Higher Education and Research",
+        "degree": "B.Tech",
+        "field_of_study": "Computer Science and Engineering",
+        "grade": "CGPA: 7.94",
+        "why": "Education is fixed and sourced from education.json."
+      },
+      {
+        "record_id": "education_harvest_higher_secondary",
+        "institution": "Harvest Public School",
+        "degree": "Higher Secondary (XII)",
+        "field_of_study": null,
+        "grade": "70.8%",
+        "why": "Education is fixed and sourced from education.json."
+      },
+      {
+        "record_id": "education_harvest_secondary",
+        "institution": "Harvest Public School",
+        "degree": "Secondary (X)",
+        "field_of_study": null,
+        "grade": "82.2%",
+        "why": "Education is fixed and sourced from education.json."
+      }
+    ],
+    "certifications_to_include": [],
+    "items_intentionally_excluded": {
+      "projects": [
+        {
+          "record_id": "project_telecom_churn_logistic_regression",
+          "name": "Telecom Churn Logistic Regression",
+          "project_status": "completed",
+          "eligible": true,
+          "reason": "no meaningful requirement-level evidence"
+        },
+        {
+          "record_id": "project_fuel_regression_crispmlq",
+          "name": "Flight Fuel-Burn Prediction",
+          "project_status": "completed",
+          "eligible": true,
+          "reason": "no meaningful requirement-level evidence"
+        },
+        {
+          "record_id": "project_bank_customer_clustering_dashboard",
+          "name": "Bank Customer Clustering and Financial Analytics Dashboard",
+          "project_status": "completed",
+          "eligible": true,
+          "reason": "no meaningful requirement-level evidence"
+        },
+        {
+          "record_id": "project_sample_sales_data",
+          "name": "Sample Sales Data Generator and EDA Toolkit",
+          "project_status": "completed",
+          "eligible": true,
+          "reason": "no meaningful requirement-level evidence"
+        },
+        {
+          "record_id": "project_text_to_sql_project",
+          "name": "Text-to-SQL Project",
+          "project_status": "completed",
+          "eligible": true,
+          "reason": "no meaningful requirement-level evidence"
+        },
+        {
+          "record_id": "project_genai_pyspark_pipeline",
+          "name": "Synthetic Data Generation and PySpark Analytics Pipeline",
+          "project_status": "completed",
+          "eligible": true,
+          "reason": "no meaningful requirement-level evidence"
+        },
+        {
+          "record_id": "project_retail_mini_etl",
+          "name": "Retail Mini ETL",
+          "project_status": "unknown",
+          "eligible": false,
+          "reason": "lifecycle-ineligible; GitHub availability does not change this"
+        },
+        {
+          "record_id": "project_student_performance_rag",
+          "name": "Student Performance RAG Chatbot",
+          "project_status": "completed",
+          "eligible": true,
+          "reason": "no meaningful requirement-level evidence"
+        },
+        {
+          "record_id": "project_ai_resume_jd_match_tool",
+          "name": "AI Resume-JD Match Tool",
+          "project_status": "completed",
+          "eligible": true,
+          "reason": "no meaningful requirement-level evidence"
+        },
+        {
+          "record_id": "project_vibe_kpi_demo",
+          "name": "vibe-kpi-demo-",
+          "project_status": "unknown",
+          "eligible": false,
+          "reason": "lifecycle-ineligible; GitHub availability does not change this"
+        },
+        {
+          "record_id": "project_smartfraud_classifier",
+          "name": "SmartFraud Classifier",
+          "project_status": "completed",
+          "eligible": true,
+          "reason": "no meaningful requirement-level evidence"
+        },
+        {
+          "record_id": "project_weather_app",
+          "name": "Weather App",
+          "project_status": "completed",
+          "eligible": true,
+          "reason": "no meaningful requirement-level evidence"
+        },
+        {
+          "record_id": "project_imdb_movie_analysis",
+          "name": "IMDb Movie Analysis",
+          "project_status": "completed",
+          "eligible": true,
+          "reason": "no meaningful requirement-level evidence"
+        }
+      ],
+      "note": "Excluded projects remain in the master profile and are not permanently ranked."
+    },
+    "supported_requirements": [
+      {
+        "requirement": "sql",
+        "classification": "uncertain",
+        "match_type": "semantic",
+        "evidence_status": "SUPPORTED",
+        "evidence": [
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "SQL",
+            "status": "verified",
+            "match_type": "semantic",
+            "category": "databases_and_sql",
+            "source": "skills.json"
+          },
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "SQLite",
+            "status": "verified",
+            "match_type": "semantic",
+            "category": "databases_and_sql",
+            "source": "skills.json"
+          },
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "MySQL",
+            "status": "verified",
+            "match_type": "semantic",
+            "category": "databases_and_sql",
+            "source": "skills.json"
+          },
+          {
+            "type": "skill",
+            "record_id": null,
+            "name": "Text-to-SQL",
+            "status": "verified",
+            "match_type": "semantic",
+            "category": "generative_ai",
+            "source": "skills.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_telecom_churn_logistic_regression",
+            "name": "Telecom Churn Logistic Regression",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "mysql"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_fuel_regression_crispmlq",
+            "name": "Flight Fuel-Burn Prediction",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "mysql"
+            ],
+            "source": "projects.json"
+          },
+          {
+            "type": "project",
+            "record_id": "project_text_to_sql_project",
+            "name": "Text-to-SQL Project",
+            "project_status": "completed",
+            "github_availability": "github_verified",
+            "match_type": "semantic",
+            "matched_evidence": [
+              "sql",
+              "sqlite"
+            ],
+            "source": "projects.json"
+          }
+        ],
+        "explanation": "SUPPORTED: related semantic evidence from SQL, SQLite, MySQL. Actual profile technologies are preserved."
+      }
+    ],
+    "partial_requirements": [],
+    "unsupported_requirements": [],
+    "summary_direction": "Emphasize only the selected completed projects and actual technologies; preserve gaps rather than substituting unsupported tools.",
+    "evidence_notes": [
+      "SUPPORTED: related semantic evidence from SQL, SQLite, MySQL. Actual profile technologies are preserved."
+    ],
+    "warnings": [],
+    "project_selection_scope": "Dynamic for this JD only; completed lifecycle is mandatory and GitHub availability is independent.",
+    "llm_evidence": {
+      "standalone_skill_record": false,
+      "project_level_evidence": [
+        {
+          "record_id": "project_fuel_regression_crispmlq",
+          "name": "Flight Fuel-Burn Prediction",
+          "evidence": [
+            "Linear Regression, Ridge, Lasso and ElasticNet; CRISP-ML(Q) workflow"
+          ],
+          "claim_scope": "project-level evidence only"
+        },
+        {
+          "record_id": "project_genai_pyspark_pipeline",
+          "name": "Synthetic Data Generation and PySpark Analytics Pipeline",
+          "evidence": [
+            "Configurable pipeline; Spark-based aggregations; test coverage for generation and analytics"
+          ],
+          "claim_scope": "project-level evidence only"
+        },
+        {
+          "record_id": "project_student_performance_rag",
+          "name": "Student Performance RAG Chatbot",
+          "evidence": [
+            "Local LLM and embedding workflow; top-five retrieval by default; tests cover preprocessing, retrieval, vector storage and RAG"
+          ],
+          "claim_scope": "project-level evidence only"
+        }
+      ],
+      "model_used": null,
+      "validation_rule": "Deterministic profile evidence is authoritative; no external model was used."
+    },
+    "project_selection_source": "manual",
+    "project_selection_record_ids": [
+      "project_weather_app",
+      "project_text_to_sql_project",
+      "project_student_performance_rag"
+    ]
+  },
+  "approval_checkpoint": {
+    "resume_generation_allowed": false,
+    "required_next_step": "Show this plan and wait for explicit user approval or requested changes."
+  },
+  "safety": {
+    "profile_data_modified": false,
+    "resume_generated": false,
+    "resume_docx_modified": false,
+    "ats_template_modified": false,
+    "external_model_used": false
+  },
+  "project_selection_source": "manual"
+}

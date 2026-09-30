@@ -1,0 +1,167 @@
+{
+  "phase": "Phase 8",
+  "final_status": "PASS",
+  "implementation": {
+    "matching_approach": "Deterministic semantic normalization and evidence matching",
+    "external_model_used": false,
+    "profile_is_authoritative": true,
+    "privacy": "No personal contact details sent externally; no external model used."
+  },
+  "regression_jd": {
+    "job_title": "Job Title: Junior Generative AI / RAG Engineer — Fresher",
+    "company": null,
+    "location": null,
+    "experience_level": "fresher",
+    "employment_type": null,
+    "explicit_years_experience": []
+  },
+  "selected_projects": [
+    "Student Performance RAG Chatbot",
+    "Text-to-SQL Project",
+    "AI Resume-JD Match Tool"
+  ],
+  "experience_decisions": [
+    {
+      "record_id": "experience_ediglobe_ai_intern",
+      "organization": "Ediglobe",
+      "title": "Artificial Intelligence Intern",
+      "decision": "NOT RELEVANT ENOUGH FOR RESUME",
+      "matched_requirements": [],
+      "reason": "Actual responsibilities/evidence were compared; broad AI/Python wording alone is insufficient."
+    },
+    {
+      "record_id": "experience_eduskills_ai_ml_virtual_internship",
+      "organization": "EduSkills",
+      "title": "AI-ML Virtual Internship",
+      "decision": "NOT RELEVANT ENOUGH FOR RESUME",
+      "matched_requirements": [],
+      "reason": "Actual responsibilities/evidence were compared; broad AI/Python wording alone is insufficient."
+    }
+  ],
+  "gap_summary": {
+    "supported": [
+      "python",
+      "vector databases",
+      "rag",
+      "embeddings",
+      "generative ai",
+      "llm integration",
+      "nlp",
+      "streamlit",
+      "chromadb",
+      "ollama",
+      "git",
+      "github",
+      "prompt engineering",
+      "ai evaluation",
+      "semantic search",
+      "data science",
+      "machine learning"
+    ],
+    "partial": [],
+    "unsupported": [
+      "langchain",
+      "faiss",
+      "docker",
+      "document processing"
+    ],
+    "unknown": []
+  },
+  "approval_status": {
+    "resume_generation_allowed": false,
+    "required_next_step": "Show this plan and wait for explicit user approval or requested changes."
+  },
+  "regression_tests": {
+    "passed": true,
+    "results": [
+      {
+        "test": "1 vector database to ChromaDB semantic match",
+        "passed": true,
+        "detail": "{'requirement': 'vector databases', 'classification': 'uncertain', 'match_type': 'semantic', 'evidence_status': 'SUPPORTED', 'evidence': [{'type': 'skill', 'record_id': None, 'name': 'ChromaDB', 'status': 'verified', 'match_type': 'semantic', 'category': 'generative_ai', 'source': 'skills.json'}, {'type': 'project', 'record_id': 'project_student_performance_rag', 'name': 'Student Performance RAG Chatbot', 'project_status': 'completed', 'github_availability': 'github_verified', 'match_type': 'semantic', 'matched_evidence': ['vector databases', 'chromadb'], 'source': 'projects.json'}], 'explanation': 'SUPPORTED: related semantic evidence from ChromaDB, Student Performance RAG Chatbot. Actual profile technologies are preserved.'}"
+      },
+      {
+        "test": "2 LangChain unsupported without profile evidence",
+        "passed": true,
+        "detail": "{'requirement': 'langchain', 'classification': 'uncertain', 'match_type': None, 'evidence_status': 'UNSUPPORTED', 'evidence': [], 'explanation': 'No matching skill, project, or experience evidence was found in the profile.'}"
+      },
+      {
+        "test": "3 RAG supported by project evidence",
+        "passed": true,
+        "detail": "{'requirement': 'rag', 'classification': 'uncertain', 'match_type': 'direct', 'evidence_status': 'SUPPORTED', 'evidence': [{'type': 'skill', 'record_id': None, 'name': 'RAG', 'status': 'verified', 'match_type': 'direct', 'category': 'generative_ai', 'source': 'skills.json'}, {'type': 'project', 'record_id': 'project_student_performance_rag', 'name': 'Student Performance RAG Chatbot', 'project_status': 'completed', 'github_availability': 'github_verified', 'match_type': 'direct', 'matched_evidence': ['rag', 'retrieval augmented generation', 'retrieval-augmented generation', 'semantic retrieval'], 'source': 'projects.json'}], 'explanation': 'SUPPORTED: direct evidence from RAG, Student Performance RAG Chatbot. Actual profile technologies are preserved.'}"
+      },
+      {
+        "test": "4 natural-language querying to Text-to-SQL semantic match",
+        "passed": true,
+        "detail": "{'requirement': 'natural-language database querying', 'classification': 'uncertain', 'match_type': 'semantic', 'evidence_status': 'SUPPORTED', 'evidence': [{'type': 'skill', 'record_id': None, 'name': 'Text-to-SQL', 'status': 'verified', 'match_type': 'semantic', 'category': 'generative_ai', 'source': 'skills.json'}, {'type': 'project', 'record_id': 'project_text_to_sql_project', 'name': 'Text-to-SQL Project', 'project_status': 'completed', 'github_availability': 'github_verified', 'match_type': 'semantic', 'matched_evidence': ['text to sql', 'text-to-sql', 'sql generation'], 'source': 'projects.json'}], 'explanation': 'SUPPORTED: related semantic evidence from Text-to-SQL, Text-to-SQL Project. Actual profile technologies are preserved.'}"
+      },
+      {
+        "test": "5 Docker unsupported without project evidence",
+        "passed": true,
+        "detail": "{'requirement': 'docker', 'classification': 'uncertain', 'match_type': None, 'evidence_status': 'UNSUPPORTED', 'evidence': [], 'explanation': 'No matching skill, project, or experience evidence was found in the profile.'}"
+      },
+      {
+        "test": "6 Python direct match",
+        "passed": true,
+        "detail": "{'requirement': 'python', 'classification': 'uncertain', 'match_type': 'direct', 'evidence_status': 'SUPPORTED', 'evidence': [{'type': 'skill', 'record_id': None, 'name': 'Python', 'status': 'verified', 'match_type': 'direct', 'category': 'programming_languages', 'source': 'skills.json'}, {'type': 'project', 'record_id': 'project_telecom_churn_logistic_regression', 'name': 'Telecom Churn Logistic Regression', 'project_status': 'completed', 'github_availability': 'github_verified', 'match_type': 'direct', 'matched_evidence': ['python'], 'source': 'projects.json'}, {'type': 'project', 'record_id': 'project_fuel_regression_crispmlq', 'name': 'Flight Fuel-Burn Prediction', 'project_status': 'completed', 'github_availability': 'github_verified', 'match_type': 'direct', 'matched_evidence': ['python'], 'source': 'projects.json'}, {'type': 'project', 'record_id': 'project_bank_customer_clustering_dashboard', 'name': 'Bank Customer Clustering and Financial Analytics Dashboard', 'project_status': 'completed', 'github_availability': 'github_verified', 'match_type': 'direct', 'matched_evidence': ['python'], 'source': 'projects.json'}, {'type': 'project', 'record_id': 'project_sample_sales_data', 'name': 'Sample Sales Data Generator and EDA Toolkit', 'project_status': 'completed', 'github_availability': 'github_verified', 'match_type': 'direct', 'matched_evidence': ['python'], 'source': 'projects.json'}, {'type': 'project', 'record_id': 'project_text_to_sql_project', 'name': 'Text-to-SQL Project', 'project_status': 'completed', 'github_availability': 'github_verified', 'match_type': 'direct', 'matched_evidence': ['python'], 'source': 'projects.json'}, {'type': 'project', 'record_id': 'project_genai_pyspark_pipeline', 'name': 'Synthetic Data Generation and PySpark Analytics Pipeline', 'project_status': 'completed', 'github_availability': 'github_verified', 'match_type': 'direct', 'matched_evidence': ['python'], 'source': 'projects.json'}, {'type': 'project', 'record_id': 'project_student_performance_rag', 'name': 'Student Performance RAG Chatbot', 'project_status': 'completed', 'github_availability': 'github_verified', 'match_type': 'direct', 'matched_evidence': ['python'], 'source': 'projects.json'}, {'type': 'project', 'record_id': 'project_smartfraud_classifier', 'name': 'SmartFraud Classifier', 'project_status': 'completed', 'github_availability': 'github_verified', 'match_type': 'direct', 'matched_evidence': ['python'], 'source': 'projects.json'}, {'type': 'project', 'record_id': 'project_imdb_movie_analysis', 'name': 'IMDb Movie Analysis', 'project_status': 'completed', 'github_availability': 'github_verified', 'match_type': 'direct', 'matched_evidence': ['python'], 'source': 'projects.json'}, {'type': 'experience', 'record_id': 'experience_ediglobe_ai_intern', 'name': 'Ediglobe', 'match_type': 'direct', 'matched_evidence': ['python'], 'source': 'experience.json'}], 'explanation': 'SUPPORTED: direct evidence from Python, Telecom Churn Logistic Regression, Flight Fuel-Burn Prediction. Actual profile technologies are preserved.'}"
+      },
+      {
+        "test": "7 unknown project excluded",
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "test": "8 completed non-GitHub project remains eligible",
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "test": "9 broad AI/Python internship not automatically relevant",
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "test": "10 third-project fallback and approval gate",
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "test": "11 deterministic fallback without external model",
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "test": "12 unsupported semantic suggestion not added to plan/profile",
+        "passed": true,
+        "detail": ""
+      }
+    ]
+  },
+  "protected_files_unchanged": true,
+  "protected_hash_check": {
+    "passed": true,
+    "files": [
+      "data/achievements.json",
+      "data/certifications.json",
+      "data/education.json",
+      "data/experience.json",
+      "data/master_profile.json",
+      "data/projects.json",
+      "data/skills.json",
+      "resumes/RESUME.docx",
+      "templates/ats_resume_template.docx",
+      "resume_generator.py",
+      "profile_update_agent.py"
+    ]
+  },
+  "phase6_integration": {
+    "generator_hash_unchanged": true,
+    "resume_not_generated": true,
+    "template_unchanged": true
+  },
+  "phase7_integration": {
+    "agent_hash_unchanged": true,
+    "profile_json_unchanged": true
+  },
+  "documentation_updated": true,
+  "phase9_started": false
+}

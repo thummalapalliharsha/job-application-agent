@@ -1,0 +1,159 @@
+{
+  "profile": {
+    "name": "Thummalapalli Harsha",
+    "contact": {
+      "phone": "+91 9000657769",
+      "email": "thummalapalliharsha@gmail.com"
+    },
+    "location": "Khammam, Telangana",
+    "links": {
+      "linkedin": "linkedin.com/in/thummalapalliharsha",
+      "github": "github.com/thummalapalliharsha"
+    }
+  },
+  "source_documents": [
+    {
+      "source_id": "resume_docx",
+      "source_type": "resume",
+      "source_name": "resumes/RESUME.docx"
+    },
+    {
+      "source_id": "github_account",
+      "source_type": "github",
+      "source_name": "thummalapalliharsha",
+      "source_url": "https://github.com/thummalapalliharsha?tab=repositories"
+    },
+    {
+      "source_id": "internship_pdf",
+      "source_type": "candidate_provided_document",
+      "source_name": "pasted_file_mXppIx_THUMMALAPALLIHARSHA311658.pdf"
+    }
+  ],
+  "record_indexes": {
+    "experience_ids": [
+      "experience_ediglobe_ai_intern",
+      "experience_eduskills_ai_ml_virtual_internship"
+    ],
+    "project_ids": [
+      "project_telecom_churn_logistic_regression",
+      "project_fuel_regression_crispmlq",
+      "project_bank_customer_clustering_dashboard",
+      "project_sample_sales_data",
+      "project_text_to_sql_project",
+      "project_genai_pyspark_pipeline",
+      "project_retail_mini_etl",
+      "project_student_performance_rag",
+      "project_ai_resume_jd_match_tool",
+      "project_vibe_kpi_demo",
+      "project_smartfraud_classifier",
+      "project_weather_app",
+      "project_imdb_movie_analysis"
+    ],
+    "skill_categories": [
+      "programming_languages",
+      "databases_and_sql",
+      "machine_learning",
+      "generative_ai",
+      "data_engineering",
+      "web_development",
+      "tools_and_platforms",
+      "professional_and_language_skills"
+    ],
+    "certification_ids": [
+      "credential_ediglobe_ai_internship",
+      "credential_eduskills_ai_ml_virtual_internship",
+      "credential_tcs_ion_career_edge",
+      "credential_nptel_iot",
+      "credential_altair_rapidminer",
+      "credential_ramp_coding"
+    ],
+    "education_ids": [
+      "education_biher_btech",
+      "education_harvest_higher_secondary",
+      "education_harvest_secondary"
+    ],
+    "achievement_ids": [],
+    "project_lifecycle_statuses": {
+      "project_telecom_churn_logistic_regression": "completed",
+      "project_fuel_regression_crispmlq": "completed",
+      "project_bank_customer_clustering_dashboard": "completed",
+      "project_sample_sales_data": "completed",
+      "project_text_to_sql_project": "completed",
+      "project_genai_pyspark_pipeline": "completed",
+      "project_retail_mini_etl": "unknown",
+      "project_student_performance_rag": "completed",
+      "project_ai_resume_jd_match_tool": "completed",
+      "project_vibe_kpi_demo": "unknown",
+      "project_smartfraud_classifier": "completed",
+      "project_weather_app": "completed",
+      "project_imdb_movie_analysis": "completed"
+    },
+    "project_github_availability": {
+      "project_telecom_churn_logistic_regression": "github_verified",
+      "project_fuel_regression_crispmlq": "github_verified",
+      "project_bank_customer_clustering_dashboard": "github_verified",
+      "project_sample_sales_data": "github_verified",
+      "project_text_to_sql_project": "github_verified",
+      "project_genai_pyspark_pipeline": "github_verified",
+      "project_retail_mini_etl": "github_verified",
+      "project_student_performance_rag": "github_verified",
+      "project_ai_resume_jd_match_tool": "github_verified",
+      "project_vibe_kpi_demo": "github_verified",
+      "project_smartfraud_classifier": "github_verified",
+      "project_weather_app": "github_verified",
+      "project_imdb_movie_analysis": "github_verified"
+    }
+  },
+  "conflicts_requiring_review": [
+    {
+      "record_id": "project_smartfraud_classifier",
+      "topic": "algorithms and quantitative claims",
+      "details": "Resume and GitHub claims are preserved separately; XGBoost is GitHub-verified, while approximately 18% recall improvement and 12-feature reduction are resume-only and unverified from the repository."
+    },
+    {
+      "record_id": "project_imdb_movie_analysis",
+      "topic": "quantitative analysis claims",
+      "details": "Resume-only claims about 5,000+ records, approximately 22% noise reduction, 10+ visualizations and director impact are not independently verified from inspected repository evidence."
+    },
+    {
+      "record_id": "project_experience_eduskills_ai_ml_virtual_internship",
+      "topic": "classification",
+      "details": "Kept separate from Ediglobe as approved."
+    }
+  ],
+  "unverified_or_incomplete_records": [
+    "project_retail_mini_etl",
+    "project_vibe_kpi_demo"
+  ],
+  "project_lifecycle_policy": {
+    "project_exists_independently_of_github": true,
+    "github_availability_is_not_completion_proof": true,
+    "allowed_project_statuses": [
+      "idea",
+      "planned",
+      "in_progress",
+      "completed",
+      "unknown"
+    ],
+    "allowed_github_availability": [
+      "github_verified",
+      "github_not_uploaded",
+      "github_pending",
+      "github_unverified"
+    ],
+    "resume_selection_rules": {
+      "idea": "never_select_as_completed_project",
+      "planned": "never_select_as_completed_project",
+      "in_progress": "exclude by default; include only with explicit candidate permission and clearly label as in progress",
+      "completed": "may be selected when source information is sufficient and verified, regardless of GitHub availability",
+      "unknown": "do not select until lifecycle status is reviewed"
+    },
+    "github_upload_update_rule": "When a project is uploaded later, update the existing project record and append GitHub provenance; do not create a duplicate.",
+    "manual_status_confirmation_required_for_existing_records": true,
+    "status_review_result": "Lifecycle status explicitly confirmed by candidate for 11 projects; Retail Mini ETL and vibe-kpi-demo- remain unknown."
+  },
+  "review_policy": {
+    "lifecycle_status_review_required": true,
+    "github_availability_must_not_be_used_as_completion_evidence": true
+  }
+}

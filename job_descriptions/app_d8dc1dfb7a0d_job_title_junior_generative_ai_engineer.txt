@@ -1,0 +1,54 @@
+Job Title: Junior Generative AI Engineer
+
+Company: TechNova AI Solutions
+
+Location: Hyderabad, India
+
+Employment Type: Full-time
+
+Job Description
+
+We are looking for a Junior Generative AI Engineer to join our AI engineering team. The candidate will work on building and evaluating AI-powered applications using Python, large language models, retrieval-augmented generation, embeddings, and vector databases.
+
+Responsibilities
+Develop Python-based AI and machine learning applications.
+Build Retrieval-Augmented Generation (RAG) pipelines for knowledge-based applications.
+Work with embeddings, semantic search, and vector databases.
+Develop applications that interact with Large Language Models (LLMs).
+Build natural-language interfaces for querying structured data.
+Perform data preprocessing, cleaning, and exploratory data analysis.
+Evaluate application outputs and improve retrieval and response quality.
+Work with Git and standard software development practices.
+Collaborate with the engineering team to develop and test AI features.
+Required Skills
+Python
+Generative AI
+Large Language Models (LLMs)
+Retrieval-Augmented Generation (RAG)
+Embeddings
+Vector Databases
+Machine Learning
+Pandas
+Scikit-learn
+Git
+SQL
+Preferred Skills
+ChromaDB or other vector databases
+Ollama or local LLMs
+Streamlit
+Prompt engineering
+LangChain
+FAISS
+Docker
+API integration
+Education
+Bachelor's degree in Computer Science, Information Technology, Artificial Intelligence, Data Science, or a related field.
+Fresh graduates are welcome to apply.
+Experience
+0–2 years of experience in AI/ML or Generative AI.
+Academic, internship, or personal AI projects are considered relevant.
+Nice to Have
+Experience building RAG chatbots.
+Experience with Text-to-SQL systems.
+Experience deploying AI applications with Streamlit.
+Familiarity with evaluation and observability tools for LLM applications.

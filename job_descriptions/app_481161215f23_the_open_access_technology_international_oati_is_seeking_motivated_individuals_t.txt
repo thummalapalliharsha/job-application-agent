@@ -1,0 +1,17 @@
+The Open Access Technology International (OATI) is seeking motivated individuals to join our AI Engineering team supporting power‑system applications. This role provides the opportunity to apply foundational machine‑learning and programming knowledge to real‑world energy‑sector challenges under the guidance of senior engineers and researchers.Responsibilities
+Assist in developing machine‑learning and neural‑network models for forecasting, anomaly detection, Text‑to‑SQL tasks, and data‑driven analysis.
+Support the development and deployment of agentic AI components using frameworks such as LangChain and LangGraph.
+Assist in implementing retrieval‑augmented generation (RAG) pipelines that integrate external knowledge sources and vector databases.
+Support fine‑tuning and evaluation of large language models using supervised techniques such as PEFT/LoRA and prompt‑engineering strategies.
+Assist in implementing Model Context Protocol (MCP) communication and long‑term memory mechanisms for AI agents.
+Support model deployment, monitoring, and maintenance using tools such as MLflow and distributed inference frameworks.
+Participate in data preparation, preprocessing, experimentation, and evaluation workflows.
+Collaborate with researchers, engineers, and data scientists to integrate models, validate results, and support product‑development activities.
+Minimum Qualifications
+Bachelor’s degree in Computer Science, Artificial Intelligence, Machine Learning, Computer Engineering, or a closely related field.
+Foundational knowledge of Python and machine‑learning concepts.
+Familiarity with ML frameworks such as PyTorch or TensorFlow.
+Understanding of data structures, algorithms, and neural‑network fundamentals.
+Ability to learn new tools and frameworks with guidance.
+Strong analytical and problem‑solving skills.
+Effective communication and teamwork abilities.

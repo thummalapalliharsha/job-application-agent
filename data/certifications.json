@@ -1,0 +1,162 @@
+{
+  "certifications": [
+    {
+      "record_id": "credential_ediglobe_ai_internship",
+      "status": "candidate_provided",
+      "sources": [
+        {
+          "source_id": "resume_docx",
+          "evidence_type": "resume",
+          "evidence_location": "achievements and certifications section",
+          "claims_supported": [
+            "Artificial Intelligence Internship",
+            "Ediglobe",
+            "February 2024"
+          ]
+        }
+      ],
+      "review_flags": [
+        "Credential listing is preserved separately from the experience record; exact certificate details were not provided."
+      ],
+      "conflicts": [],
+      "name": "Artificial Intelligence Internship",
+      "issuer": "Ediglobe",
+      "credential_type": "program_credential",
+      "issue_date": "2024-02",
+      "expiration_date": null,
+      "credential_id": null,
+      "verification_url": null,
+      "related_experience_id": "experience_ediglobe_ai_intern"
+    },
+    {
+      "record_id": "credential_eduskills_ai_ml_virtual_internship",
+      "status": "candidate_provided",
+      "sources": [
+        {
+          "source_id": "internship_pdf",
+          "evidence_type": "candidate_provided_document",
+          "evidence_location": "internship credential/document",
+          "claims_supported": [
+            "AI-ML Virtual Internship",
+            "EduSkills",
+            "10 weeks",
+            "January 2025 to March 2025"
+          ]
+        }
+      ],
+      "review_flags": [],
+      "conflicts": [],
+      "name": "AI-ML Virtual Internship",
+      "issuer": "EduSkills",
+      "credential_type": "program_credential",
+      "issue_date": "2025-03",
+      "expiration_date": null,
+      "credential_id": null,
+      "verification_url": null,
+      "related_experience_id": "experience_eduskills_ai_ml_virtual_internship"
+    },
+    {
+      "record_id": "credential_tcs_ion_career_edge",
+      "status": "candidate_provided",
+      "sources": [
+        {
+          "source_id": "resume_docx",
+          "evidence_type": "resume",
+          "evidence_location": "achievements and certifications section",
+          "claims_supported": [
+            "TCS iON Career Edge – Young Professional",
+            "March 2025"
+          ]
+        }
+      ],
+      "review_flags": [],
+      "conflicts": [],
+      "name": "TCS iON Career Edge – Young Professional",
+      "issuer": "TCS iON",
+      "credential_type": "certificate",
+      "issue_date": "2025-03",
+      "expiration_date": null,
+      "credential_id": null,
+      "verification_url": null,
+      "related_experience_id": null
+    },
+    {
+      "record_id": "credential_nptel_iot",
+      "status": "candidate_provided",
+      "sources": [
+        {
+          "source_id": "resume_docx",
+          "evidence_type": "resume",
+          "evidence_location": "achievements and certifications section",
+          "claims_supported": [
+            "NPTEL – Introduction to Internet of Things",
+            "April 2025"
+          ]
+        }
+      ],
+      "review_flags": [],
+      "conflicts": [],
+      "name": "Introduction to Internet of Things",
+      "issuer": "NPTEL",
+      "credential_type": "certificate",
+      "issue_date": "2025-04",
+      "expiration_date": null,
+      "credential_id": null,
+      "verification_url": null,
+      "related_experience_id": null
+    },
+    {
+      "record_id": "credential_altair_rapidminer",
+      "status": "candidate_provided",
+      "sources": [
+        {
+          "source_id": "resume_docx",
+          "evidence_type": "resume",
+          "evidence_location": "achievements and certifications section",
+          "claims_supported": [
+            "Altair RapidMiner Data Science Master",
+            "AICTE",
+            "June 2025"
+          ]
+        }
+      ],
+      "review_flags": [],
+      "conflicts": [],
+      "name": "Altair RapidMiner Data Science Master",
+      "issuer": "AICTE",
+      "credential_type": "certificate",
+      "issue_date": "2025-06",
+      "expiration_date": null,
+      "credential_id": null,
+      "verification_url": null,
+      "related_experience_id": null
+    },
+    {
+      "record_id": "credential_ramp_coding",
+      "status": "candidate_provided",
+      "sources": [
+        {
+          "source_id": "resume_docx",
+          "evidence_type": "resume",
+          "evidence_location": "achievements and certifications section",
+          "claims_supported": [
+            "Essentials of Coding and Programming",
+            "RAMP Scheme, MSME",
+            "A1 Grade",
+            "March 2026"
+          ]
+        }
+      ],
+      "review_flags": [],
+      "conflicts": [],
+      "name": "Essentials of Coding and Programming",
+      "issuer": "RAMP Scheme, MSME",
+      "credential_type": "certificate",
+      "issue_date": "2026-03",
+      "expiration_date": null,
+      "credential_id": null,
+      "verification_url": null,
+      "related_experience_id": null
+    }
+  ]
+}

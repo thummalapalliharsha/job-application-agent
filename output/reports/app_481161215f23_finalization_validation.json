@@ -1,0 +1,136 @@
+{
+  "generated_at": "2026-09-19T17:20:46.211854+00:00",
+  "jd_role": "The Open Access Technology International (OATI) is seeking motivated individuals to join our AI Engineering team supporting powerâ€‘system applications. This role provides the opportunity to apply foundational machineâ€‘learning and programming knowledge to realâ€‘world energyâ€‘sector challenges under the guidance of senior engineers and researchers.Responsibilities",
+  "output_filename": "oati_the_open_access_technology_international_oati_is_seeking_motivated_individuals_t_app_481161215f23_Working.docx",
+  "page_count": 1,
+  "page_count_exactly_one": true,
+  "selected_projects": [
+    "Student Performance RAG Chatbot",
+    "Text-to-SQL Project"
+  ],
+  "selected_skills": [
+    "Python",
+    "SQL",
+    "SQLite",
+    "MySQL",
+    "Text-to-SQL",
+    "ChromaDB",
+    "RAG",
+    "Text-to-SQL"
+  ],
+  "selected_certifications": [
+    "Artificial Intelligence Internship",
+    "AI-ML Virtual Internship",
+    "TCS iON Career Edge – Young Professional",
+    "Introduction to Internet of Things"
+  ],
+  "selected_experience": [
+    "experience_ediglobe_ai_intern"
+  ],
+  "experience_included": true,
+  "summary_line_count": 6,
+  "skill_category_count": 4,
+  "contact_validation": {
+    "passed": true,
+    "missing": []
+  },
+  "hyperlink_validation": {
+    "passed": true,
+    "targets": [
+      "styles.xml",
+      "stylesWithEffects.xml",
+      "settings.xml",
+      "webSettings.xml",
+      "fontTable.xml",
+      "theme/theme1.xml",
+      "../customXml/item1.xml",
+      "numbering.xml",
+      "tel:+919000657769",
+      "mailto:thummalapalliharsha@gmail.com",
+      "https://linkedin.com/in/thummalapalliharsha",
+      "https://github.com/thummalapalliharsha",
+      "https://github.com/thummalapalliharsha/student-performance-rag",
+      "https://github.com/thummalapalliharsha/text_to_sql_project"
+    ]
+  },
+  "ats_validation": {
+    "docx_valid": true,
+    "text_extractable": true,
+    "standard_headings_present": true,
+    "one_page": true,
+    "single_column": true,
+    "problematic_tables_or_textboxes": false,
+    "malformed_hyperlinks": false
+  },
+  "placeholder_validation": {
+    "passed": true,
+    "unresolved_placeholders": []
+  },
+  "duplicate_template_validation": {
+    "passed": true,
+    "duplicate_signals": []
+  },
+  "summary_validation": {
+    "passed": true,
+    "line_count": 6
+  },
+  "skills_validation": {
+    "passed": true,
+    "category_count": 4
+  },
+  "certification_validation": {
+    "passed": true,
+    "count": 4,
+    "minimum_required": 0,
+    "requirement_applies": false
+  },
+  "education_validation": {
+    "passed": true,
+    "all_records_included": true
+  },
+  "project_order_validation": {
+    "passed": true,
+    "expected_order": [
+      "Student Performance RAG Chatbot",
+      "Text-to-SQL Project"
+    ],
+    "positions": [
+      397,
+      430
+    ]
+  },
+  "content_density": {
+    "text_characters": 2920,
+    "meaningful_bullet_count": 0,
+    "warning": false
+  },
+  "truth_provenance_validation": {
+    "all_projects_completed": true,
+    "unknown_or_planned_excluded": true,
+    "imdb_not_experience": true,
+    "ediglobe_eduskills_separate": true,
+    "unsupported_claims_detected": []
+  },
+  "warnings_issues": [],
+  "summary_format_validation": {
+    "passed": true,
+    "paragraph_count": 1,
+    "not_bulleted": true
+  },
+  "languages_validation": {
+    "passed": true,
+    "value": "English, Telugu, Hindi, Tamil"
+  },
+  "project_stack_validation": {
+    "passed": true,
+    "count": 2
+  },
+  "project_link_validation": {
+    "passed": true,
+    "verified_links": [
+      "https://github.com/thummalapalliharsha/student-performance-rag",
+      "https://github.com/thummalapalliharsha/text_to_sql_project"
+    ]
+  },
+  "final_status": "PASS"
+}
