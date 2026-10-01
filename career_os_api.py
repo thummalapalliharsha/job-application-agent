@@ -829,8 +829,7 @@ class Handler(BaseHTTPRequestHandler):
             return False
 
         origins = self.headers.get_all("Origin", [])
-        expected_origin = f"http://{host}"
-        if len(origins) > 1 or (origins and (origins[0] not in _ALLOWED_ORIGINS or origins[0] != expected_origin)):
+        if len(origins) > 1 or (origins and origins[0] not in _ALLOWED_ORIGINS):
             self.send_json({"error": "request denied"}, 403)
             return False
 
