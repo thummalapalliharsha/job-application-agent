@@ -66,12 +66,15 @@ _ALLOWED_ORIGINS = _configured_origins()
 _ALLOWED_HOSTS = _LOCAL_ALLOWED_HOSTS | _environment_items("CAREER_OS_ALLOWED_HOSTS")
 _ALLOWED_HOSTS.update(urlparse(origin).netloc for origin in _ALLOWED_ORIGINS)
 
-
 def _api_server_address() -> tuple[str, int]:
-    host = os.environ.get("CAREER_OS_HOST", "127.0.0.1").strip()
-    port = int(os.environ.get("CAREER_OS_PORT", "8504"))
+    production = _RUNTIME_ENV in {"production", "prod"}
+    host = os.environ.get(
+        "CAREER_OS_HOST",
+        "0.0.0.0" if production else "127.0.0.1",
+    ).strip()
+    port = int(os.environ.get("PORT", os.environ.get("CAREER_OS_PORT", "8504")))
     if not host or not 1 <= port <= 65535:
-        raise ValueError("CAREER_OS_HOST and CAREER_OS_PORT must specify a valid bind address")
+        raise ValueError("CAREER_OS_HOST and PORT must specify a valid bind address")
     return host, port
 
 
