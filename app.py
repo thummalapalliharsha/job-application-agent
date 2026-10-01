@@ -336,7 +336,7 @@ def working_resume_is_newer(app,final_record,working_record):
  except OSError: return False
 def finalize_doc(app,kind,src):
  final=src.with_name(src.stem.replace('_Working','_Final')+src.suffix)
- if kind=='resume' and (final.exists() or final.with_suffix('.pdf').exists()):
+ if final.exists() or final.with_suffix('.pdf').exists():
   base=final.with_suffix(''); version=2
   while True:
    candidate=base.with_name(f'{base.name}_v{version}').with_suffix(final.suffix)
@@ -344,7 +344,7 @@ def finalize_doc(app,kind,src):
    if not candidate.exists() and not candidate_pdf.exists(): final=candidate; break
    version+=1
  shutil.copy2(src,final); pdf=pdf_convert(final)
- if kind=='resume' and not pdf_is_readable(pdf).get('passed'): raise RuntimeError('Generated final PDF is not readable.')
+ if not pdf_is_readable(pdf).get('passed'): raise RuntimeError('Generated final PDF is not readable.')
  app=app_by_id(app['application_id']); apps=load_apps(); target=next(x for x in apps if x['application_id']==app['application_id'])
  key='resume_reference' if kind=='resume' else 'cover_letter_reference'; target[key]=str(final.relative_to(ROOT)); target[f'{kind}_pdf_reference']=str(pdf.relative_to(ROOT)); target[f'{kind}_status']='final'
  if kind=='resume':
@@ -511,14 +511,16 @@ def resume_workspace():
  if st.button('Generate working resume'):
   if not app.get('resume_generation_allowed'): st.error('Approve the Resume Plan first.'); return
   try:
-   plan=json.loads(resolve_ref(app['phase8_plan_reference']).read_text()); plan['approval_checkpoint']['resume_generation_allowed']=True; out=RESUMES/f"{aa.slug(app.get('company_name') or 'company')}_{aa.slug(app.get('job_title') or 'role')}_{app['application_id']}_Working.docx"; report=REPORTS/f"{app['application_id']}_resume_validation.json"
-   with st.spinner('Generating and validating one-page resume…'):
-    rg.generate(plan,rg.profile(),out); validation=rg.validate(out,plan,rg.profile(),report)
-    working_pdf=pdf_convert(out); generation_id='gen_'+uuid.uuid4().hex; generated_at=aa.now(); docx_rel=str(out.relative_to(ROOT)); pdf_rel=str(working_pdf.relative_to(ROOT))
-   st.session_state['resume_generation_result']={'docx':str(out.relative_to(ROOT)),'validation_report':str(report.relative_to(ROOT)),'validation':validation}
-   if validation.get('page_count')==1 and validation.get('final_status')=='PASS':
-    apps=load_apps(); target=next(x for x in apps if x['application_id']==app['application_id']); target.update({'working_resume_reference':docx_rel,'working_resume_pdf_reference':pdf_rel,'working_resume_docx_path':docx_rel,'working_resume_pdf_path':pdf_rel,'working_resume_docx_sha256':file_sha256(out),'working_resume_pdf_sha256':file_sha256(working_pdf),'working_resume_generation_id':generation_id,'working_resume_generated_at':generated_at,'resume_validation_reference':str(report.relative_to(ROOT)),'resume_working_artifact_stale':False,'current_status':'resume_ready','last_updated':aa.now()}); save_apps(apps); st.success('Working resume generated and validated.'); st.rerun()
-   else: st.error(f"Resume validation failed: {validation.get('final_status','UNKNOWN')}. Review {report.relative_to(ROOT)} before retrying.")
+    plan=json.loads(resolve_ref(app['phase8_plan_reference']).read_text()); plan['approval_checkpoint']['resume_generation_allowed']=True; base=aa.artifact_stem(app,'resume','Working'); out=RESUMES/f'{base}.docx'; version=2
+    while out.exists() or out.with_suffix('.pdf').exists(): out=RESUMES/f'{base}_v{version}.docx'; version+=1
+    report=REPORTS/f"{app['application_id']}_resume_validation.json"
+    with st.spinner('Generating and validating one-page resume…'):
+     rg.generate(plan,rg.profile(),out); validation=rg.validate(out,plan,rg.profile(),report)
+     working_pdf=pdf_convert(out); generation_id='gen_'+uuid.uuid4().hex; generated_at=aa.now(); docx_rel=str(out.relative_to(ROOT)); pdf_rel=str(working_pdf.relative_to(ROOT))
+    st.session_state['resume_generation_result']={'docx':str(out.relative_to(ROOT)),'validation_report':str(report.relative_to(ROOT)),'validation':validation}
+    if validation.get('page_count')==1 and validation.get('final_status')=='PASS':
+     apps=load_apps(); target=next(x for x in apps if x['application_id']==app['application_id']); target.update({'working_resume_reference':docx_rel,'working_resume_pdf_reference':pdf_rel,'working_resume_docx_path':docx_rel,'working_resume_pdf_path':pdf_rel,'working_resume_docx_sha256':file_sha256(out),'working_resume_pdf_sha256':file_sha256(working_pdf),'working_resume_generation_id':generation_id,'working_resume_generated_at':generated_at,'resume_validation_reference':str(report.relative_to(ROOT)),'resume_working_artifact_stale':False,'current_status':'resume_ready','last_updated':aa.now()}); save_apps(apps); st.success('Working resume generated and validated.'); st.rerun()
+    else: st.error(f"Resume validation failed: {validation.get('final_status','UNKNOWN')}. Review {report.relative_to(ROOT)} before retrying.")
   except Exception as exc:
    st.error(f'Resume generation failed: {type(exc).__name__}: {exc}')
    st.exception(exc)
@@ -540,7 +542,7 @@ def resume_workspace():
    b1,b2=st.columns(2)
    if b1.button('Preview Working',key=f'preview_working_{aid}'):
     st.session_state[preview_key]='working'; st.rerun()
-   b2.download_button('Download Working DOCX',working_record['docx'].read_bytes(),file_name='Thummalapalli_Harsha_Resume_Working.docx',key=f'download_working_docx_{aid}')
+   b2.download_button('Download Working DOCX',working_record['docx'].read_bytes(),file_name=working_record['docx'].name,key=f'download_working_docx_{aid}')
    if active_preview=='working':
     st.markdown('#### Working PDF preview')
     try: st.pdf(working_record['pdf'].read_bytes())
@@ -554,7 +556,7 @@ def resume_workspace():
    b1,b2=st.columns(2)
    if b1.button('Preview Final',key=f'preview_final_{aid}'):
     st.session_state[preview_key]='final'; st.rerun()
-   b2.download_button('Download Final DOCX',final_record['docx'].read_bytes(),file_name='Thummalapalli_Harsha_Resume_Final.docx',key=f'download_final_docx_{aid}')
+   b2.download_button('Download Final DOCX',final_record['docx'].read_bytes(),file_name=final_record['docx'].name,key=f'download_final_docx_{aid}')
    if active_preview=='final':
     st.markdown('#### Final PDF preview')
     try: st.pdf(final_record['pdf'].read_bytes())
@@ -588,7 +590,12 @@ def cover_workspace():
  lifecycle_active=4 if final_ref and final_pdf_ref else (3 if working_ref or final_ref else 1)
  st.markdown('<div class="lifecycle"><span class="lifecycle-step done">Application</span><span class="lifecycle-arrow">→</span><span class="lifecycle-step '+('done' if working_ref else 'active' if not final_ref else '')+'">Draft</span><span class="lifecycle-arrow">→</span><span class="lifecycle-step '+('done' if final_ref else 'active' if working_ref else '')+'">Review</span><span class="lifecycle-arrow">→</span><span class="lifecycle-step '+('done' if final_ref and final_pdf_ref else '')+'">Final</span></div>',unsafe_allow_html=True)
  if st.button('Generate Working Cover Letter',type='primary',key=f'cover_generate_{app["application_id"]}'):
-  aa.generate_cover_letter(app['application_id']); st.success('Working cover letter generated.'); st.rerun()
+  result=aa.generate_cover_letter(app['application_id'])
+  if result.get('decision')=='created':
+   source=resolve_ref(result['cover_letter_working_reference']); doc=source.with_suffix('.docx'); pdf=source.with_suffix('.pdf')
+   md_to_docx(source,doc); pdf_convert(doc)
+   apps=load_apps(); target=next(x for x in apps if x['application_id']==app['application_id']); target['cover_letter_working_docx_reference']=str(doc.relative_to(ROOT)); target['cover_letter_working_pdf_reference']=str(pdf.relative_to(ROOT)); save_apps(apps)
+  st.success('Working cover letter generated.'); st.rerun()
  app=app_by_id(app['application_id']); working_ref=app.get('cover_letter_working_reference'); final_ref=app.get('cover_letter_reference'); final_pdf_ref=app.get('cover_letter_pdf_reference')
  left,right=st.columns(2)
  with left:
@@ -597,12 +604,21 @@ def cover_workspace():
    path=resolve_ref(working_ref)
    if not path.exists(): st.error(f'Working cover-letter artifact is unavailable: {working_ref}')
    else:
-    st.markdown(f'<div class="artifact-meta">Reference: {escape(str(working_ref))}<br>Availability: persisted<br>Format: {escape(path.suffix.lower() or "document")}</div>',unsafe_allow_html=True)
+    working_pdf_ref=app.get('cover_letter_working_pdf_reference')
+    working_pdf=resolve_ref(working_pdf_ref) if working_pdf_ref else path.with_suffix('.pdf')
+    if not working_pdf.exists():
+     doc=resolve_ref(app.get('cover_letter_working_docx_reference')) if app.get('cover_letter_working_docx_reference') else path.with_suffix('.docx')
+     if not doc.exists(): md_to_docx(path,doc)
+     working_pdf=pdf_convert(doc)
+     apps=load_apps(); target=next(x for x in apps if x['application_id']==app['application_id']); target['cover_letter_working_docx_reference']=str(doc.relative_to(ROOT)); target['cover_letter_working_pdf_reference']=str(working_pdf.relative_to(ROOT)); save_apps(apps)
+    st.markdown(f'<div class="artifact-meta">Reference: {escape(str(working_ref))}<br>PDF: {escape(str(working_pdf.relative_to(ROOT)))}<br>Availability: persisted<br>Format: PDF (source Markdown preserved)</div>',unsafe_allow_html=True)
     st.text_area('Working cover-letter preview',path.read_text(encoding='utf-8',errors='replace'),height=300,key=f'cover_working_preview_{app["application_id"]}')
-    st.download_button('Download Working Cover Letter',path.read_bytes(),file_name=path.name,key=f'cover_download_working_{app["application_id"]}')
-    if final_ref and st.button('Finalize Cover Letter',type='primary',key=f'cover_finalize_{app["application_id"]}'):
+    st.download_button('Download Working Cover Letter',working_pdf.read_bytes(),file_name=working_pdf.name,mime='application/pdf',key=f'cover_download_working_{app["application_id"]}')
+    if st.button('Finalize Cover Letter',type='primary',key=f'cover_finalize_{app["application_id"]}'):
      try:
-      apps=load_apps(); target=next(x for x in apps if x['application_id']==app['application_id']); target['cover_letter_working_reference']=str(path.relative_to(ROOT)); save_apps(apps); doc=path.with_name(path.stem+'_Working.docx'); md_to_docx(path,doc); final,pdf=finalize_doc(app,'cover_letter',doc); check=pdf_is_readable(pdf)
+      apps=load_apps(); target=next(x for x in apps if x['application_id']==app['application_id']); target['cover_letter_working_reference']=str(path.relative_to(ROOT)); save_apps(apps); doc=resolve_ref(target.get('cover_letter_working_docx_reference')) if target.get('cover_letter_working_docx_reference') else path.with_suffix('.docx');
+      if not doc.exists(): md_to_docx(path,doc)
+      final,pdf=finalize_doc(app,'cover_letter',doc); check=pdf_is_readable(pdf)
       if check['passed']: st.success('Cover letter finalized and converted to PDF.'); st.rerun()
       st.error('Cover letter finalization completed, but PDF validation failed. Review the generated files.')
      except Exception as exc: st.error(f'Cover letter finalization failed: {type(exc).__name__}: {exc}'); st.exception(exc)
@@ -614,7 +630,7 @@ def cover_workspace():
    if not final_path.exists() or not pdf_path.exists(): st.error('Final cover-letter artifact reference is unavailable.')
    else:
     st.markdown(f'<div class="artifact-meta">DOCX: {escape(str(final_ref))}<br>PDF: {escape(str(final_pdf_ref))}<br>Availability: persisted and readable</div>',unsafe_allow_html=True)
-    st.download_button('Download Final Cover Letter',final_path.read_bytes(),file_name=final_path.name,key=f'cover_download_final_{app["application_id"]}')
+    st.download_button('Download Final Cover Letter',pdf_path.read_bytes(),file_name=pdf_path.name,mime='application/pdf',key=f'cover_download_final_{app["application_id"]}')
     try: st.pdf(pdf_path.read_bytes())
     except Exception: st.info('Inline PDF preview is unavailable in this Streamlit environment. Use Download Final Cover Letter to review the validated PDF.')
   else: st.info('No finalized cover letter yet. Review the Working Version before finalizing.')

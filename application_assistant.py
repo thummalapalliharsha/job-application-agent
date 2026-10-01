@@ -18,6 +18,10 @@ FINAL_SUBMISSION_WORDS=('applied','submitted','i submitted','application submitt
 
 def now(): return datetime.now(timezone.utc).isoformat()
 def slug(s): return re.sub(r'[^a-z0-9]+','_',str(s).lower()).strip('_')[:80]
+def artifact_stem(app, kind, lifecycle, suffix=None):
+ label={'resume':'Resume','cover_letter':'CoverLetter'}.get(kind, slug(kind))
+ stem=f"{slug(app.get('company_name') or 'company')}_{slug(app.get('job_title') or 'role')}_{app.get('application_id')}_{label}_{lifecycle}"
+ return f'{stem}_{suffix}' if suffix else stem
 def norm(s): return re.sub(r'[^a-z0-9]+',' ',str(s or '').lower()).strip()
 def load_store():
  p=DATA/'applications.json'
@@ -95,7 +99,11 @@ def generate_cover_letter(aid):
  plan=json.loads(plan_path.read_text(encoding='utf-8')) if plan_path and plan_path.exists() else {}
  approved=plan.get('evidence_summary',{})
  supported={str(x.get('requirement','')).lower() for x in approved.get('supported_requirements',[]) if isinstance(x,dict)}
+ if not supported and app.get('supported_requirements'):
+  supported={str(x).lower() for x in app.get('supported_requirements',[])}
  unsupported={str(x.get('requirement','')).lower() for x in approved.get('unsupported_requirements',[]) if isinstance(x,dict)}
+ if not unsupported and app.get('unsupported_requirements'):
+  unsupported={str(x).lower() for x in app.get('unsupported_requirements',[])}
  project_records={x.get('record_id'):x for x in profile.get('projects',{}).get('projects',[])}
  selected_ids=app.get('project_selection_record_ids') or [x.get('record_id') for x in plan.get('resume_plan',{}).get('projects_to_include',[])]
  projects=[project_records[x] for x in selected_ids if x in project_records and project_records[x].get('project_status')=='completed']
@@ -116,7 +124,7 @@ def generate_cover_letter(aid):
   relevant=[]
   for item in functionality:
    item_lower=str(item).lower()
-   if any(term in item_lower for term in ('preprocess','evaluation','query','retrieval','embedding','classification','data','quality','analysis','prompt')):
+   if any(term in item_lower for term in ('preprocess','evaluation','query','retrieval','embedding','classification','data','quality','analysis','prompt','cleaning','dashboard','reporting','visualization','cluster')):
     relevant.append(str(item))
   if name_text=='Text-to-SQL Project':
    detail='building Python and SQL workflows for natural-language querying, generated-query execution, and result validation'
@@ -130,18 +138,40 @@ def generate_cover_letter(aid):
  if not project_sentences:
   project_sentences.append('completed Python and data-focused projects documented in my canonical profile')
  skill_phrases=[]
- for phrase in ('python','sql','nlp','machine learning','llm integration'):
-  if phrase in supported and phrase not in unsupported: skill_phrases.append({'python':'Python','sql':'SQL','nlp':'NLP','machine learning':'machine learning','llm integration':'LLM integration'}[phrase])
+ for phrase in ('python','sql','pandas','numpy','nlp','machine learning','llm integration'):
+  if phrase in supported and phrase not in unsupported:
+   m={'python':'Python','sql':'SQL','pandas':'Pandas','numpy':'NumPy','nlp':'NLP','machine learning':'machine learning','llm integration':'LLM integration'}
+   skill_phrases.append(m[phrase])
  skills_sentence=', '.join(skill_phrases[:4])
- lines=['Dear Hiring Manager,','',f'I am writing to apply for the {role} at {company}. The role\'s focus on training-data quality, prompt and QA evaluation, and careful analysis of language-model outputs matches the evidence-backed work I have completed in Python and data/ML projects.','',f'My relevant project work includes {"; ".join(project_sentences)}. These projects developed my ability to inspect data, structure repeatable workflows, evaluate outputs, and document results clearly.']
+ is_ai_eval=any(term in jd_lower for term in ('data labeling','rlhf','prompt evaluation','annotation guidelines','content safety','evaluation and calibration','language-model','large language model','training-data quality','training data quality'))
+ is_analytics=any(term in jd_lower for term in ('data analyst','business analyst','analytics','data cleaning','exploratory data analysis','data visualization','reporting','dashboard','dashboards'))
+ if is_ai_eval:
+  intro_focus="The role's focus on training-data quality, prompt and QA evaluation, and careful analysis of language-model outputs matches the evidence-backed work I have completed in Python and data/ML projects."
+  skill_suffix='Python/SQL data checks and NLP/LLM-oriented analysis.'
+  closing_target=f"{company}'s evaluation and calibration workflows while continuing to learn from experienced AI/ML teams."
+ elif is_analytics:
+  intro_focus="The role's focus on data cleaning, exploratory data analysis, reporting, and dashboard visualization matches the evidence-backed work I have completed in Python and SQL/data projects."
+  skill_suffix='structured data analysis, data cleaning, and reporting workflows.'
+  closing_target=f"{company}'s data and analytics workflows while continuing to learn from experienced data teams."
+ else:
+  intro_focus="The role's focus on hands-on data analysis, problem-solving, and building structured technical workflows matches the evidence-backed work I have completed in Python and data projects."
+  skill_suffix='Python and SQL data workflows.'
+  closing_target=f"{company}'s technical and data workflows while continuing to deliver reliable results."
+ lines=['Dear Hiring Manager,','',f"I am writing to apply for the {role} at {company}. {intro_focus}",'',f"My relevant project work includes {'; '.join(project_sentences)}. These projects developed my ability to inspect data, structure repeatable workflows, evaluate outputs, and document results clearly."]
  if skills_sentence:
-  lines += ['', f'My supported experience with {skills_sentence} is especially relevant to Python/SQL data checks and NLP/LLM-oriented analysis.']
- lines += ['', f'I would be glad to bring this analytical, detail-oriented approach to {company}\'s evaluation and calibration workflows while continuing to learn from experienced AI/ML teams. Thank you for your consideration.','', 'Regards,', name]
+  lines += ['', f'My supported experience with {skills_sentence} is especially relevant to {skill_suffix}']
+ lines += ['', f"I would be glad to bring this analytical, detail-oriented approach to {closing_target} Thank you for your consideration.",'', 'Regards,', name]
  content='\n'.join(lines)+'\n'
- path=LETTERS/f'{slug(app.get("company_name") or "company")}_{slug(app.get("job_title") or "role")}_{aid}.md'; path.parent.mkdir(parents=True,exist_ok=True); path.write_text(content,encoding='utf-8')
+ base=artifact_stem(app,'cover_letter','Working'); path=LETTERS/f'{base}.md'; path.parent.mkdir(parents=True,exist_ok=True)
+ path.write_text(content,encoding='utf-8')
  for a in store['applications']:
-  if a['application_id']==aid: a['cover_letter_reference']=str(path.relative_to(ROOT)); a['application_checklist']['documents'][1]['status']='ready'; a['last_updated']=now()
- save_store(store); return {'decision':'created','cover_letter_reference':str(path.relative_to(ROOT)),'content':content}
+  if a['application_id']==aid:
+   a['cover_letter_working_reference']=str(path.relative_to(ROOT))
+   a['cover_letter_source_reference']=str(path.relative_to(ROOT))
+   a['application_checklist']['documents'][1]['status']='ready'
+   a['last_updated']=now()
+ save_store(store)
+ return {'decision':'created','cover_letter_reference':str(path.relative_to(ROOT)),'cover_letter_working_reference':str(path.relative_to(ROOT)),'content':content}
 def edit_cover_letter(aid, content):
  store=load_store(); app=next((x for x in store['applications'] if x['application_id']==aid),None)
  if not app:return {'decision':'not_found'}
@@ -153,7 +183,7 @@ def edit_cover_letter(aid, content):
  forbidden=('open role','source-supported experience can be composed','direct rlhf','production content-safety labeling','named-entity annotation','computer-vision annotation','production qa ownership')
  found=[phrase for phrase in forbidden if phrase in content.lower()]
  if found:return {'decision':'invalid','message':'Unsupported or placeholder wording is not allowed: '+', '.join(found)}
- reference=app.get('cover_letter_reference')
+ reference=app.get('cover_letter_working_reference') or app.get('cover_letter_source_reference')
  if not reference:return {'decision':'invalid','message':'Generate a working cover letter before editing.'}
  path=ROOT/str(reference).replace('\\','/'); path.parent.mkdir(parents=True,exist_ok=True); path.write_text(content+'\n',encoding='utf-8')
  for item in store['applications']:

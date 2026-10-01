@@ -1,0 +1,36 @@
+Junior Data Analyst — Fresher
+
+Company: DataNova Analytics
+
+We are looking for a Junior Data Analyst to support data-driven business
+decisions through data cleaning, exploratory analysis, reporting, and
+visualization.
+
+Responsibilities:
+- Clean, transform, and validate structured datasets.
+- Perform exploratory data analysis to identify trends and patterns.
+- Create reports and dashboards for business insights.
+- Write SQL queries to extract and analyze data.
+- Work with Python libraries such as Pandas and NumPy for data analysis.
+- Communicate analytical findings clearly to team members.
+
+Required Skills:
+- Python
+- SQL
+- Pandas
+- NumPy
+- Data Cleaning
+- Exploratory Data Analysis
+- Data Visualization
+- Analytical Thinking
+
+Preferred Skills:
+- Power BI
+- Excel
+- Basic statistics
+- Git/GitHub
+
+Education:
+- Bachelor's degree in Computer Science, Data Science, Statistics,
+  Mathematics, or a related field.
+- Freshers are welcome.

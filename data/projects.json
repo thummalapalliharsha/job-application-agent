@@ -321,17 +321,12 @@
       "documentation_level": "high",
       "purpose": "Segment credit-card customers into behavioral personas and provide financial analytics through an interactive dashboard.",
       "functionality": [
-        "EDA",
-        "data cleaning and feature engineering",
-        "standardization",
-        "K-Means, Agglomerative and DBSCAN clustering",
-        "clustering benchmark",
+        "Loaded and explored an 8,950-record credit card dataset, applying data cleaning, feature engineering, and robust standardization",
+        "Implemented and benchmarked K-Means, Agglomerative, and DBSCAN clustering models, evaluating Silhouette, Davies-Bouldin, and Calinski-Harabasz metrics",
+        "Built an interactive Streamlit analytics dashboard with 2D/3D Plotly visualizations for real-time customer persona classification",
         "density-based outlier detection",
         "PCA outputs",
-        "supervised train/validation/test preparation",
-        "interactive 2D/3D visualizations",
-        "dynamic controls",
-        "real-time persona classification"
+        "supervised train/validation/test preparation"
       ],
       "technologies": [
         "Python",

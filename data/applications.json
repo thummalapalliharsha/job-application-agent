@@ -481,6 +481,243 @@
       "working_resume_validated": true,
       "working_resume_validated_at": "2026-09-27T11:55:12.101543+00:00",
       "working_resume_validation_reference": "output\\reports\\app_14a66f897623_resume_document_validation_rev_ab7adc5325d50511427d7a20_548480e3a6.json"
+    },
+    {
+      "application_id": "app_7956079ee1de",
+      "company_name": "DataNova Analytics",
+      "job_title": "Junior Data Analyst — Fresher",
+      "job_url": "",
+      "source_platform": "user_provided",
+      "location": "",
+      "employment_type": "",
+      "job_description_reference": "job_descriptions\\app_7956079ee1de_junior_data_analyst_fresher.txt",
+      "job_description_text": "Junior Data Analyst — Fresher\n\nCompany: DataNova Analytics\n\nWe are looking for a Junior Data Analyst to support data-driven business\ndecisions through data cleaning, exploratory analysis, reporting, and\nvisualization.\n\nResponsibilities:\n- Clean, transform, and validate structured datasets.\n- Perform exploratory data analysis to identify trends and patterns.\n- Create reports and dashboards for business insights.\n- Write SQL queries to extract and analyze data.\n- Work with Python libraries such as Pandas and NumPy for data analysis.\n- Communicate analytical findings clearly to team members.\n\nRequired Skills:\n- Python\n- SQL\n- Pandas\n- NumPy\n- Data Cleaning\n- Exploratory Data Analysis\n- Data Visualization\n- Analytical Thinking\n\nPreferred Skills:\n- Power BI\n- Excel\n- Basic statistics\n- Git/GitHub\n\nEducation:\n- Bachelor's degree in Computer Science, Data Science, Statistics,\n  Mathematics, or a related field.\n- Freshers are welcome.",
+      "date_added": "2026-10-01",
+      "date_applied": null,
+      "current_status": "resume_ready",
+      "status_history": [
+        {
+          "old_status": null,
+          "new_status": "awaiting_resume_approval",
+          "timestamp": "2026-10-01T04:01:40.851711+00:00",
+          "source": "application_assistant"
+        },
+        {
+          "old_status": "awaiting_resume_approval",
+          "new_status": "resume_ready",
+          "timestamp": "2026-10-01T04:02:16.920727+00:00",
+          "source": "explicit_user_approval"
+        }
+      ],
+      "resume_reference": "output\\resumes\\datanova_analytics_junior_data_analyst_fresher_app_7956079ee1de_Final.docx",
+      "cover_letter_reference": "output\\cover_letters\\datanova_analytics_junior_data_analyst_fresher_app_7956079ee1de_CoverLetter_Final.docx",
+      "project_selection_mode": "automatic",
+      "project_selection_source": "automatic",
+      "project_selection_record_ids": [
+        "project_bank_customer_clustering_dashboard",
+        "project_telecom_churn_logistic_regression"
+      ],
+      "selected_projects": [
+        "Bank Customer Clustering and Financial Analytics Dashboard",
+        "Telecom Churn Logistic Regression"
+      ],
+      "selected_skills": [
+        "Python",
+        "SQL",
+        "SQLite",
+        "MySQL",
+        "Text-to-SQL",
+        "Git",
+        "Pandas",
+        "NumPy"
+      ],
+      "selected_certifications": [],
+      "experience_decision": [
+        {
+          "record_id": "experience_ediglobe_ai_intern",
+          "organization": "Ediglobe",
+          "title": "Artificial Intelligence Intern",
+          "decision": "INCLUDE",
+          "matched_requirements": [
+            "data preprocessing",
+            "exploratory data analysis"
+          ],
+          "reason": "Actual responsibilities/evidence were compared; broad AI/Python wording alone is insufficient."
+        },
+        {
+          "record_id": "experience_eduskills_ai_ml_virtual_internship",
+          "organization": "EduSkills",
+          "title": "AI-ML Virtual Internship",
+          "decision": "NOT RELEVANT ENOUGH FOR RESUME",
+          "matched_requirements": [],
+          "reason": "Actual responsibilities/evidence were compared; broad AI/Python wording alone is insufficient."
+        }
+      ],
+      "requirements_summary": [
+        {
+          "canonical": "python",
+          "jd_phrases": [
+            "python"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "sql",
+          "jd_phrases": [
+            "sql"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "data preprocessing",
+          "jd_phrases": [
+            "data cleaning",
+            "cleaning"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "exploratory data analysis",
+          "jd_phrases": [
+            "exploratory data analysis",
+            "visualization"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "git",
+          "jd_phrases": [
+            "git"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "github",
+          "jd_phrases": [
+            "github"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "pandas",
+          "jd_phrases": [
+            "pandas"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "numpy",
+          "jd_phrases": [
+            "numpy"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "data science",
+          "jd_phrases": [
+            "data science",
+            "analytics"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        }
+      ],
+      "supported_requirements": [
+        "python",
+        "sql",
+        "data preprocessing",
+        "exploratory data analysis",
+        "git",
+        "github",
+        "pandas",
+        "numpy",
+        "data science"
+      ],
+      "partial_requirements": [],
+      "unsupported_requirements": [],
+      "candidate_gap_summary": [],
+      "application_checklist": {
+        "requirements": [],
+        "documents": [
+          {
+            "item": "Tailored resume",
+            "status": "pending"
+          },
+          {
+            "item": "Cover letter",
+            "status": "ready"
+          }
+        ],
+        "manual_actions": [
+          {
+            "item": "Submit application",
+            "status": "pending"
+          },
+          {
+            "item": "Upload resume",
+            "status": "pending"
+          },
+          {
+            "item": "Upload cover letter",
+            "status": "pending"
+          },
+          {
+            "item": "Complete application questions",
+            "status": "pending"
+          },
+          {
+            "item": "Verify contact information",
+            "status": "pending"
+          },
+          {
+            "item": "Final manual submission",
+            "status": "pending"
+          }
+        ]
+      },
+      "application_notes": [],
+      "follow_up_date": null,
+      "last_updated": "2026-10-01T05:32:56.584485+00:00",
+      "phase8_plan_reference": "output\\reports\\app_7956079ee1de_phase8_plan.json",
+      "resume_generation_allowed": true,
+      "provenance": {
+        "job_source": "user_provided",
+        "candidate_source": "data/*.json",
+        "phase8_source": "output\\reports\\app_7956079ee1de_phase8_plan.json"
+      },
+      "manual_submission_required": true,
+      "automatic_submission_enabled": false,
+      "working_resume_reference": "output\\resumes\\datanova_analytics_junior_data_analyst_fresher_app_7956079ee1de_Resume_Working.docx",
+      "working_resume_pdf_reference": "output\\resumes\\datanova_analytics_junior_data_analyst_fresher_app_7956079ee1de_Resume_Working.pdf",
+      "working_resume_docx_path": "output\\resumes\\datanova_analytics_junior_data_analyst_fresher_app_7956079ee1de_Resume_Working.docx",
+      "working_resume_pdf_path": "output\\resumes\\datanova_analytics_junior_data_analyst_fresher_app_7956079ee1de_Resume_Working.pdf",
+      "working_resume_docx_sha256": "e209928520146aae077149e94423671f942262a68db31f70e50dd872c84a40cf",
+      "working_resume_pdf_sha256": "c833b98137a558d4b0833b99a2c2e985c813623b700b293b2d6eafc2b37f2904",
+      "working_resume_generation_id": "gen_62ea116c7dec4ae2b7d3eda584395418",
+      "working_resume_generated_at": "2026-10-01T05:11:49.177316+00:00",
+      "resume_validation_reference": "output\\reports\\app_7956079ee1de_resume_validation.json",
+      "resume_working_artifact_stale": false,
+      "resume_pdf_reference": "output\\resumes\\datanova_analytics_junior_data_analyst_fresher_app_7956079ee1de_Final.pdf",
+      "resume_docx_path": "output\\resumes\\datanova_analytics_junior_data_analyst_fresher_app_7956079ee1de_Final.docx",
+      "resume_pdf_path": "output\\resumes\\datanova_analytics_junior_data_analyst_fresher_app_7956079ee1de_Final.pdf",
+      "resume_docx_sha256": "6dfa828f2291aac5a89cf0fedada4fc651de74e27939c2988ae468cd0c6615ca",
+      "resume_pdf_sha256": "d944339d234a53fbcea72e7c855eda25d75bddbb4eed36cc621f11976fe9b95e",
+      "resume_generation_id": "gen_309b96c1a1544b63b57f8d9132a5eefc",
+      "resume_finalized_at": "2026-10-01T04:03:14.115793+00:00",
+      "resume_status": "final",
+      "cover_letter_edited_at": "2026-10-01T04:03:33.971913+00:00",
+      "cover_letter_working_reference": "output\\cover_letters\\datanova_analytics_junior_data_analyst_fresher_app_7956079ee1de_CoverLetter_Working.md",
+      "cover_letter_source_reference": "output\\cover_letters\\datanova_analytics_junior_data_analyst_fresher_app_7956079ee1de_CoverLetter_Working.md",
+      "cover_letter_pdf_reference": "output\\cover_letters\\datanova_analytics_junior_data_analyst_fresher_app_7956079ee1de_CoverLetter_Final.pdf",
+      "cover_letter_status": "final"
     }
   ]
 }

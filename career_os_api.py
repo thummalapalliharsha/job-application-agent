@@ -439,9 +439,7 @@ def save_resume_document_payload(aid, payload):
         reports_dir = ROOT / "output" / "reports"
         resume_dir.mkdir(parents=True, exist_ok=True)
         stamp = uuid.uuid4().hex[:10]
-        company = aa.slug(app.get("company_name") or "company")
-        role = aa.slug(app.get("job_title") or "role")
-        stem = f"{company}_{role}_{aid}_Working_{candidate['revision_id']}_{stamp}"
+        stem = aa.artifact_stem(app, "resume", "Working", f"{candidate['revision_id']}_{stamp}")
         final_docx = resume_dir / f"{stem}.docx"
         final_pdf = resume_dir / f"{stem}.pdf"
         report_path = reports_dir / f"{aid}_resume_document_validation_{candidate['revision_id']}_{stamp}.json"
