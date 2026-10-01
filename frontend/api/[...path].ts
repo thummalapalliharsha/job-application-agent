@@ -8,19 +8,15 @@ export default async function handler(req: any, res: any) {
     });
   }
 
-  const pathParts = req.query?.path;
-
-  const path = Array.isArray(pathParts)
-    ? pathParts.join("/")
-    : String(pathParts || "");
-
   const incomingUrl = new URL(
     req.url || "/",
     `https://${req.headers.host}`
   );
 
+  const apiPath = incomingUrl.pathname.replace(/^\/api\/?/, "");
+
   const targetUrl =
-    `${renderUrl.replace(/\/$/, "")}/api/${path}` +
+    `${renderUrl.replace(/\/$/, "")}/api/${apiPath}` +
     incomingUrl.search;
 
   const headers: Record<string, string> = {
