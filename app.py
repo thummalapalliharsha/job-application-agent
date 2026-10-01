@@ -7,15 +7,23 @@ from datetime import datetime
 from html import escape
 import streamlit as st
 import streamlit.components.v1 as components
+from career_os_config import (
+  CODE_ROOT,
+  DATA_DIR,
+  OUTPUT_DIR,
+  resolve_storage_reference,
+  storage_reference,
+)
 
-ROOT=Path(__file__).resolve().parent
-DATA=ROOT/'data'; OUT=ROOT/'output'; REPORTS=OUT/'reports'; RESUMES=OUT/'resumes'; LETTERS=OUT/'cover_letters'
+ROOT=CODE_ROOT
+DATA=DATA_DIR; OUT=OUTPUT_DIR; REPORTS=OUT/'reports'; RESUMES=OUT/'resumes'; LETTERS=OUT/'cover_letters'
 for p in [REPORTS,RESUMES,LETTERS]: p.mkdir(parents=True,exist_ok=True)
 
 import application_assistant as aa
 import jd_resume_planner as planner
 import profile_update_agent as pua
 import resume_generator as rg
+import career_os_api as career_api
 
 st.set_page_config(page_title='AI Career Command Center', page_icon='✦', layout='wide', initial_sidebar_state='expanded')
 
@@ -120,7 +128,10 @@ if st.session_state.get('settings_motion_preference') == 'Reduced motion':
 def load_apps(): return aa.load_store().get('applications',[])
 def save_apps(apps): aa.save_store({'applications':apps})
 def app_by_id(aid): return next((x for x in load_apps() if x['application_id']==aid),None)
-def resolve_ref(ref): return ROOT/str(ref).replace('\\','/')
+def resolve_ref(ref):
+ path=resolve_storage_reference(str(ref))
+ if path is None: raise ValueError('Invalid application storage reference')
+ return path
 def card(title,value,sub=''):
  st.markdown(f'<div class="card"><div class="label">{title}</div><div class="metric">{value}</div><div class="small">{sub}</div></div>',unsafe_allow_html=True)
 def status_badge(status):
@@ -144,7 +155,7 @@ def eligible_completed_projects():
  profile=planner.load_profile(); projects=profile['projects'].get('projects',[]); seen=set(); eligible=[]
  for p in projects:
   rid=p.get('record_id')
-  if rid and rid not in seen and p.get('project_status')=='completed': eligible.append(p); seen.add(rid)
+  if rid and rid not in seen and p.get('project_status')=='completed' and p.get('status')=='verified': eligible.append(p); seen.add(rid)
  return eligible
 def project_stack(p):
  vals=p.get('technologies') or p.get('frameworks_libraries_tools') or []
@@ -348,7 +359,7 @@ def finalize_doc(app,kind,src):
  app=app_by_id(app['application_id']); apps=load_apps(); target=next(x for x in apps if x['application_id']==app['application_id'])
  key='resume_reference' if kind=='resume' else 'cover_letter_reference'; target[key]=str(final.relative_to(ROOT)); target[f'{kind}_pdf_reference']=str(pdf.relative_to(ROOT)); target[f'{kind}_status']='final'
  if kind=='resume':
-  target.update({'resume_docx_path':str(final.relative_to(ROOT)),'resume_pdf_path':str(pdf.relative_to(ROOT)),'resume_docx_sha256':file_sha256(final),'resume_pdf_sha256':file_sha256(pdf),'resume_generation_id':'gen_'+uuid.uuid4().hex,'resume_finalized_at':aa.now()})
+  target.update({'resume_docx_path':str(final.relative_to(ROOT)),'resume_pdf_path':str(pdf.relative_to(ROOT)),'resume_docx_sha256':file_sha256(final),'resume_pdf_sha256':file_sha256(pdf),'resume_generation_id':'gen_'+uuid.uuid4().hex,'resume_finalized_at':aa.now(),'resume_final_stale':False})
  target['last_updated']=aa.now(); save_apps(apps); return final,pdf
 def load_document_history():
  path=DATA/'document_history.json'
@@ -485,12 +496,25 @@ def jd_analysis_page():
  except Exception as exc: st.error(f'JD analysis could not be loaded: {type(exc).__name__}: {exc}'); return
  st.markdown(f'<div class="workspace-card"><b>{escape(str(app.get("company_name") or "Unknown company"))}</b><br><span class="muted">{escape(str(app.get("job_title") or plan.get("jd_analysis",{}).get("job_title") or "Untitled role"))}</span><br><span class="small">Status: {escape(str(app.get("current_status") or "unknown"))}</span></div>',unsafe_allow_html=True)
  render_plan_review(plan,app)
+ required_gaps=[item for item in plan.get('candidate_matching',[]) if item.get('classification')=='required' and item.get('evidence_status') in {'UNSUPPORTED','UNKNOWN'} and not any(evidence.get('type')=='skill' and evidence.get('status') in {'verified','candidate_provided'} for evidence in item.get('evidence',[]))]
+ if required_gaps:
+  st.markdown('<div class="section-title">Required Skill Gaps</div>',unsafe_allow_html=True)
+  profile_data=pua.all_data()
+  categories=[group.get('category') for group in profile_data['skills'].get('skill_groups',[]) if group.get('category')]
+  for gap in required_gaps:
+   skill=gap.get('requirement')
+   st.warning(f'This JD strongly requires {skill}, but {skill} is not currently in your profile. Do you want to add it?')
+   category=st.selectbox('Profile category',categories,key=f'skill_gap_category_{app["application_id"]}_{planner.norm(skill)}')
+   if st.button(f'Confirm adding {skill} as candidate-provided',key=f'skill_gap_confirm_{app["application_id"]}_{planner.norm(skill)}'):
+    result=career_api.confirm_skill_gap(app['application_id'],{'skill':skill,'category':category,'confirmed':True})
+    if result.get('decision')=='skill_added_candidate_provided': st.success(result.get('message','Skill recorded for verification.')); st.rerun()
+    else: st.error(result.get('message') or result)
  st.markdown('<div class="section-title">Resume Plan Review</div>',unsafe_allow_html=True)
  if app.get('resume_generation_allowed'): st.success('Resume Plan approved. Resume generation is available in Resume Workspace.')
  else:
   st.warning('Resume plan ready for review. Explicit approval is required before resume generation.')
   if st.button('Approve Resume Plan',type='primary',key='jd_analysis_approve_plan'):
-   approval=aa.approve_resume(app['application_id'])
+   approval=aa.approve_resume(app['application_id'],plan)
    if approval.get('decision')=='approved': st.success('Resume Plan approved.'); st.session_state['selected_app']=app['application_id']; st.rerun()
    else: st.error(approval)
 
@@ -505,7 +529,8 @@ def resume_workspace():
  if app.get('current_status')=='awaiting_resume_approval':
   st.warning('Resume Plan approval required.')
   if st.button('Approve Resume Plan',type='primary'):
-   approval=aa.approve_resume(app['application_id'])
+   plan=json.loads(resolve_ref(app['phase8_plan_reference']).read_text(encoding='utf-8'))
+   approval=aa.approve_resume(app['application_id'],plan)
    if approval.get('decision')=='approved': st.session_state['resume_plan_approved_notice']=True
    st.rerun()
  if st.button('Generate working resume'):
@@ -519,7 +544,7 @@ def resume_workspace():
      working_pdf=pdf_convert(out); generation_id='gen_'+uuid.uuid4().hex; generated_at=aa.now(); docx_rel=str(out.relative_to(ROOT)); pdf_rel=str(working_pdf.relative_to(ROOT))
     st.session_state['resume_generation_result']={'docx':str(out.relative_to(ROOT)),'validation_report':str(report.relative_to(ROOT)),'validation':validation}
     if validation.get('page_count')==1 and validation.get('final_status')=='PASS':
-     apps=load_apps(); target=next(x for x in apps if x['application_id']==app['application_id']); target.update({'working_resume_reference':docx_rel,'working_resume_pdf_reference':pdf_rel,'working_resume_docx_path':docx_rel,'working_resume_pdf_path':pdf_rel,'working_resume_docx_sha256':file_sha256(out),'working_resume_pdf_sha256':file_sha256(working_pdf),'working_resume_generation_id':generation_id,'working_resume_generated_at':generated_at,'resume_validation_reference':str(report.relative_to(ROOT)),'resume_working_artifact_stale':False,'current_status':'resume_ready','last_updated':aa.now()}); save_apps(apps); st.success('Working resume generated and validated.'); st.rerun()
+      apps=load_apps(); target=next(x for x in apps if x['application_id']==app['application_id']); target.update({'working_resume_reference':docx_rel,'working_resume_pdf_reference':pdf_rel,'working_resume_docx_path':docx_rel,'working_resume_pdf_path':pdf_rel,'working_resume_docx_sha256':file_sha256(out),'working_resume_pdf_sha256':file_sha256(working_pdf),'working_resume_generation_id':generation_id,'working_resume_generated_at':generated_at,'resume_validation_reference':str(report.relative_to(ROOT)),'resume_working_artifact_stale':False,'resume_final_stale':bool(target.get('resume_generation_id')),'current_status':'resume_ready','last_updated':aa.now()}); save_apps(apps); st.success('Working resume generated and validated.'); st.rerun()
     else: st.error(f"Resume validation failed: {validation.get('final_status','UNKNOWN')}. Review {report.relative_to(ROOT)} before retrying.")
   except Exception as exc:
    st.error(f'Resume generation failed: {type(exc).__name__}: {exc}')

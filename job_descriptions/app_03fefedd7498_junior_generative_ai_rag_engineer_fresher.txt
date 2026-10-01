@@ -1,0 +1,44 @@
+We are looking for a Junior Generative AI / RAG Engineer to help build retrieval-augmented AI applications and LLM-powered tools.
+
+Responsibilities
+Build and maintain Retrieval-Augmented Generation (RAG) pipelines.
+Process and chunk documents for retrieval.
+Generate embeddings and store documents in a vector database.
+Implement semantic search and retrieve relevant context for LLM responses.
+Integrate LLMs into Python applications.
+Develop prompts and evaluate generated responses.
+Build simple interfaces for demonstrating AI applications.
+Debug and improve RAG pipelines for relevance and reliability.
+Required Skills
+Python
+Generative AI
+Large Language Models (LLMs)
+Retrieval-Augmented Generation (RAG)
+Natural Language Processing (NLP)
+Embeddings
+Vector Databases
+Prompt Engineering
+Git/GitHub
+Preferred Skills
+LangChain
+ChromaDB
+FAISS
+Ollama
+Streamlit
+Docker
+LLM Evaluation
+REST APIs
+Education
+Bachelor's degree in Computer Science, Artificial Intelligence, Data Science, or a related field.
+Freshers are welcome.
+Role
+
+Junior Generative AI / RAG Engineer — Fresher
+
+Experience
+
+0–1 year / Freshers
+
+Location
+
+Hyderabad, Telangana

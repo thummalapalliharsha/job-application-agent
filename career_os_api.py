@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 import copy
+import hmac
 import mimetypes
 import os
 import re
@@ -16,22 +17,70 @@ from urllib.parse import parse_qs, unquote_to_bytes, urlparse
 
 import application_assistant as aa
 import jd_resume_planner as planner
+import profile_update_agent as pua
+from career_os_config import (
+    CODE_ROOT,
+    DATA_DIR,
+    FRONTEND_DIST_DIR,
+    OUTPUT_DIR,
+    STORAGE_ROOT,
+    resolve_storage_reference,
+    storage_reference,
+)
 try:
     import resume_generator as rg
 except ModuleNotFoundError:
     rg = None
 
-ROOT = Path(__file__).resolve().parent
-FRONTEND = ROOT / "frontend" / "dist"
+ROOT = CODE_ROOT
+FRONTEND = FRONTEND_DIST_DIR
 _RESUME_DOCUMENT_LOCK = threading.RLock()
-_ALLOWED_HOSTS = {
+_LOCAL_ALLOWED_HOSTS = {
     f"{host}:{port}"
     for host in ("localhost", "127.0.0.1")
     for port in (8504, 5173, 4173)
 }
-_ALLOWED_ORIGINS = {f"http://{host}" for host in _ALLOWED_HOSTS}
+_LOCAL_ALLOWED_ORIGINS = {f"http://{host}" for host in _LOCAL_ALLOWED_HOSTS}
+_API_TOKEN = os.environ.get("CAREER_OS_API_TOKEN", "").strip()
+_RUNTIME_ENV = os.environ.get("CAREER_OS_ENV", "development").strip().casefold()
 _BAD_PERCENT_ESCAPE = re.compile(r"%(?![0-9A-Fa-f]{2})")
 _WINDOWS_DRIVE = re.compile(r"^[A-Za-z]:")
+
+
+def _environment_items(name: str) -> set[str]:
+    return {item.strip() for item in os.environ.get(name, "").split(",") if item.strip()}
+
+
+def _configured_origins() -> set[str]:
+    origins = set(_LOCAL_ALLOWED_ORIGINS)
+    for origin in _environment_items("CAREER_OS_ALLOWED_ORIGINS"):
+        parsed = urlparse(origin)
+        if (origin != "*" and parsed.scheme in {"http", "https"} and parsed.netloc
+                and parsed.username is None and parsed.password is None
+                and parsed.path in {"", "/"} and not parsed.params and not parsed.query and not parsed.fragment):
+            origins.add(f"{parsed.scheme}://{parsed.netloc}")
+    return origins
+
+
+_ALLOWED_ORIGINS = _configured_origins()
+_ALLOWED_HOSTS = _LOCAL_ALLOWED_HOSTS | _environment_items("CAREER_OS_ALLOWED_HOSTS")
+_ALLOWED_HOSTS.update(urlparse(origin).netloc for origin in _ALLOWED_ORIGINS)
+
+
+def _api_server_address() -> tuple[str, int]:
+    host = os.environ.get("CAREER_OS_HOST", "127.0.0.1").strip()
+    port = int(os.environ.get("CAREER_OS_PORT", "8504"))
+    if not host or not 1 <= port <= 65535:
+        raise ValueError("CAREER_OS_HOST and CAREER_OS_PORT must specify a valid bind address")
+    return host, port
+
+
+def _valid_api_token(method: str, path: str, authorization: str | None) -> bool:
+    if not _API_TOKEN or method == "OPTIONS" or path == "/api/health":
+        return True
+    if not isinstance(authorization, str) or not authorization.startswith("Bearer "):
+        return False
+    return hmac.compare_digest(authorization[7:], _API_TOKEN)
 
 
 def _decode_url_path(value):
@@ -98,6 +147,89 @@ def profile_summary():
     projects = profile.get("projects", {}).get("projects", [])
     skills = [s for group in profile.get("skills", {}).get("skill_groups", []) for s in group.get("skills", [])]
     return {"name": master.get("name"), "headline": master.get("headline") or master.get("summary"), "location": master.get("location"), "projects": projects, "skills": skills, "education": profile.get("education", {}).get("education", []), "experience": profile.get("experience", {}).get("experiences", []), "certifications": profile.get("certifications", {}).get("certifications", [])}
+
+
+def confirm_skill_gap(aid, payload):
+    """Persist an explicitly confirmed skill as candidate-provided and stale the application plan."""
+    if not isinstance(payload, dict) or payload.get("confirmed") is not True:
+        return {"decision": "confirmation_required", "message": "Explicit confirmation is required before adding a candidate-provided skill."}
+    skill_name = str(payload.get("skill") or "").strip()
+    category = str(payload.get("category") or "").strip()
+    if not skill_name or len(skill_name) > 100:
+        return {"decision": "invalid", "message": "A valid skill name is required."}
+
+    with _RESUME_DOCUMENT_LOCK:
+        app = get_application(aid)
+        if not app:
+            return {"decision": "not_found"}
+        plan_path = _safe_project_path(app.get("phase8_plan_reference"))
+        if not plan_path or not plan_path.is_file():
+            return {"decision": "error", "message": "The current Resume Plan could not be safely resolved."}
+        try:
+            plan = json.loads(plan_path.read_text(encoding="utf-8"))
+            matching = next((item for item in plan.get("candidate_matching", [])
+                             if planner.norm(item.get("requirement")) == planner.norm(skill_name)), None)
+            if not matching or matching.get("classification") != "required" or matching.get("evidence_status") not in {"UNSUPPORTED", "UNKNOWN"}:
+                return {"decision": "invalid", "message": "Only a currently unsupported required JD skill can be added through this confirmation."}
+            store_path = aa.DATA / "applications.json"
+            original_store = store_path.read_bytes()
+            original_plan = plan_path.read_bytes()
+            profile_paths = [ROOT / "data" / "skills.json", ROOT / "data" / "master_profile.json"]
+            original_profile = {path: path.read_bytes() for path in profile_paths}
+            profile = pua.all_data(ROOT)
+            update_plan = pua.plan_skill_gap_addition(skill_name, category, root=ROOT, application_id=aid)
+            if update_plan.get("decision") != "planned":
+                return {"decision": update_plan.get("decision", "invalid"), "message": "The skill could not be planned for profile update.", "details": update_plan}
+            pua.apply_plan(update_plan, root=ROOT, confirm=True)
+            profile = pua.all_data(ROOT)
+            updated_plan = planner.plan_resume(app.get("job_description_text", ""), profile)
+            automatic = copy.deepcopy(updated_plan["resume_plan"].get("projects_to_include", []))
+            updated_plan["resume_plan"]["automatic_projects_to_include"] = copy.deepcopy(automatic)
+            mode = app.get("project_selection_mode") or "automatic"
+            selected = automatic
+            if mode == "manual":
+                eligible = {item.get("record_id"): item for item in profile["projects"].get("projects", [])
+                            if item.get("status") == "verified" and item.get("project_status") == "completed"}
+                selected = [eligible[record_id] for record_id in app.get("project_selection_record_ids", []) if record_id in eligible]
+                if selected:
+                    updated_plan["resume_plan"]["projects_to_include"] = selected
+                    updated_plan["resume_plan"]["project_selection_source"] = "manual"
+                    updated_plan["resume_plan"]["project_selection_record_ids"] = [item["record_id"] for item in selected]
+                else:
+                    mode = "automatic"
+            updated_plan.setdefault("approval_checkpoint", {})["resume_generation_allowed"] = False
+            _atomic_write_json(plan_path, updated_plan)
+
+            store = json.loads(store_path.read_bytes().decode("utf-8"))
+            target = next(item for item in store.get("applications", []) if item.get("application_id") == aid)
+            selected = updated_plan["resume_plan"].get("projects_to_include", automatic)
+            target.update({
+                "selected_projects": [item.get("name") for item in selected],
+                "project_selection_mode": mode,
+                "project_selection_source": mode,
+                "project_selection_record_ids": [item.get("record_id") for item in selected],
+                "selected_skills": [item.get("name") for item in updated_plan["resume_plan"].get("skills_to_include", [])],
+                "selected_certifications": [item.get("name") for item in updated_plan["resume_plan"].get("certifications_to_include", [])],
+                "experience_decision": updated_plan["resume_plan"].get("experience_decisions", []),
+                "requirements_summary": updated_plan["jd_analysis"].get("requirements", []),
+                "supported_requirements": [item.get("requirement") for item in updated_plan["evidence_summary"].get("supported_requirements", [])],
+                "partial_requirements": [item.get("requirement") for item in updated_plan["evidence_summary"].get("partial_requirements", [])],
+                "unsupported_requirements": [item.get("requirement") for item in updated_plan["evidence_summary"].get("unsupported_requirements", [])],
+                "candidate_gap_summary": aa.gap_summary(updated_plan),
+                "application_checklist": aa.checklist(updated_plan),
+                "resume_generation_allowed": False,
+                "resume_working_artifact_stale": bool(target.get("working_resume_generation_id") or target.get("working_resume_docx_path")),
+                "current_status": "awaiting_resume_approval",
+                "last_updated": aa.now(),
+            })
+            _write_application_store_atomically(original_store, store)
+            return {"decision": "skill_added_candidate_provided", "message": "Added as candidate-provided evidence. It will not appear in a resume until verified. The refreshed Resume Plan requires approval before regeneration.", "skill": skill_name, "status": "candidate_provided", "application": target, "plan": updated_plan}
+        except Exception as exc:
+            for path, content in original_profile.items() if 'original_profile' in locals() else []:
+                path.write_bytes(content)
+            if 'original_plan' in locals():
+                plan_path.write_bytes(original_plan)
+            return {"decision": "error", "message": f"Skill-gap confirmation was not completed: {type(exc).__name__}: {exc}"}
 
 
 def application_payload():
@@ -583,6 +715,55 @@ def convert_pdf(docx):
     return destination
 
 
+def persist_working_cover_letter_formats(aid, result):
+    app = get_application(aid)
+    if not app:
+        return {"decision": "not_found"}
+    markdown_ref = app.get("cover_letter_working_reference") or result.get("cover_letter_working_reference")
+    if not markdown_ref:
+        return {"decision": "error", "message": "The Working Cover Letter source was not saved."}
+    markdown_path = resolve_ref(markdown_ref)
+    if not markdown_path.is_file():
+        return {"decision": "error", "message": "The Working Cover Letter source could not be found."}
+    docx_path = markdown_path.with_suffix(".docx")
+    from docx import Document
+    document = Document()
+    for line in markdown_path.read_text(encoding="utf-8").splitlines():
+        document.add_paragraph(line)
+    document.save(docx_path)
+    pdf_path = convert_pdf(docx_path)
+    if not pdf_path.is_file() or pdf_path.read_bytes()[:4] != b"%PDF":
+        return {"decision": "error", "message": "The Working Cover Letter PDF could not be generated."}
+
+    store = aa.load_store()
+    target = next((item for item in store.get("applications", []) if item.get("application_id") == aid), None)
+    if not target:
+        return {"decision": "not_found"}
+    docx_ref = str(docx_path.relative_to(ROOT))
+    pdf_ref = str(pdf_path.relative_to(ROOT))
+    target.update({
+        "cover_letter_working_reference": str(markdown_ref),
+        "cover_letter_source_reference": str(markdown_ref),
+        "cover_letter_working_docx_reference": docx_ref,
+        "cover_letter_working_pdf_reference": pdf_ref,
+        "last_updated": aa.now(),
+    })
+    aa.save_store(store)
+    return {
+        **result,
+        "cover_letter_working_reference": str(markdown_ref),
+        "cover_letter_working_docx_reference": docx_ref,
+        "cover_letter_working_pdf_reference": pdf_ref,
+    }
+
+
+def generate_working_cover_letter(aid):
+    result = aa.generate_cover_letter(aid)
+    if result.get("decision") != "created":
+        return result
+    return persist_working_cover_letter_formats(aid, result)
+
+
 def generate_working_resume(aid):
     if rg is None:
         return {"decision": "backend_unavailable", "message": "Resume document tooling is unavailable in this runtime; use the project desktop service."}
@@ -612,7 +793,7 @@ def generate_working_resume(aid):
     pdf_ref = str(working_pdf.relative_to(ROOT))
     store = aa.load_store()
     target = next(item for item in store["applications"] if item.get("application_id") == aid)
-    target.update({"working_resume_reference": docx_ref, "working_resume_pdf_reference": pdf_ref, "working_resume_docx_path": docx_ref, "working_resume_pdf_path": pdf_ref, "working_resume_docx_sha256": file_sha256(output), "working_resume_pdf_sha256": file_sha256(working_pdf), "working_resume_generation_id": generation_id, "working_resume_generated_at": generated_at, "resume_validation_reference": str(report.relative_to(ROOT)), "resume_working_artifact_stale": False, "current_status": "resume_ready", "last_updated": generated_at})
+    target.update({"working_resume_reference": docx_ref, "working_resume_pdf_reference": pdf_ref, "working_resume_docx_path": docx_ref, "working_resume_pdf_path": pdf_ref, "working_resume_docx_sha256": file_sha256(output), "working_resume_pdf_sha256": file_sha256(working_pdf), "working_resume_generation_id": generation_id, "working_resume_generated_at": generated_at, "resume_validation_reference": str(report.relative_to(ROOT)), "resume_working_artifact_stale": False, "resume_final_stale": bool(target.get("resume_generation_id")), "current_status": "resume_ready", "last_updated": generated_at})
     aa.save_store(store)
     return {"decision": "created", "application": target, "working": {"docx_reference": docx_ref, "pdf_reference": pdf_ref, "generation_id": generation_id, "generated_at": generated_at, "validation_reference": str(report.relative_to(ROOT)), "validation": validation}}
 
@@ -735,7 +916,7 @@ def finalize_resume(aid):
     finalized_at = aa.now()
     store = aa.load_store()
     target = next(item for item in store["applications"] if item.get("application_id") == aid)
-    target.update({"resume_reference": final_docx_ref, "resume_pdf_reference": final_pdf_ref, "resume_docx_path": final_docx_ref, "resume_pdf_path": final_pdf_ref, "resume_docx_sha256": file_sha256(final), "resume_pdf_sha256": file_sha256(final_pdf), "resume_generation_id": "gen_" + uuid.uuid4().hex, "resume_finalized_at": finalized_at, "resume_status": "final", "last_updated": finalized_at})
+    target.update({"resume_reference": final_docx_ref, "resume_pdf_reference": final_pdf_ref, "resume_docx_path": final_docx_ref, "resume_pdf_path": final_pdf_ref, "resume_docx_sha256": file_sha256(final), "resume_pdf_sha256": file_sha256(final_pdf), "resume_generation_id": "gen_" + uuid.uuid4().hex, "resume_finalized_at": finalized_at, "resume_status": "final", "resume_final_stale": False, "last_updated": finalized_at})
     aa.save_store(store)
     return {"decision": "finalized", "application": target, "final": {"docx_reference": final_docx_ref, "pdf_reference": final_pdf_ref, "finalized_at": finalized_at, "validation_reference": str(validation_report.relative_to(ROOT))}}
 
@@ -749,7 +930,7 @@ def eligible_completed_projects():
     result = []
     for project in projects:
         record_id = project.get("record_id")
-        if record_id and record_id not in seen and project.get("project_status") == "completed":
+        if record_id and record_id not in seen and project.get("project_status") == "completed" and project.get("status") == "verified":
             result.append(project)
             seen.add(record_id)
     return result
@@ -831,6 +1012,12 @@ class Handler(BaseHTTPRequestHandler):
             self.send_json({"error": "request denied"}, 403)
             return False
 
+        request_path = urlparse(self.path).path
+        if (request_path.startswith("/api/")
+                and not _valid_api_token(self.command, request_path, self._single_header("Authorization"))):
+            self.send_json({"error": "authentication required"}, 401)
+            return False
+
         fetch_values = {
             "Sec-Fetch-Site": {"same-origin", "same-site", "none"},
             "Sec-Fetch-Mode": {"navigate", "same-origin", "no-cors", "cors", "websocket"},
@@ -859,9 +1046,16 @@ class Handler(BaseHTTPRequestHandler):
                 return False
         return True
 
+    def _send_cors_headers(self):
+        origins = self.headers.get_all("Origin", [])
+        if len(origins) == 1 and origins[0] in _ALLOWED_ORIGINS:
+            self.send_header("Access-Control-Allow-Origin", origins[0])
+            self.send_header("Vary", "Origin")
+
     def send_json(self, payload, status=200):
         body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
         self.send_response(status)
+        self._send_cors_headers()
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
         self.send_header("X-Content-Type-Options", "nosniff")
@@ -896,6 +1090,12 @@ class Handler(BaseHTTPRequestHandler):
                 return self.send_json({"error": "request denied"}, 400)
         self.send_response(204)
         self.send_header("Allow", "GET, POST, OPTIONS")
+        self._send_cors_headers()
+        origin = self.headers.get("Origin")
+        if origin in _ALLOWED_ORIGINS:
+            self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+            self.send_header("Access-Control-Allow-Headers", "Content-Type")
+            self.send_header("Access-Control-Max-Age", "600")
         self.send_header("X-Content-Type-Options", "nosniff")
         self.end_headers()
 
@@ -944,6 +1144,7 @@ class Handler(BaseHTTPRequestHandler):
                 except OSError:
                     return self.send_json({"error": "artifact not found"}, 404)
                 self.send_response(200)
+                self._send_cors_headers()
                 self.send_header("Content-Type", mimetypes.guess_type(str(candidate))[0] or "application/octet-stream")
                 self.send_header("Content-Length", str(len(body)))
                 view_requested = (query.get("view") or [""])[0].lower() in {"1", "true", "inline"}
@@ -974,7 +1175,10 @@ class Handler(BaseHTTPRequestHandler):
                 jd = str(payload.get("job_description", "")).strip()
                 if not jd:
                     return self.send_json({"error": "job_description is required"}, 400)
-                return self.send_json(planner.plan_resume(jd, planner.load_profile()))
+                profile = planner.load_profile()
+                plan = planner.plan_resume(jd, profile)
+                plan["candidate_skill_categories"] = [group.get("category") for group in profile.get("skills", {}).get("skill_groups", []) if group.get("category")]
+                return self.send_json(plan)
             if path == "/api/applications":
                 jd = str(payload.get("job_description", "")).strip()
                 if not jd:
@@ -996,7 +1200,13 @@ class Handler(BaseHTTPRequestHandler):
             else:
                 return self.send_json({"error": "not found"}, 404)
             if action == "approve-resume":
-                return self.send_json(aa.approve_resume(aid))
+                result = aa.approve_resume(aid, payload.get("plan"))
+                status = 200 if result.get("decision") == "approved" else 404 if result.get("decision") == "not_found" else 400 if result.get("decision", "").startswith("plan_") or result.get("decision") == "invalid_plan" else 200
+                return self.send_json(result, status)
+            if action == "confirm-skill-gap":
+                result = confirm_skill_gap(aid, payload)
+                status = 200 if result.get("decision") == "skill_added_candidate_provided" else 404 if result.get("decision") == "not_found" else 400 if result.get("decision") in {"invalid", "confirmation_required", "no_change_duplicate", "ask_clarification"} else 500 if result.get("decision") == "error" else 200
+                return self.send_json(result, status)
             if action == "resume-edit":
                 result = save_resume_edit(aid, payload)
                 return self.send_json(result, 400 if result.get("decision") in {"invalid", "error"} else 404 if result.get("decision") == "not_found" else 200)
@@ -1009,10 +1219,15 @@ class Handler(BaseHTTPRequestHandler):
             if action == "manual-edit":
                 return self.send_json({"decision": "unsupported", "message": "Manual resume editing is not exposed here because unsupported claims must remain governed by the existing Resume Project Edit/profile-evidence workflow."}, 409)
             if action == "cover-letter":
-                return self.send_json(aa.generate_cover_letter(aid))
+                result = generate_working_cover_letter(aid)
+                status = 404 if result.get("decision") == "not_found" else 500 if result.get("decision") == "error" else 200
+                return self.send_json(result, status)
             if action == "cover-letter-edit":
                 result = aa.edit_cover_letter(aid, payload.get("content"))
-                return self.send_json(result, 400 if result.get("decision") == "invalid" else 404 if result.get("decision") == "not_found" else 200)
+                if result.get("decision") == "saved":
+                    result = persist_working_cover_letter_formats(aid, result)
+                status = 400 if result.get("decision") == "invalid" else 404 if result.get("decision") == "not_found" else 500 if result.get("decision") == "error" else 200
+                return self.send_json(result, status)
             if action == "status":
                 try:
                     result = aa.update_status(aid, payload.get("status"), bool(payload.get("explicit_submission")))
@@ -1045,6 +1260,7 @@ class Handler(BaseHTTPRequestHandler):
         except OSError:
             return self.send_json({"error": "not found"}, 404)
         self.send_response(200)
+        self._send_cors_headers()
         self.send_header("Content-Type", mimetypes.guess_type(str(candidate))[0] or "application/octet-stream")
         self.send_header("Content-Length", str(len(body)))
         self.send_header("X-Content-Type-Options", "nosniff")
@@ -1056,4 +1272,6 @@ class Handler(BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    ThreadingHTTPServer(("127.0.0.1", 8504), Handler).serve_forever()
+    if _RUNTIME_ENV in {"production", "prod"} and len(_API_TOKEN) < 32:
+        raise SystemExit("CAREER_OS_API_TOKEN must be configured with at least 32 characters in production")
+    ThreadingHTTPServer(_api_server_address(), Handler).serve_forever()

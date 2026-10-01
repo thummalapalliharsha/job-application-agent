@@ -1,6 +1,7 @@
 import { StrictMode, Suspense, lazy, useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './styles.css'
+import { apiUrl } from './apiUrl'
 import { LoadingStatus } from './components/LoadingStatus'
 const ResumeDocumentEditor = lazy(() => import('./components/ResumeDocumentEditor').then((module) => ({ default: module.ResumeDocumentEditor })))
 
@@ -37,7 +38,7 @@ const nav: { key: Route; label: string; index: string }[] = [
 ]
 
 async function api<T>(path: string, options?: RequestInit): Promise<T> {
-  const response = await fetch(path, { headers: { 'Content-Type': 'application/json' }, ...options })
+  const response = await fetch(apiUrl(path), { headers: { 'Content-Type': 'application/json' }, ...options })
   const data = await response.json()
   if (!response.ok) throw new Error(data.error || data.message || 'Request failed')
   return data
@@ -137,7 +138,61 @@ function NewApplication({ app, onCreated, setNotice, go }: { app?: AppRecord; on
   return <Workspace title="START WITH THE ROLE" eyebrow="01 / INTAKE" intro="Give the system the raw material. It will extract the signal without inventing the evidence." workflow="new" go={go}><div className="form-layout"><div><label>JOB DESCRIPTION<textarea value={form.job_description} onChange={(e) => update('job_description', e.target.value)} placeholder="Paste the complete job description here…" /></label></div><div className="form-stack"><label>COMPANY<input value={form.company} onChange={(e) => update('company', e.target.value)} placeholder="Company name" /></label><label>ROLE<input value={form.title} onChange={(e) => update('title', e.target.value)} placeholder="Job title" /></label><label>JOB URL<input value={form.url} onChange={(e) => update('url', e.target.value)} placeholder="https://…" /></label><div className="form-row"><label>LOCATION<input value={form.location} onChange={(e) => update('location', e.target.value)} placeholder="Remote / city" /></label><label>SOURCE<input value={form.source} onChange={(e) => update('source', e.target.value)} placeholder="LinkedIn / referral" /></label></div><button className="button primary wide" onClick={submit} disabled={busy}>{busy ? <LoadingStatus label="ANALYZING…" /> : 'CREATE + ANALYZE ROLE ↗'}</button></div></div></Workspace>
 }
 
-function Analysis({ app, setNotice, refresh, go }: { app?: AppRecord; setNotice: (s: string) => void; refresh: () => void; go: (r: Route) => void }) { const [jd, setJd] = useState(''); const [plan, setPlan] = useState<AppRecord | null>(null); const [busy, setBusy] = useState(false); const confirmation = useTransientConfirmation(); const load = async () => { if (!app?.phase8_plan_reference) return; setBusy(true); try { const result: any = await api(`/api/analyze`, { method: 'POST', body: JSON.stringify({ job_description: app.job_description_text }) }); setPlan(result); confirmation.show('ANALYSIS COMPLETE') } catch (e: any) { setNotice(e.message) } finally { setBusy(false) } }; const approve = async () => { if (!app) return; try { await api(`/api/applications/${app.application_id}/approve-resume`, { method: 'POST' }); setNotice('Resume plan approved.'); refresh() } catch (e: any) { setNotice(e.message) } }; return <Workspace title="SEE THE SIGNAL" eyebrow="02 / JD INTELLIGENCE" intro="Requirements, evidence, gaps, and a defensible resume plan in one readable surface." workflow="analysis" go={go}><div className="analysis-top"><div className="analysis-card"><span className="card-label">SELECTED APPLICATION</span><h3>{app?.company_name || 'No application selected'}</h3><p>{app?.job_title || 'Create an application first.'}</p><span className="pill">{app?.current_status || 'WAITING'}</span></div><button className="button outline" onClick={load} disabled={!app || busy}>{busy ? <LoadingStatus label="ANALYZING…" /> : 'RUN EVIDENCE MAP ↗'}</button></div><InlineConfirmation message={confirmation.message} />{app && <div className="analysis-grid"><div className="analysis-card large"><span className="card-label">ROLE IDENTITY</span><h3>{plan?.jd_analysis?.job_title || app.job_title || 'Role'}</h3><div className="chip-list">{(plan?.jd_analysis?.required_technical_skills || app.supported_requirements || []).map((x: any) => <span className="chip positive" key={x}>{x}</span>)}</div></div><div className="analysis-card large"><span className="card-label">ALIGNMENT READOUT</span><div className="alignment-meter"><span style={{ width: `${Math.min(92, 35 + (plan?.evidence_summary?.supported_requirements?.length || 0) * 12)}%` }} /></div><p>{plan ? `${plan.evidence_summary?.supported_requirements?.length || 0} supported · ${plan.evidence_summary?.partial_requirements?.length || 0} partial · ${plan.evidence_summary?.unsupported_requirements?.length || 0} gaps` : 'Run the evidence map to calculate alignment.'}</p></div><div className="analysis-card full"><span className="card-label">PROJECT STRATEGY</span><div className="project-row">{(plan?.resume_plan?.projects_to_include || app.selected_projects || []).map((x: any) => <span className="project-chip" key={x.name || x}>{x.name || x}</span>)}</div></div></div>}{app && <div className="action-bar"><span>Approval gate: resume generation stays locked until you review this plan.</span>{!app.resume_generation_allowed && <button className="button primary" onClick={approve}>APPROVE PLAN ↗</button>}</div>}</Workspace> }
+function Analysis({ app, setNotice, refresh, go }: { app?: AppRecord; setNotice: (s: string) => void; refresh: () => void; go: (r: Route) => void }) {
+  const [plan, setPlan] = useState<AppRecord | null>(null)
+  const [busy, setBusy] = useState(false)
+  const [skillCategories, setSkillCategories] = useState<Record<string, string>>({})
+  const confirmation = useTransientConfirmation()
+  const load = async () => {
+    if (!app?.phase8_plan_reference) return
+    setBusy(true)
+    try {
+      const result: any = await api('/api/analyze', { method: 'POST', body: JSON.stringify({ job_description: app.job_description_text }) })
+      setPlan(result)
+      confirmation.show('ANALYSIS COMPLETE')
+    } catch (e: any) { setNotice(e.message) } finally { setBusy(false) }
+  }
+  const approve = async () => {
+    if (!app || !plan) return
+    try {
+      const result: any = await api(`/api/applications/${app.application_id}/approve-resume`, { method: 'POST', body: JSON.stringify({ plan }) })
+      if (result.decision !== 'approved') throw new Error(result.message || 'The reviewed plan could not be approved.')
+      setPlan(null)
+      setNotice('Reviewed Resume Plan approved and saved for this application.')
+      refresh()
+    }
+    catch (e: any) { setNotice(e.message) }
+  }
+  const confirmSkill = async (skill: string) => {
+    if (!app) return
+    const category = skillCategories[skill]
+    if (!category) return
+    setBusy(true)
+    try {
+      const result: any = await api(`/api/applications/${app.application_id}/confirm-skill-gap`, { method: 'POST', body: JSON.stringify({ skill, category, confirmed: true }) })
+      setNotice(result.message || 'Skill recorded as candidate-provided. Verify it before using it in a resume.')
+      setPlan(null)
+      refresh()
+    } catch (e: any) { setNotice(e.message) } finally { setBusy(false) }
+  }
+  const requiredGaps = (plan?.candidate_matching || []).filter((item: any) => item.classification === 'required' && ['UNSUPPORTED', 'UNKNOWN'].includes(item.evidence_status) && !(item.evidence || []).some((evidence: any) => evidence.type === 'skill' && ['verified', 'candidate_provided'].includes(evidence.status)))
+  return <Workspace title="SEE THE SIGNAL" eyebrow="02 / JD INTELLIGENCE" intro="Requirements, evidence, gaps, and a defensible resume plan in one readable surface." workflow="analysis" go={go}>
+    <div className="analysis-top"><div className="analysis-card"><span className="card-label">SELECTED APPLICATION</span><h3>{app?.company_name || 'No application selected'}</h3><p>{app?.job_title || 'Create an application first.'}</p><span className="pill">{app?.current_status || 'WAITING'}</span></div><button className="button outline" onClick={load} disabled={!app || busy}>{busy ? <LoadingStatus label="ANALYZING…" /> : 'RUN EVIDENCE MAP ↗'}</button></div>
+    <InlineConfirmation message={confirmation.message} />
+    {app && plan && <div className="analysis-grid">
+      <div className="analysis-card large"><span className="card-label">ROLE IDENTITY</span><h3>{plan.jd_analysis?.target_role || app.job_title || 'Role'}</h3><div className="chip-list">{(plan.jd_analysis?.required_technical_skills || app.supported_requirements || []).map((item: any) => <span className="chip positive" key={item}>{item}</span>)}</div></div>
+      <div className="analysis-card large"><span className="card-label">ALIGNMENT READOUT</span><div className="alignment-meter"><span style={{ width: `${Math.min(92, 35 + (plan.evidence_summary?.supported_requirements?.length || 0) * 12)}%` }} /></div><p>{`${plan.evidence_summary?.supported_requirements?.length || 0} supported · ${plan.evidence_summary?.partial_requirements?.length || 0} partial · ${plan.evidence_summary?.unsupported_requirements?.length || 0} gaps`}</p></div>
+      <div className="analysis-card full"><span className="card-label">PROJECT STRATEGY</span><div className="project-row">{(plan.resume_plan?.projects_to_include || []).map((item: any) => <span className="project-chip" key={item.record_id}>{item.name}</span>)}</div></div>
+      {requiredGaps.map((gap: any) => <div className="analysis-card full" key={gap.requirement}>
+        <span className="card-label">REQUIRED SKILL GAP</span>
+        <p>This JD strongly requires <b>{gap.requirement}</b>, but it is not currently in your profile. Do you want to add it?</p>
+        <label className="field-label">PROFILE CATEGORY<select value={skillCategories[gap.requirement] || ''} onChange={(event) => setSkillCategories({ ...skillCategories, [gap.requirement]: event.target.value })}><option value="">Choose a category</option>{(plan.candidate_skill_categories || []).map((category: string) => <option key={category} value={category}>{category.split('_').join(' ')}</option>)}</select></label>
+        <button className="button outline" onClick={() => confirmSkill(gap.requirement)} disabled={busy || !skillCategories[gap.requirement]}>CONFIRM ADD AS CANDIDATE-PROVIDED</button>
+      </div>)}
+    </div>}
+    {app && <div className="action-bar"><span>Approval gate: resume generation stays locked until you review this plan.</span>{plan && <button className="button primary" onClick={approve}>APPROVE REVIEWED PLAN ↗</button>}</div>}
+  </Workspace>
+}
 
 function Resume({ app, go, setNotice, refresh }: { app?: AppRecord; go: (r: Route) => void; setNotice: (s: string) => void; refresh: () => void }) {
   const [busy, setBusy] = useState(false)
@@ -148,6 +203,11 @@ function Resume({ app, go, setNotice, refresh }: { app?: AppRecord; go: (r: Rout
   const approved = !!app?.resume_generation_allowed
   const working = !!app?.working_resume_generation_id
   const finalized = !!app?.resume_generation_id
+  const workingTime = Date.parse(app?.working_resume_generated_at || '')
+  const finalizedTime = Date.parse(app?.resume_finalized_at || '')
+  const workingNewerThanFinal = !!(working && finalized && !app?.resume_working_artifact_stale && Number.isFinite(workingTime) && Number.isFinite(finalizedTime) && workingTime > finalizedTime)
+  const finalStale = !!(finalized && (app?.resume_final_stale || workingNewerThanFinal))
+  const canFinalize = !!(working && !app?.resume_working_artifact_stale && (!finalized || finalStale))
   const action = async (endpoint: string, success: string) => { if (!app) return; setBusyLabel(endpoint === 'finalize-resume' ? 'FINALIZING…' : 'BUILDING RESUME…'); setBusy(true); try { const result: any = await api(`/api/applications/${app.application_id}/${endpoint}`, { method: 'POST' }); if (result.decision && !['created', 'finalized'].includes(result.decision)) throw new Error(result.message || 'Resume action could not be completed.'); if (endpoint === 'generate-resume') confirmation.show('RESUME READY'); else setNotice(success); refresh() } catch (e: any) { setNotice(e.message) } finally { setBusy(false); setBusyLabel('') } }
   const openEditor = async () => { if (!app) return; setBusyLabel('LOADING PROJECTS…'); setBusy(true); try { setEditor(await api(`/api/applications/${app.application_id}/resume-editor`)) } catch (e: any) { setNotice(e.message) } finally { setBusy(false); setBusyLabel('') } }
   const openTextEditor = () => { if (!app) return; setEditor(null); setTextEditorOpen(true) }
@@ -155,18 +215,122 @@ function Resume({ app, go, setNotice, refresh }: { app?: AppRecord; go: (r: Rout
   const toggleProject = (id: string) => setEditor({ ...editor, selected_record_ids: editor.selected_record_ids.includes(id) ? editor.selected_record_ids.filter((x: string) => x !== id) : [...editor.selected_record_ids, id] })
   if (textEditorOpen && app) return <Workspace title="EDIT THE WORKING RESUME" eyebrow="03 / RESUME WORKSPACE" intro="Edit only source-backed resume text. Save validates and activates a new Working DOCX/PDF revision; Cancel discards the session." workflow="resume" go={go}><Suspense fallback={<div className="resume-editor-loading"><LoadingStatus label="LOADING EDITOR MODULE…" /></div>}><ResumeDocumentEditor applicationId={app.application_id} companyName={app.company_name || 'Selected application'} onCancel={() => setTextEditorOpen(false)} onSaved={() => { setTextEditorOpen(false); confirmation.show('WORKING VERSION SAVED'); refresh() }} /></Suspense></Workspace>
   return <Workspace title="BUILD THE PROOF" eyebrow="03 / RESUME WORKSPACE" intro="A working document, a final document, and a clear lifecycle between them." workflow="resume" go={go}>
-    <div className="resume-context"><div><span className="card-label">SELECTED APPLICATION</span><h3>{app?.company_name || 'No application selected'}</h3><p>{app?.job_title || 'Create an application first.'}</p></div><span className="pill">{finalized ? 'FINALIZED' : working ? 'RESUME READY' : approved ? 'PLAN APPROVED' : 'PLAN REVIEW REQUIRED'}</span></div><InlineConfirmation message={confirmation.message} />
+    <div className="resume-context"><div><span className="card-label">SELECTED APPLICATION</span><h3>{app?.company_name || 'No application selected'}</h3><p>{app?.job_title || 'Create an application first.'}</p></div><span className="pill">{finalStale ? 'WORKING UPDATED · FINAL SUPERSEDED' : finalized ? 'FINALIZED' : working ? 'RESUME READY' : approved ? 'PLAN APPROVED' : 'PLAN REVIEW REQUIRED'}</span></div><InlineConfirmation message={confirmation.message} />
     {!app && <div className="notice-panel">Create an application before opening the Resume Workspace.</div>}
     {app && !approved && <div className="resume-gate"><div><b>Approve the Resume Plan before generating.</b><span>Review the evidence map and project strategy in JD Intelligence first.</span></div><button className="button outline" onClick={() => go('analysis')}>← JD INTELLIGENCE</button></div>}
     {app && approved && !working && <div className="resume-next"><div><b>Resume plan approved</b><span>Ready to generate your tailored resume using the canonical profile and approved evidence.</span></div><div className="resume-actions"><button className="button primary" onClick={() => action('generate-resume', 'Working resume generated and validated.')} disabled={busy}>{busy && busyLabel === 'BUILDING RESUME…' ? <LoadingStatus label={busyLabel} /> : 'GENERATE RESUME ↗'}</button><button className="button quiet" onClick={openEditor} disabled={busy}>{busy && busyLabel === 'LOADING PROJECTS…' ? <LoadingStatus label={busyLabel} /> : 'EDIT PROJECTS'}</button></div></div>}
-    {app && approved && working && <div className="resume-next"><div><b>{finalized ? 'Working Resume and Final Resume available' : 'Working Resume ready'}</b><span>Last generated: {app.working_resume_generated_at || 'date not recorded'}</span></div><div className="resume-actions"><button className="button quiet" onClick={openEditor} disabled={busy}>{busy && busyLabel === 'LOADING PROJECTS…' ? <LoadingStatus label={busyLabel} /> : 'EDIT PROJECTS'}</button><button className="button quiet" onClick={() => action('generate-resume', 'Working resume regenerated and validated.')} disabled={busy}>{busy && busyLabel === 'BUILDING RESUME…' ? <LoadingStatus label={busyLabel} /> : 'REGENERATE'}</button>{!finalized && <button className="button primary" onClick={() => action('finalize-resume', 'Working resume finalized and preserved as the active Final Resume.')} disabled={busy}>{busy && busyLabel === 'FINALIZING…' ? <LoadingStatus label={busyLabel} /> : 'FINALIZE RESUME ↗'}</button>}</div></div>}
+    {app && approved && working && <div className="resume-next"><div><b>{finalStale ? 'Working Resume is newer than the superseded Final' : finalized ? 'Working Resume and Final Resume available' : 'Working Resume ready'}</b><span>Last generated: {app.working_resume_generated_at || 'date not recorded'}</span></div><div className="resume-actions"><button className="button quiet" onClick={openEditor} disabled={busy}>{busy && busyLabel === 'LOADING PROJECTS…' ? <LoadingStatus label={busyLabel} /> : 'EDIT PROJECTS'}</button><button className="button quiet" onClick={() => action('generate-resume', 'Working resume regenerated and validated.')} disabled={busy}>{busy && busyLabel === 'BUILDING RESUME…' ? <LoadingStatus label={busyLabel} /> : 'REGENERATE'}</button>{canFinalize && <button className="button primary" onClick={() => action('finalize-resume', 'Current Working Resume finalized; prior Final artifact retained.')} disabled={busy}>{busy && busyLabel === 'FINALIZING…' ? <LoadingStatus label={busyLabel} /> : finalized ? 'FINALIZE UPDATED WORKING ↗' : 'FINALIZE RESUME ↗'}</button>}</div></div>}
     {editor && <div className="resume-editor"><div className="editor-heading"><div><span className="card-label">SUPPORTED REVIEW / EDIT</span><h3>Project Selection</h3><p>Only canonical completed projects can be changed here. Final artifacts remain protected.</p></div><span className="pill">MAX {editor.max_projects}</span></div><div className="editor-modes"><button className={editor.mode === 'automatic' ? 'button primary' : 'button quiet'} onClick={() => setEditor({ ...editor, mode: 'automatic', selected_record_ids: editor.automatic_record_ids })}>AUTOMATIC RECOMMENDATION</button><button className={editor.mode === 'manual' ? 'button primary' : 'button quiet'} onClick={() => setEditor({ ...editor, mode: 'manual' })}>CHOOSE PROJECTS MANUALLY</button></div>{editor.mode === 'automatic' ? <div className="editor-readout">{editor.projects.filter((p: any) => editor.selected_record_ids.includes(p.record_id)).map((p: any) => <span key={p.record_id}>{p.name}</span>)}<small>Automatic recommendation will be restored. Saving invalidates the current Working Resume until the updated plan is approved and regenerated.</small></div> : <div className="editor-projects">{editor.projects.map((p: any) => <label key={p.record_id}><input type="checkbox" checked={editor.selected_record_ids.includes(p.record_id)} onChange={() => toggleProject(p.record_id)} /><span><b>{p.name}</b><small>{p.technologies.join(' · ') || 'Canonical completed project'}</small></span></label>)}</div>}<div className="editor-footer"><span>Unsupported fields cannot be invented or edited in this workflow.</span><div><button className="button quiet" onClick={() => setEditor(null)} disabled={busy}>CANCEL</button><button className="button primary" onClick={saveEditor} disabled={busy || editor.mode === 'manual' && !editor.selected_record_ids.length}>{busy && busyLabel === 'SAVING WORKING RESUME…' ? <LoadingStatus label={busyLabel} /> : 'SAVE WORKING VERSION ↗'}</button></div></div></div>}
-    <div className="artifact-grid"><Artifact label="WORKING VERSION" title="Editable candidate" state={working ? 'READY' : 'WAITING'} reference={app?.working_resume_docx_path} pdfReference={app?.working_resume_pdf_path} docxAvailable={app?.working_resume_docx_available} pdfAvailable={app?.working_resume_pdf_available} generatedAt={app?.working_resume_generated_at} viewLabel="VIEW RESUME" /><Artifact label="FINAL VERSION" title="Active finalized resume" state={finalized ? 'FINAL' : 'NOT CREATED'} reference={app?.resume_reference} pdfReference={app?.resume_pdf_reference} docxAvailable={app?.final_resume_docx_available} pdfAvailable={app?.final_resume_pdf_available} generatedAt={app?.resume_finalized_at} viewLabel="VIEW FINAL RESUME" /></div>
+    <div className="artifact-grid"><Artifact label="WORKING VERSION" title="Editable candidate" state={working ? 'READY' : 'WAITING'} reference={app?.working_resume_docx_path} pdfReference={app?.working_resume_pdf_path} docxAvailable={app?.working_resume_docx_available} pdfAvailable={app?.working_resume_pdf_available} generatedAt={app?.working_resume_generated_at} viewLabel="VIEW RESUME" /><Artifact label="FINAL VERSION" title={finalStale ? 'Superseded Final · retained in history' : 'Active finalized resume'} state={finalStale ? 'SUPERSEDED' : finalized ? 'FINAL' : 'NOT CREATED'} reference={app?.resume_reference} pdfReference={app?.resume_pdf_reference} docxAvailable={app?.final_resume_docx_available} pdfAvailable={app?.final_resume_pdf_available} generatedAt={app?.resume_finalized_at} viewLabel="VIEW FINAL RESUME" /></div>
     <div className="process-strip"><span className={approved ? 'live' : ''}>PLAN APPROVED</span><i>→</i><span className={working ? 'live' : ''}>WORKING GENERATED</span><i>→</i><span className={working ? 'live' : ''}>REVIEW / EDIT</span><i>→</i><span className={finalized ? 'live' : ''}>FINALIZED</span></div>
   </Workspace>
 }
-function Artifact({ label, title, state, reference, pdfReference, docxAvailable, pdfAvailable, generatedAt, viewLabel }: { label: string; title: string; state: string; reference?: string; pdfReference?: string; docxAvailable?: boolean; pdfAvailable?: boolean; generatedAt?: string; viewLabel: string }) { return <div className="artifact"><span className="card-label">{label}</span><h3>{title}</h3><span className={state === 'FINAL' || state === 'READY' ? 'pill live' : 'pill'}>{state}</span>{generatedAt && <small className="artifact-date">{generatedAt}</small>}<div className="artifact-sheet"><span>DOCUMENT SURFACE</span><span>evidence-aligned structure</span><span>one-page validation</span></div>{(docxAvailable || pdfAvailable) && <div className="artifact-links">{pdfAvailable && pdfReference && <a className="artifact-view" href={`/api/artifact?ref=${encodeURIComponent(pdfReference)}&view=inline`} target="_blank" rel="noreferrer">{viewLabel}</a>}{docxAvailable && reference && <a href={`/api/artifact?ref=${encodeURIComponent(reference)}`} download>DOWNLOAD DOCX</a>}{pdfAvailable && pdfReference && <a href={`/api/artifact?ref=${encodeURIComponent(pdfReference)}`} download>DOWNLOAD PDF</a>}</div>}</div> }
-function Letter({ app, setNotice, refresh, go }: { app?: AppRecord; setNotice: (s: string) => void; refresh: () => void; go: (r: Route) => void }) { const [content, setContent] = useState(''); const [draft, setDraft] = useState(''); const [editing, setEditing] = useState(false); const [busy, setBusy] = useState(false); const [busyLabel, setBusyLabel] = useState(''); const confirmation = useTransientConfirmation(); const load = async (reference: string) => { const response = await fetch(`/api/artifact?ref=${encodeURIComponent(reference)}`); if (!response.ok) throw new Error('Generated cover letter could not be loaded.'); return response.text() }; useEffect(() => { let active = true; if (!app?.cover_letter_reference) { if (active) { setContent(''); setDraft(''); setEditing(false) }; return () => { active = false } }; load(app.cover_letter_reference).then((text) => { if (active) { setContent(text); setDraft(text) } }).catch((e: any) => { if (active) setNotice(e.message) }); return () => { active = false } }, [app?.application_id, app?.cover_letter_reference]); const create = async () => { if (!app) return; setBusyLabel('GENERATING LETTER…'); setBusy(true); try { const result: any = await api(`/api/applications/${app.application_id}/cover-letter`, { method: 'POST' }); const next = result.content || (app.cover_letter_reference ? await load(app.cover_letter_reference) : content); if (next) { setContent(next); setDraft(next) }; setEditing(false); confirmation.show('COVER LETTER READY'); refresh() } catch (e: any) { setNotice(e.message) } finally { setBusy(false); setBusyLabel('') } }; const save = async () => { if (!app) return; setBusyLabel('SAVING LETTER…'); setBusy(true); try { const result: any = await api(`/api/applications/${app.application_id}/cover-letter-edit`, { method: 'POST', body: JSON.stringify({ content: draft }) }); setContent(result.content || draft); setDraft(result.content || draft); setEditing(false); setNotice('Working cover letter saved.'); refresh() } catch (e: any) { setNotice(e.message) } finally { setBusy(false); setBusyLabel('') } }; const reference = app?.cover_letter_reference; return <Workspace title="WRITE WITH INTENT" eyebrow="04 / COVER LETTER" intro="An editorial writing surface grounded in the role, the profile, and the projects already selected." workflow="letter" go={go}><div className="writing-surface"><div className="writing-meta"><span>{app?.company_name || 'SELECT AN APPLICATION'}</span><span>{app?.job_title || 'AI/ML EVALUATION ROLE'}</span></div>{content ? editing ? <textarea value={draft} onChange={(e) => setDraft(e.target.value)} aria-label="Working cover letter" rows={18} /> : <p style={{ whiteSpace: 'pre-wrap' }}>{content}</p> : <p>Generate a working letter from the approved application evidence.</p>}<div className="letter-actions">{content && !editing && <><button className="button outline" onClick={() => { setDraft(content); setEditing(true) }} disabled={busy}>EDIT</button>{reference && <a className="button quiet" href={`/api/artifact?ref=${encodeURIComponent(reference)}`} download>DOWNLOAD</a>}</>}{editing && <><button className="button quiet" onClick={() => setEditing(false)} disabled={busy}>CANCEL</button><button className="button primary" onClick={save} disabled={busy || !draft.trim()}>{busy && busyLabel === 'SAVING LETTER…' ? <LoadingStatus label={busyLabel} /> : 'SAVE WORKING LETTER ↗'}</button></>}<button className="button primary" onClick={create} disabled={!app || busy}>{busy && busyLabel === 'GENERATING LETTER…' ? <LoadingStatus label={busyLabel} /> : content ? 'REGENERATE WORKING LETTER ↗' : 'GENERATE WORKING LETTER ↗'}</button></div><InlineConfirmation message={confirmation.message} />{content && <small className="artifact-date">WORKING / GENERATED ARTIFACT</small>}</div></Workspace> }
+function Artifact({ label, title, state, reference, pdfReference, docxAvailable, pdfAvailable, generatedAt, viewLabel }: { label: string; title: string; state: string; reference?: string; pdfReference?: string; docxAvailable?: boolean; pdfAvailable?: boolean; generatedAt?: string; viewLabel: string }) { return <div className="artifact"><span className="card-label">{label}</span><h3>{title}</h3><span className={state === 'FINAL' || state === 'READY' ? 'pill live' : 'pill'}>{state}</span>{generatedAt && <small className="artifact-date">{generatedAt}</small>}<div className="artifact-sheet"><span>DOCUMENT SURFACE</span><span>evidence-aligned structure</span><span>one-page validation</span></div>{(docxAvailable || pdfAvailable) && <div className="artifact-links">{pdfAvailable && pdfReference && <a className="artifact-view" href={apiUrl(`/api/artifact?ref=${encodeURIComponent(pdfReference)}&view=inline`)} target="_blank" rel="noreferrer">{viewLabel}</a>}{docxAvailable && reference && <a href={apiUrl(`/api/artifact?ref=${encodeURIComponent(reference)}`)} download>DOWNLOAD DOCX</a>}{pdfAvailable && pdfReference && <a href={apiUrl(`/api/artifact?ref=${encodeURIComponent(pdfReference)}`)} download>DOWNLOAD PDF</a>}</div>}</div> }
+function Letter({ app, setNotice, refresh, go }: { app?: AppRecord; setNotice: (s: string) => void; refresh: () => void; go: (r: Route) => void }) {
+  const [content, setContent] = useState('')
+  const [draft, setDraft] = useState('')
+  const [editing, setEditing] = useState(false)
+  const [busy, setBusy] = useState(false)
+  const [busyLabel, setBusyLabel] = useState('')
+  const [workingPdfRef, setWorkingPdfRef] = useState(app?.cover_letter_working_pdf_reference || '')
+  const confirmation = useTransientConfirmation()
+
+  const loadMd = async (reference: string) => {
+    const response = await fetch(apiUrl(`/api/artifact?ref=${encodeURIComponent(reference)}`))
+    if (!response.ok) throw new Error('Generated cover letter could not be loaded.')
+    return response.text()
+  }
+
+  // Load text preview from the working Markdown source (cover_letter_working_reference preferred, fall back to cover_letter_reference)
+  const mdRef = app?.cover_letter_working_reference || app?.cover_letter_reference
+  useEffect(() => { setWorkingPdfRef(app?.cover_letter_working_pdf_reference || '') }, [app?.application_id, app?.cover_letter_working_pdf_reference])
+  useEffect(() => {
+    let active = true
+    if (!mdRef) { if (active) { setContent(''); setDraft(''); setEditing(false) }; return () => { active = false } }
+    loadMd(mdRef).then((text) => { if (active) { setContent(text); setDraft(text) } }).catch((e: any) => { if (active) setNotice(e.message) })
+    return () => { active = false }
+  }, [app?.application_id, mdRef])
+
+  const create = async () => {
+    if (!app) return
+    setBusyLabel('GENERATING LETTER…'); setBusy(true)
+    try {
+      const result: any = await api(`/api/applications/${app.application_id}/cover-letter`, { method: 'POST' })
+      const next = result.content || (mdRef ? await loadMd(mdRef) : content)
+      if (next) { setContent(next); setDraft(next) }
+      if (result.cover_letter_working_pdf_reference) setWorkingPdfRef(result.cover_letter_working_pdf_reference)
+      setEditing(false); confirmation.show('COVER LETTER READY'); refresh()
+    } catch (e: any) { setNotice(e.message) } finally { setBusy(false); setBusyLabel('') }
+  }
+
+  const save = async () => {
+    if (!app) return
+    setBusyLabel('SAVING LETTER…'); setBusy(true)
+    try {
+      const result: any = await api(`/api/applications/${app.application_id}/cover-letter-edit`, { method: 'POST', body: JSON.stringify({ content: draft }) })
+      setContent(result.content || draft); setDraft(result.content || draft)
+      if (result.cover_letter_working_pdf_reference) setWorkingPdfRef(result.cover_letter_working_pdf_reference)
+      setEditing(false); setNotice('Working cover letter saved.'); refresh()
+    } catch (e: any) { setNotice(e.message) } finally { setBusy(false); setBusyLabel('') }
+  }
+
+  // Resolve the best download references
+  const finalPdfRef = app?.cover_letter_pdf_reference
+
+  return (
+    <Workspace title="WRITE WITH INTENT" eyebrow="04 / COVER LETTER" intro="An editorial writing surface grounded in the role, the profile, and the projects already selected." workflow="letter" go={go}>
+      <div className="writing-surface">
+        <div className="writing-meta">
+          <span>{app?.company_name || 'SELECT AN APPLICATION'}</span>
+          <span>{app?.job_title || 'ROLE NOT SPECIFIED'}</span>
+        </div>
+
+        {content
+          ? editing
+            ? <textarea value={draft} onChange={(e) => setDraft(e.target.value)} aria-label="Working cover letter" rows={18} />
+            : <p style={{ whiteSpace: 'pre-wrap' }}>{content}</p>
+          : <p>Generate a working letter from the approved application evidence.</p>}
+
+        <div className="letter-actions">
+          {content && !editing && (
+            <>
+              <button className="button outline" onClick={() => { setDraft(content); setEditing(true) }} disabled={busy}>EDIT</button>
+              {workingPdfRef && (
+                <a className="button quiet" href={apiUrl(`/api/artifact?ref=${encodeURIComponent(workingPdfRef)}&view=inline`)} target="_blank" rel="noreferrer">
+                  VIEW PDF
+                </a>
+              )}
+              {workingPdfRef && (
+                <a className="button quiet" href={apiUrl(`/api/artifact?ref=${encodeURIComponent(workingPdfRef)}`)} download>
+                  DOWNLOAD WORKING PDF
+                </a>
+              )}
+              {finalPdfRef && (
+                <a className="button quiet" href={apiUrl(`/api/artifact?ref=${encodeURIComponent(finalPdfRef)}`)} download>
+                  DOWNLOAD FINAL PDF
+                </a>
+              )}
+            </>
+          )}
+          {editing && (
+            <>
+              <button className="button quiet" onClick={() => setEditing(false)} disabled={busy}>CANCEL</button>
+              <button className="button primary" onClick={save} disabled={busy || !draft.trim()}>
+                {busy && busyLabel === 'SAVING LETTER…' ? <LoadingStatus label={busyLabel} /> : 'SAVE WORKING LETTER ↗'}
+              </button>
+            </>
+          )}
+          <button className="button primary" onClick={create} disabled={!app || busy}>
+            {busy && busyLabel === 'GENERATING LETTER…' ? <LoadingStatus label={busyLabel} /> : content ? 'REGENERATE WORKING LETTER ↗' : 'GENERATE WORKING LETTER ↗'}
+          </button>
+        </div>
+
+        <InlineConfirmation message={confirmation.message} />
+        {content && <small className="artifact-date">WORKING / GENERATED ARTIFACT</small>}
+      </div>
+    </Workspace>
+  )
+}
 function Package({ app, go }: { app?: AppRecord; go: (r: Route) => void }) { const cards: [string, Route][] = [['RESUME', 'resume'], ['COVER LETTER', 'letter'], ['JD ANALYSIS', 'analysis'], ['APPLICATION INFO', 'new']]; const checks: [string, boolean, Route][] = [['JD analyzed', !!app?.phase8_plan_reference, 'analysis'], ['Resume plan approved', !!app?.resume_generation_allowed, 'resume'], ['Working resume', !!app?.working_resume_docx_path, 'resume'], ['Final resume', !!app?.resume_reference, 'resume'], ['Cover letter', !!app?.cover_letter_reference, 'letter']]; return <Workspace title="ASSEMBLE THE MOMENT" eyebrow="05 / PACKAGE ASSEMBLY" intro="Documents and application information converge into a package you can submit manually with confidence." workflow="package" go={go}><div className="assembly"><div className="assembly-stack">{cards.map(([label, route], i) => <button key={label} className="assembly-card" style={{ '--i': i } as CSSProperties} onClick={() => go(route)} aria-label={`Open ${label}`}>{label}<span>+</span></button>)}</div><div className="assembly-result">APPLICATION<br /><em>PACKAGE</em><small>MANUAL SUBMISSION ONLY</small></div></div><div className="check-list">{checks.map(([label, ok, route]) => <button className="check-row" key={label} onClick={() => go(route)}><i className={ok ? 'check on' : 'check'} />{label}<span>{ok ? 'READY' : 'PENDING'}</span></button>)}</div></Workspace> }
 function History({ apps, openApplication, go }: { apps: AppRecord[]; openApplication: (id: string, r?: Route) => void; go: (r: Route) => void }) { return <Workspace title="FOLLOW THE TRACE" eyebrow="06 / HISTORY" intro="A spatial record of every application state, decision, and artifact milestone." workflow="history" go={go}><div className="timeline">{[...apps].reverse().map((a, i) => <button className="timeline-row" key={a.application_id} onClick={() => openApplication(a.application_id, 'analysis')}><span className="timeline-dot" /><span className="timeline-date">{a.date_added || '—'}</span><span><b>{a.company_name || 'Unknown company'}</b><small>{a.job_title || 'Untitled role'}</small></span><span className="stream-status">{a.current_status}</span><span>↗</span></button>)}</div></Workspace> }
 function Profile({ profile }: { profile: AppRecord }) { return <Workspace title="KNOW YOUR EVIDENCE" eyebrow="07 / PROFILE" intro="The canonical profile stays authoritative. This surface makes its clusters, projects, and proof readable."><div className="profile-grid"><div className="profile-intro"><div className="eyebrow">CANDIDATE</div><h3>{profile.name || 'Profile'}</h3><p>{profile.headline || 'Evidence-backed career profile'}</p><span>{profile.location || 'Local profile store'}</span></div><div className="profile-block"><span className="card-label">SKILL CLUSTERS</span><div className="tag-cloud">{(profile.skills || []).slice(0, 18).map((s: any) => <span key={s.name}>{s.name}</span>)}</div></div><div className="profile-block"><span className="card-label">PROJECTS</span>{(profile.projects || []).map((p: any) => <div className="proof-row" key={p.record_id}><b>{p.name}</b><small>{p.project_status || 'unknown'} · {p.github_availability || 'source recorded'}</small></div>)}</div></div></Workspace> }

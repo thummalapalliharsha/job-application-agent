@@ -1,0 +1,39 @@
+Responsibilities:
+- Develop and evaluate machine learning models for business and analytical problems.
+- Clean, preprocess, and transform structured datasets.
+- Perform exploratory data analysis and identify useful patterns and relationships.
+- Engineer and select relevant features for machine learning models.
+- Train, evaluate, and compare classification and regression algorithms.
+- Tune model hyperparameters and improve model performance.
+- Use Python and standard machine learning libraries for experimentation.
+- Visualize model results and communicate findings clearly.
+- Maintain reproducible notebooks, scripts, and Git/GitHub workflows.
+
+Required Skills:
+- Python
+- Pandas
+- NumPy
+- Scikit-learn
+- Machine Learning
+- Data Preprocessing
+- Feature Engineering
+- Exploratory Data Analysis
+- Model Evaluation
+- Classification
+- Regression
+- Data Visualization
+- Git/GitHub
+
+Preferred Skills:
+- XGBoost
+- Random Forest
+- Decision Trees
+- Hyperparameter Tuning
+- Streamlit
+- SQL
+- Matplotlib
+- Seaborn
+
+Education:
+- Bachelor's degree in Computer Science, Data Science, Artificial Intelligence, or a related field.
+- Freshers are welcome.

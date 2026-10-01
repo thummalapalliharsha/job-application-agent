@@ -10,9 +10,9 @@ import resume_generator as rg
 def main():
  results=[]
  def ck(name, value): results.append({'test':name,'passed':bool(value)})
- profile=planner.load_profile(); all_projects=profile['projects']['projects']; eligible=[p for p in all_projects if p.get('project_status')=='completed']; unknown=[p for p in all_projects if p.get('project_status')!='completed']
+ profile=planner.load_profile(); all_projects=profile['projects']['projects']; eligible=[p for p in all_projects if p.get('project_status')=='completed' and p.get('status')=='verified']; unknown=[p for p in all_projects if p not in eligible]
  ck('automatic Phase 8 recommendations remain available',bool(planner.plan_resume('Junior RAG Engineer\nRequired Skills:\n- Python\n- RAG',profile)['resume_plan']['projects_to_include']))
- ck('eligible list is canonical completed projects only',len(ui.eligible_completed_projects())==len(eligible) and all(p.get('project_status')=='completed' for p in ui.eligible_completed_projects()))
+ ck('eligible list is canonical verified completed projects only',len(ui.eligible_completed_projects())==len(eligible) and all(p.get('project_status')=='completed' and p.get('status')=='verified' for p in ui.eligible_completed_projects()))
  ck('unknown and incomplete projects excluded',not any(p in ui.eligible_completed_projects() for p in unknown))
  ck('project limit enforced',ui.PROJECT_LIMIT==3)
  td=tempfile.TemporaryDirectory(); temp=Path(td.name); plan_path=temp/'plan.json';

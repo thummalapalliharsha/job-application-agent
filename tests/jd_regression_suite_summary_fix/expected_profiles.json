@@ -1,0 +1,104 @@
+{
+  "cases": [
+    {
+      "id": "01_data_analyst",
+      "company": "Northstar Analytics (test fixture)",
+      "role": "Junior Data Analyst",
+      "role_family": "data_analytics",
+      "jd_text": "Junior Data Analyst\nCompany: Northstar Analytics (test fixture)\n\nResponsibilities:\n- Clean and inspect structured datasets for accuracy and completeness.\n- Use exploratory analysis to identify patterns and prepare clear reports.\n- Build simple visual summaries for business stakeholders.\n\nRequired Skills:\n- Python\n- Pandas\n- NumPy\n- SQL\n- Data Preprocessing\n- Exploratory Data Analysis\n- Data Visualization\n\nPreferred Skills:\n- Matplotlib\n- Seaborn\n- Streamlit\n- Tableau\n- Power BI\n- Excel\n\nEducation:\n- Bachelor's degree in Computer Science or a related field.\n- Freshers are welcome.",
+      "supported_skills": ["Python", "Pandas", "NumPy", "SQL", "Matplotlib", "Seaborn", "Streamlit"],
+      "intentionally_missing_skills": ["Tableau", "Power BI", "Excel"],
+      "relevant_project_ids": ["project_bank_customer_clustering_dashboard", "project_sample_sales_data", "project_imdb_movie_analysis", "project_telecom_churn_logistic_regression"]
+    },
+    {
+      "id": "02_business_data_analyst",
+      "company": "Harbor Business Insights (test fixture)",
+      "role": "Junior Business Data Analyst",
+      "role_family": "business_analytics",
+      "jd_text": "Junior Business Data Analyst\nCompany: Harbor Business Insights (test fixture)\n\nResponsibilities:\n- Validate and prepare business datasets for recurring analysis.\n- Explore customer and operational data and summarize useful findings.\n- Create charts and concise reports for non-technical stakeholders.\n\nRequired Skills:\n- Python\n- SQL\n- Pandas\n- NumPy\n- Data Cleaning\n- Exploratory Data Analysis\n- Data Visualization\n- Analytical Thinking\n\nPreferred Skills:\n- Streamlit\n- Matplotlib\n- Seaborn\n- Power BI\n- Excel\n- Tableau\n\nEducation:\n- Bachelor's degree in Computer Science, Business Analytics, or a related field.\n- Freshers are welcome.",
+      "supported_skills": ["Python", "SQL", "Pandas", "NumPy", "Streamlit", "Matplotlib", "Seaborn"],
+      "intentionally_missing_skills": ["Power BI", "Excel", "Tableau"],
+      "relevant_project_ids": ["project_bank_customer_clustering_dashboard", "project_sample_sales_data", "project_imdb_movie_analysis"]
+    },
+    {
+      "id": "03_machine_learning_engineer",
+      "company": "VectorWorks ML (test fixture)",
+      "role": "Junior Machine Learning Engineer",
+      "role_family": "machine_learning",
+      "jd_text": "Junior Machine Learning Engineer\nCompany: VectorWorks ML (test fixture)\n\nResponsibilities:\n- Prepare structured data and engineer features for model experiments.\n- Train and compare classification and regression models.\n- Evaluate model behavior and document reproducible experiments.\n\nRequired Skills:\n- Python\n- Pandas\n- NumPy\n- Scikit-learn\n- Machine Learning\n- Data Preprocessing\n- Feature Engineering\n- Classification\n- Model Evaluation\n\nPreferred Skills:\n- XGBoost\n- Streamlit\n- TensorFlow\n- PyTorch\n- Keras\n- Advanced Statistics\n\nEducation:\n- Bachelor's degree in Computer Science, Mathematics, or a related field.\n- Freshers are welcome.",
+      "supported_skills": ["Python", "Pandas", "NumPy", "Scikit-learn", "XGBoost", "Streamlit"],
+      "intentionally_missing_skills": ["TensorFlow", "PyTorch", "Keras", "Advanced Statistics"],
+      "relevant_project_ids": ["project_smartfraud_classifier", "project_telecom_churn_logistic_regression", "project_fuel_regression_crispmlq", "project_bank_customer_clustering_dashboard"]
+    },
+    {
+      "id": "04_data_scientist",
+      "company": "Cedar Research Analytics (test fixture)",
+      "role": "Junior Data Scientist",
+      "role_family": "data_science",
+      "jd_text": "Junior Data Scientist\nCompany: Cedar Research Analytics (test fixture)\n\nResponsibilities:\n- Inspect, clean, and transform tabular data for analysis.\n- Explore relationships and prepare features for supervised models.\n- Compare classification or regression approaches and communicate results.\n\nRequired Skills:\n- Python\n- Pandas\n- NumPy\n- Scikit-learn\n- Exploratory Data Analysis\n- Data Preprocessing\n- Feature Engineering\n- Classification\n- Regression\n\nPreferred Skills:\n- XGBoost\n- Matplotlib\n- Seaborn\n- TensorFlow\n- Keras\n- Advanced Statistics\n- Azure\n\nEducation:\n- Bachelor's degree in Data Science, Computer Science, or a related field.\n- Freshers are welcome.",
+      "supported_skills": ["Python", "Pandas", "NumPy", "Scikit-learn", "XGBoost", "Matplotlib", "Seaborn"],
+      "intentionally_missing_skills": ["TensorFlow", "Keras", "Advanced Statistics", "Azure"],
+      "relevant_project_ids": ["project_smartfraud_classifier", "project_fuel_regression_crispmlq", "project_telecom_churn_logistic_regression", "project_bank_customer_clustering_dashboard", "project_imdb_movie_analysis"]
+    },
+    {
+      "id": "05_rag_engineer",
+      "company": "Local Retrieval Labs (test fixture)",
+      "role": "Junior Generative AI / RAG Engineer",
+      "role_family": "generative_ai_rag",
+      "jd_text": "Junior Generative AI / RAG Engineer\nCompany: Local Retrieval Labs (test fixture)\n\nResponsibilities:\n- Prepare documents and create searchable records for retrieval.\n- Generate embeddings and retrieve relevant context from a vector store.\n- Integrate a local language model into a grounded question-answering workflow.\n\nRequired Skills:\n- Python\n- RAG\n- Generative AI\n- Embeddings\n- ChromaDB\n- Ollama\n\nPreferred Skills:\n- Streamlit\n- Langfuse\n- Promptfoo\n- LangChain\n- FAISS\n- Docker\n\nEducation:\n- Bachelor's degree in Computer Science, Artificial Intelligence, or a related field.\n- Freshers are welcome.",
+      "supported_skills": ["Python", "RAG", "Generative AI", "Embeddings", "ChromaDB", "Ollama", "Streamlit", "Langfuse", "Promptfoo"],
+      "intentionally_missing_skills": ["LangChain", "FAISS", "Docker"],
+      "relevant_project_ids": ["project_student_performance_rag", "project_text_to_sql_project", "project_ai_resume_jd_match_tool"]
+    },
+    {
+      "id": "06_ai_ml_engineer",
+      "company": "Atlas Applied AI (test fixture)",
+      "role": "Junior AI/ML Engineer",
+      "role_family": "applied_ai_ml",
+      "jd_text": "Junior AI/ML Engineer\nCompany: Atlas Applied AI (test fixture)\n\nResponsibilities:\n- Prepare data and implement machine-learning workflows for applied problems.\n- Compare classification models and evaluate their outputs.\n- Build small interfaces to demonstrate analytical tools.\n\nRequired Skills:\n- Python\n- Pandas\n- NumPy\n- Scikit-learn\n- Machine Learning\n- Classification\n- Model Evaluation\n- Data Preprocessing\n\nPreferred Skills:\n- XGBoost\n- Streamlit\n- PyTorch\n- AWS\n- Docker\n- Kubernetes\n\nEducation:\n- Bachelor's degree in Computer Science, Artificial Intelligence, or a related field.\n- Freshers are welcome.",
+      "supported_skills": ["Python", "Pandas", "NumPy", "Scikit-learn", "XGBoost", "Streamlit"],
+      "intentionally_missing_skills": ["PyTorch", "AWS", "Docker", "Kubernetes"],
+      "relevant_project_ids": ["project_smartfraud_classifier", "project_student_performance_rag", "project_telecom_churn_logistic_regression", "project_genai_pyspark_pipeline", "project_fuel_regression_crispmlq"]
+    },
+    {
+      "id": "07_python_developer_data_ai",
+      "company": "Juniper Python Systems (test fixture)",
+      "role": "Junior Python Developer — Data and AI",
+      "role_family": "python_data_ai",
+      "jd_text": "Junior Python Developer — Data and AI\nCompany: Juniper Python Systems (test fixture)\n\nResponsibilities:\n- Build Python scripts for data preparation and repeatable analysis.\n- Work with SQL databases and integrate data or AI APIs.\n- Maintain readable, testable project code and notebooks.\n\nRequired Skills:\n- Python\n- SQL\n- SQLite\n- Pandas\n- NumPy\n- API Integration\n\nPreferred Skills:\n- Scikit-learn\n- Pytest\n- Jupyter Notebook\n- FastAPI\n- AWS\n- Docker\n\nEducation:\n- Bachelor's degree in Computer Science or a related field.\n- Freshers are welcome.",
+      "supported_skills": ["Python", "SQL", "SQLite", "Pandas", "NumPy", "Scikit-learn", "Pytest", "Jupyter Notebook", "API integration"],
+      "intentionally_missing_skills": ["FastAPI", "AWS", "Docker"],
+      "relevant_project_ids": ["project_text_to_sql_project", "project_student_performance_rag", "project_ai_resume_jd_match_tool", "project_sample_sales_data", "project_bank_customer_clustering_dashboard", "project_telecom_churn_logistic_regression", "project_fuel_regression_crispmlq", "project_smartfraud_classifier", "project_genai_pyspark_pipeline"]
+    },
+    {
+      "id": "08_bi_data_visualization_analyst",
+      "company": "Clearview BI Studio (test fixture)",
+      "role": "Junior BI / Data Visualization Analyst",
+      "role_family": "business_intelligence_visualization",
+      "jd_text": "Junior BI / Data Visualization Analyst\nCompany: Clearview BI Studio (test fixture)\n\nResponsibilities:\n- Explore datasets and prepare visual summaries for stakeholders.\n- Build interactive dashboards for examining operational or customer data.\n- Document findings without overstating conclusions.\n\nRequired Skills:\n- Python\n- Pandas\n- NumPy\n- Data Visualization\n- Exploratory Data Analysis\n- Reporting\n\nPreferred Skills:\n- Plotly\n- Matplotlib\n- Seaborn\n- Streamlit\n- Tableau\n- Power BI\n- Excel\n\nEducation:\n- Bachelor's degree in Computer Science, Business Analytics, or a related field.\n- Freshers are welcome.",
+      "supported_skills": ["Python", "Pandas", "NumPy", "Plotly", "Matplotlib", "Seaborn", "Streamlit"],
+      "intentionally_missing_skills": ["Tableau", "Power BI", "Excel"],
+      "relevant_project_ids": ["project_bank_customer_clustering_dashboard", "project_sample_sales_data", "project_imdb_movie_analysis"]
+    },
+    {
+      "id": "09_nlp_llm_engineer",
+      "company": "Meridian Language Systems (test fixture)",
+      "role": "Junior NLP / LLM Engineer",
+      "role_family": "nlp_llm",
+      "jd_text": "Junior NLP / LLM Engineer\nCompany: Meridian Language Systems (test fixture)\n\nResponsibilities:\n- Build retrieval-based applications that use text embeddings.\n- Integrate a local model and inspect grounded responses.\n- Evaluate AI workflows and compare natural-language requests with structured outputs.\n\nRequired Skills:\n- Python\n- RAG\n- Embeddings\n- ChromaDB\n- Ollama\n- Text-to-SQL\n- Generative AI\n\nPreferred Skills:\n- Promptfoo\n- Langfuse\n- LangChain\n- Hugging Face Transformers\n- FAISS\n- NLP\n\nEducation:\n- Bachelor's degree in Computer Science, Artificial Intelligence, or a related field.\n- Freshers are welcome.",
+      "supported_skills": ["Python", "RAG", "Embeddings", "ChromaDB", "Ollama", "Text-to-SQL", "Generative AI", "Promptfoo", "Langfuse"],
+      "intentionally_missing_skills": ["LangChain", "Hugging Face Transformers", "FAISS"],
+      "relevant_project_ids": ["project_student_performance_rag", "project_text_to_sql_project", "project_ai_resume_jd_match_tool"]
+    },
+    {
+      "id": "10_data_engineer",
+      "company": "Riverbend Data Infrastructure (test fixture)",
+      "role": "Junior Data Engineer",
+      "role_family": "data_engineering",
+      "jd_text": "Junior Data Engineer\nCompany: Riverbend Data Infrastructure (test fixture)\n\nResponsibilities:\n- Prepare and transform structured datasets for downstream analysis.\n- Build repeatable data-processing workflows and store data in suitable formats.\n- Validate outputs and document data pipelines.\n\nRequired Skills:\n- Python\n- SQL\n- Pandas\n- Data Preprocessing\n- Data Validation\n- Parquet\n\nPreferred Skills:\n- PySpark\n- PyArrow\n- SQLAlchemy\n- AWS\n- Apache Airflow\n- Azure\n- Kubernetes\n\nEducation:\n- Bachelor's degree in Computer Science, Data Engineering, or a related field.\n- Freshers are welcome.",
+      "supported_skills": ["Python", "SQL", "Pandas", "Parquet", "PySpark", "PyArrow", "SQLAlchemy"],
+      "intentionally_missing_skills": ["AWS", "Apache Airflow", "Azure", "Kubernetes"],
+      "relevant_project_ids": ["project_genai_pyspark_pipeline", "project_sample_sales_data", "project_text_to_sql_project", "project_student_performance_rag", "project_telecom_churn_logistic_regression"]
+    }
+  ]
+}

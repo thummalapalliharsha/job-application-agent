@@ -31,7 +31,7 @@ SECTION_TITLES = {
     "professional_summary": "PROFESSIONAL SUMMARY",
     "skills": "SKILLS",
     "projects": "PROJECTS",
-    "experience": "EXPERIENCE",
+    "experience": "RELEVANT EXPERIENCE",
     "education": "EDUCATION",
     "certifications": "CERTIFICATIONS",
 }
@@ -85,19 +85,20 @@ SKILL_GROUPS = {
     "Programming": ("Python", "SQL", "JavaScript"),
     "Web / Frontend": ("HTML", "CSS"),
     "Libraries / Frameworks": ("Pandas", "NumPy", "Scikit-learn", "Streamlit"),
-    "AI / Machine Learning": ("RAG", "Embeddings", "Generative AI", "Ollama", "XGBoost", "SMOTE", "Classification", "Regression"),
-    "Databases": ("SQLite", "SQL", "ChromaDB"),
+    "AI / Machine Learning": ("RAG", "Embeddings", "Generative AI", "Ollama", "Text-to-SQL", "XGBoost", "SMOTE", "Classification", "Regression"),
+    "Databases": ("SQLite", "SQL", "MySQL", "ChromaDB"),
     "APIs / Integration": ("Google Gemini API", "OpenWeather API", "API integration", "Requests"),
     "Tools / Platforms": ("Git", "GitHub"),
     "Languages": ("English", "Telugu", "Hindi", "Tamil"),
 }
 SKILL_CATALOG_GROUPS = {**SKILL_GROUPS, "Databases": (*SKILL_GROUPS["Databases"], "MySQL")}
-SKILL_STATUS_ALLOWLIST = frozenset({"verified", "candidate_provided", "partially_verified"})
+SKILL_STATUS_ALLOWLIST = frozenset({"verified"})
+REQUIRED_LANGUAGE_SKILLS = frozenset({"English", "Telugu", "Hindi", "Tamil"})
 
 # This is the only formatting surface the future editor may serialize in v1.
 # No colors, font-family changes, tables, columns, images, text boxes, or raw HTML.
 ALLOWED_FORMATTING = {
-    "font_size_pt": frozenset({9.1, 9.2, 10.0, 11.0, 12.0, 13.0, 18.0}),
+    "font_size_pt": frozenset({11.0, 12.0, 13.0, 18.0}),
     "alignment": frozenset({"left", "center", "right", "justify"}),
     "line_spacing": frozenset({1.0, 1.1, 1.15}),
     "list_style": frozenset({"none", "bullet", "ordered"}),
@@ -222,6 +223,12 @@ def _skill_source_id(category: str, name: str) -> str:
     return f"skill_groups/{quote(category, safe='')}/{quote(name, safe='')}"
 
 
+def _is_displayable_skill(category: str, skill: dict[str, Any]) -> bool:
+    return skill.get("status") in SKILL_STATUS_ALLOWLIST or (
+        category == "professional_and_language_skills" and skill.get("name") in REQUIRED_LANGUAGE_SKILLS
+    )
+
+
 def _skill_records(profile: dict[str, Any]) -> list[tuple[str, dict[str, Any]]]:
     records = []
     for group in profile.get("skills", {}).get("skill_groups", []):
@@ -229,7 +236,7 @@ def _skill_records(profile: dict[str, Any]) -> list[tuple[str, dict[str, Any]]]:
         if not isinstance(category, str):
             continue
         for skill in group.get("skills", []):
-            if isinstance(skill, dict) and skill.get("status") in SKILL_STATUS_ALLOWLIST:
+            if isinstance(skill, dict) and _is_displayable_skill(category, skill):
                 records.append((category, skill))
     return records
 
@@ -349,14 +356,14 @@ def _build_sections(plan: dict[str, Any], profile: dict[str, Any]) -> list[dict[
                formatting=_formatting(font_size_pt=18.0, bold=True, alignment="center", line_spacing=1.0),
                runs=_plain_runs(str(master["name"]).upper(), [name_ref])),
         _block("contact_header", "contact_details", "contact-details", source_refs=[phone_ref, location_ref, email_ref],
-               formatting=_formatting(font_size_pt=10.0, alignment="center", line_spacing=1.0, space_after_pt=1.0),
+               formatting=_formatting(font_size_pt=11.0, alignment="center", line_spacing=1.0, space_after_pt=1.0),
                runs=[
                    _run(str(master["contact"]["phone"]), [phone_ref], [{"type": "link", "href": phone_href}]),
                    _run(" | "), _run(str(master["location"]), [location_ref]), _run(" | "),
                    _run(str(master["contact"]["email"]), [email_ref], [{"type": "link", "href": "mailto:" + str(master["contact"]["email"])}]),
                ]),
         _block("contact_header", "profile_links", "profile-links", source_refs=[linkedin_ref, github_ref],
-               formatting=_formatting(font_size_pt=10.0, alignment="center", line_spacing=1.0, space_after_pt=2.0),
+               formatting=_formatting(font_size_pt=11.0, alignment="center", line_spacing=1.0, space_after_pt=2.0),
                runs=[
                    _run("LinkedIn: "), _run(str(links["linkedin"]), [linkedin_ref], [{"type": "link", "href": linkedin_href}]),
                    _run(" | "), _run("GitHub: "), _run(str(links["github"]), [github_ref], [{"type": "link", "href": github_href}]),
@@ -417,7 +424,7 @@ def _build_sections(plan: dict[str, Any], profile: dict[str, Any]) -> list[dict[
         project_blocks.append(_block("projects", "project_entry", project_id, source_refs=[project_ref],
                                       formatting=_formatting(font_size_pt=12.0, bold=True, line_spacing=1.0),
                                       project_id=project_id, runs=_plain_runs(str(project["name"]), [project_ref])))
-        for index, bullet in enumerate(rg.project_bullets(project)[:3]):
+        for index, bullet in enumerate(rg.project_bullets(project, plan)[:3]):
             project_blocks.append(_block("projects", "project_bullet", f"{project_id}:bullet:{index}",
                                           source_refs=[project_ref],
                                           formatting=_formatting(font_size_pt=11.0, line_spacing=1.0,
@@ -615,7 +622,7 @@ def _resolve_skill_source(source_id: str, profile: dict[str, Any]) -> dict[str, 
     matches = [skill for group in profile.get("skills", {}).get("skill_groups", [])
                if group.get("category") == category
                for skill in group.get("skills", [])
-               if skill.get("name") == name and skill.get("status") in SKILL_STATUS_ALLOWLIST]
+               if skill.get("name") == name and _is_displayable_skill(category, skill)]
     return matches[0] if len(matches) == 1 else None
 
 

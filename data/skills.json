@@ -341,6 +341,21 @@
             }
           ],
           "review_flags": []
+        },
+        {
+          "name": "github",
+          "status": "candidate_provided",
+          "evidence": [
+            {
+              "source_id": "user_provided",
+              "evidence_type": "explicit_user_confirmation",
+              "evidence_location": "Confirmed JD skill gap for app_b70a2228a165",
+              "claims_supported": [
+                "github"
+              ]
+            }
+          ],
+          "review_flags": []
         }
       ]
     },

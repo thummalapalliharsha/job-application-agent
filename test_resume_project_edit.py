@@ -14,7 +14,7 @@ import resume_generator as rg
 
 def main():
  profile=planner.load_profile()
- eligible=[p for p in profile['projects']['projects'] if p.get('project_status')=='completed']
+ eligible=[p for p in profile['projects']['projects'] if p.get('project_status')=='completed' and p.get('status')=='verified']
  assert len(eligible)>=3
  with tempfile.TemporaryDirectory() as td:
   temp=Path(td); plan_a=temp/'plan_a.json'; plan_b=temp/'plan_b.json'

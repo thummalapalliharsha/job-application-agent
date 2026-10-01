@@ -1,0 +1,29 @@
+We are looking for a Junior Business Data Analyst to support business
+teams with data-driven reporting and analysis.
+
+Responsibilities:
+- Clean and validate business datasets.
+- Analyze sales and customer data to identify trends.
+- Write SQL queries for data extraction and analysis.
+- Build dashboards and reports for stakeholders.
+- Use Python, Pandas and NumPy for data analysis.
+- Communicate findings clearly.
+
+Required Skills:
+- Python
+- SQL
+- Pandas
+- NumPy
+- Data Cleaning
+- Exploratory Data Analysis
+- Data Visualization
+- Analytical Thinking
+
+Preferred Skills:
+- Power BI
+- Excel
+- Git/GitHub
+
+Education:
+- Bachelor's degree in Computer Science or a related field.
+- Freshers are welcome.

@@ -8,6 +8,7 @@ import Gapcursor from '@tiptap/extension-gapcursor'
 import { GapCursor } from '@tiptap/pm/gapcursor'
 import TextAlign from '@tiptap/extension-text-align'
 import { useEffect, useMemo, useState, type CSSProperties, type FormEvent, type ReactNode } from 'react'
+import { apiUrl } from '../apiUrl'
 import { LoadingStatus } from './LoadingStatus'
 
 type SourceRef = { source_type: string; source_id: string }
@@ -504,7 +505,7 @@ function insertLayoutParagraph(view: any): boolean {
 }
 
 async function requestJson<T>(path: string, options?: RequestInit): Promise<ApiResponse<T>> {
-  const response = await fetch(path, { headers: { 'Content-Type': 'application/json' }, ...options })
+  const response = await fetch(apiUrl(path), { headers: { 'Content-Type': 'application/json' }, ...options })
   const data = await response.json()
   if (!response.ok) {
     const details = [...(Array.isArray(data.errors) ? data.errors : []), ...(Array.isArray(data.claim_validation?.errors) ? data.claim_validation.errors : [])]

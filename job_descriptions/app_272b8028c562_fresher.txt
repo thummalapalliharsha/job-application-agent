@@ -1,0 +1,9 @@
+Key Responsibilities
+• Model Training: Build, train, validate, and monitor machine learning or deep learning models.
+• Data Processing: Clean, analyze, and transform large datasets into usable data prototypes.
+• Collaboration: Work with data science and IT teams to deploy predictive tools and maintain pipelines.
+Required Skills & Qualifications
+• Programming: Strong proficiency in Python along with core libraries like NumPy, Pandas, and scikit-learn.
+• ML Frameworks: Experience with frameworks such as PyTorch, TensorFlow, or Keras.
+• Foundations: Solid understanding of probability, statistics, and data modeling.
+• Education: A Bachelor’s degree in Computer Science, Mathematics, Engineering, or a related quantitative field.

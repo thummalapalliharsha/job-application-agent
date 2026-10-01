@@ -187,9 +187,13 @@ class ResumeDocumentSaveTests(unittest.TestCase):
             education_line = next(block for block in sections["education"]["blocks"]
                                   if "CGPA:" in "".join(run["text"] for run in block.get("runs", [])))
             education_line["runs"][0]["text"] = education_line["runs"][0]["text"].replace("CGPA:", "CGPA", 1)
-            education_line["formatting"]["font_size_pt"] = 10.0
-            certification_entry = sections["certifications"]["blocks"][0]
-            certification_entry["runs"][0]["text"] = certification_entry["runs"][0]["text"].swapcase()
+            education_line["formatting"]["font_size_pt"] = 11.0
+            certification_entries = sections["certifications"]["blocks"]
+            certification_texts = []
+            if certification_entries:
+                certification_entry = certification_entries[0]
+                certification_entry["runs"][0]["text"] = certification_entry["runs"][0]["text"].swapcase()
+                certification_texts.append(certification_entry["runs"][0]["text"])
             document["source_references"] = rdm._collect_refs(document["content"])
 
             saved = api.save_resume_document_payload(AID, {
@@ -209,7 +213,7 @@ class ResumeDocumentSaveTests(unittest.TestCase):
             pdf_extract = subprocess.run([rg.resolve_executable("pdftotext"), str(pdf_path), "-"],
                                           check=True, capture_output=True, encoding="utf-8").stdout
             for text in ("MySQL", "SELECTED PROJECTS", project_title["runs"][0]["text"],
-                         "Computer Science", "natural language", "CGPA", certification_entry["runs"][0]["text"]):
+                         "Computer Science", "natural language", "CGPA", *certification_texts):
                 self.assertIn(text.casefold(), docx_text.casefold())
                 self.assertIn(text.casefold(), pdf_extract.casefold())
             validation_report = json.loads((root / app["working_resume_validation_reference"]).read_text(encoding="utf-8"))

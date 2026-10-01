@@ -136,7 +136,7 @@ class ResumeDocumentEditorApiTests(unittest.TestCase):
         summary = sections["professional_summary"]
         summary["title"] = "SUMMARY AND PROFILE"
         summary["formatting"].update({"space_before_pt": 1.5, "space_after_pt": 2.0})
-        summary["blocks"][0]["formatting"]["font_size_pt"] = 10.0
+        summary["blocks"][0]["formatting"]["font_size_pt"] = 11.0
         summary["blocks"][0]["runs"][0]["text"] = summary["blocks"][0]["runs"][0]["text"].replace("Artificial Intelligence", "artificial intelligence", 1)
 
         projects = sections["projects"]
@@ -163,7 +163,7 @@ class ResumeDocumentEditorApiTests(unittest.TestCase):
         education["blocks"] = [block for record_id in reversed(education_ids) for block in education["blocks"] if block["education_id"] == record_id]
         cgpa_line = next(block for block in education["blocks"] if "CGPA:" in "".join(run["text"] for run in block["runs"]))
         cgpa_line["runs"][0]["text"] = cgpa_line["runs"][0]["text"].replace("CGPA:", "CGPA", 1)
-        cgpa_line["formatting"].update({"font_size_pt": 10.0, "line_spacing": 1.1})
+        cgpa_line["formatting"].update({"font_size_pt": 11.0, "line_spacing": 1.1})
 
         certifications = sections["certifications"]
         certifications["blocks"].reverse()

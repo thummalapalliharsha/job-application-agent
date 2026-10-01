@@ -718,6 +718,1282 @@
       "cover_letter_source_reference": "output\\cover_letters\\datanova_analytics_junior_data_analyst_fresher_app_7956079ee1de_CoverLetter_Working.md",
       "cover_letter_pdf_reference": "output\\cover_letters\\datanova_analytics_junior_data_analyst_fresher_app_7956079ee1de_CoverLetter_Final.pdf",
       "cover_letter_status": "final"
+    },
+    {
+      "application_id": "app_d003a3f71d8c",
+      "company_name": "InsightEdge Solutions",
+      "job_title": "Junior Business Data Analyst — Fresher",
+      "job_url": "",
+      "source_platform": "user_provided",
+      "location": "",
+      "employment_type": "",
+      "job_description_reference": "job_descriptions\\app_d003a3f71d8c_junior_business_data_analyst_fresher.txt",
+      "job_description_text": "We are looking for a Junior Business Data Analyst to support business\nteams with data-driven reporting and analysis.\n\nResponsibilities:\n- Clean and validate business datasets.\n- Analyze sales and customer data to identify trends.\n- Write SQL queries for data extraction and analysis.\n- Build dashboards and reports for stakeholders.\n- Use Python, Pandas and NumPy for data analysis.\n- Communicate findings clearly.\n\nRequired Skills:\n- Python\n- SQL\n- Pandas\n- NumPy\n- Data Cleaning\n- Exploratory Data Analysis\n- Data Visualization\n- Analytical Thinking\n\nPreferred Skills:\n- Power BI\n- Excel\n- Git/GitHub\n\nEducation:\n- Bachelor's degree in Computer Science or a related field.\n- Freshers are welcome.",
+      "date_added": "2026-10-01",
+      "date_applied": null,
+      "current_status": "resume_ready",
+      "status_history": [
+        {
+          "old_status": null,
+          "new_status": "awaiting_resume_approval",
+          "timestamp": "2026-10-01T06:17:48.235255+00:00",
+          "source": "application_assistant"
+        },
+        {
+          "old_status": "awaiting_resume_approval",
+          "new_status": "resume_ready",
+          "timestamp": "2026-10-01T06:17:58.483811+00:00",
+          "source": "explicit_user_approval"
+        },
+        {
+          "old_status": "resume_ready",
+          "new_status": "resume_ready",
+          "timestamp": "2026-10-01T08:38:49.197003+00:00",
+          "source": "explicit_user_approval"
+        },
+        {
+          "old_status": "resume_ready",
+          "new_status": "resume_ready",
+          "timestamp": "2026-10-01T09:02:00.760658+00:00",
+          "source": "explicit_user_approval"
+        }
+      ],
+      "resume_reference": "output\\resumes\\insightedge_solutions_junior_business_data_analyst_fresher_app_d003a3f71d8c_Final.docx",
+      "cover_letter_reference": null,
+      "project_selection_mode": "automatic",
+      "project_selection_source": "automatic",
+      "project_selection_record_ids": [
+        "project_bank_customer_clustering_dashboard",
+        "project_sample_sales_data",
+        "project_imdb_movie_analysis"
+      ],
+      "selected_projects": [
+        "Bank Customer Clustering and Financial Analytics Dashboard",
+        "Sample Sales Data Generator and EDA Toolkit",
+        "IMDb Movie Analysis"
+      ],
+      "selected_skills": [
+        "Python",
+        "SQL",
+        "SQLite",
+        "MySQL",
+        "Text-to-SQL",
+        "Pandas",
+        "NumPy"
+      ],
+      "selected_certifications": [
+        "Altair RapidMiner Data Science Master",
+        "AI-ML Virtual Internship",
+        "Artificial Intelligence Internship",
+        "Essentials of Coding and Programming"
+      ],
+      "experience_decision": [
+        {
+          "record_id": "experience_ediglobe_ai_intern",
+          "organization": "Ediglobe",
+          "title": "Artificial Intelligence Intern",
+          "decision": "NOT RELEVANT ENOUGH FOR RESUME",
+          "matched_requirements": [],
+          "reason": "Actual responsibilities/evidence were compared; broad AI/Python wording alone is insufficient."
+        },
+        {
+          "record_id": "experience_eduskills_ai_ml_virtual_internship",
+          "organization": "EduSkills",
+          "title": "AI-ML Virtual Internship",
+          "decision": "NOT RELEVANT ENOUGH FOR RESUME",
+          "matched_requirements": [],
+          "reason": "Actual responsibilities/evidence were compared; broad AI/Python wording alone is insufficient."
+        }
+      ],
+      "requirements_summary": [
+        {
+          "canonical": "python",
+          "jd_phrases": [
+            "python"
+          ],
+          "classification": "required",
+          "match_classification": null
+        },
+        {
+          "canonical": "sql",
+          "jd_phrases": [
+            "sql"
+          ],
+          "classification": "required",
+          "match_classification": null
+        },
+        {
+          "canonical": "data preprocessing",
+          "jd_phrases": [
+            "data cleaning",
+            "cleaning"
+          ],
+          "classification": "required",
+          "match_classification": null
+        },
+        {
+          "canonical": "exploratory data analysis",
+          "jd_phrases": [
+            "exploratory data analysis",
+            "visualization"
+          ],
+          "classification": "required",
+          "match_classification": null
+        },
+        {
+          "canonical": "data visualization",
+          "jd_phrases": [
+            "data visualization",
+            "visualization",
+            "dashboards"
+          ],
+          "classification": "required",
+          "match_classification": null
+        },
+        {
+          "canonical": "reporting",
+          "jd_phrases": [
+            "reporting",
+            "reports"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "git",
+          "jd_phrases": [
+            "git"
+          ],
+          "classification": "preferred",
+          "match_classification": null
+        },
+        {
+          "canonical": "github",
+          "jd_phrases": [
+            "github"
+          ],
+          "classification": "preferred",
+          "match_classification": null
+        },
+        {
+          "canonical": "pandas",
+          "jd_phrases": [
+            "pandas"
+          ],
+          "classification": "required",
+          "match_classification": null
+        },
+        {
+          "canonical": "numpy",
+          "jd_phrases": [
+            "numpy"
+          ],
+          "classification": "required",
+          "match_classification": null
+        }
+      ],
+      "supported_requirements": [
+        "python",
+        "sql",
+        "data preprocessing",
+        "exploratory data analysis",
+        "data visualization",
+        "reporting",
+        "pandas",
+        "numpy"
+      ],
+      "partial_requirements": [],
+      "unsupported_requirements": [
+        "github"
+      ],
+      "candidate_gap_summary": [
+        {
+          "requirement": "github",
+          "status": "unsupported",
+          "message": "No supporting profile evidence; do not add this claim."
+        }
+      ],
+      "application_checklist": {
+        "requirements": [
+          {
+            "item": "python",
+            "kind": "required",
+            "status": "supported"
+          },
+          {
+            "item": "sql",
+            "kind": "required",
+            "status": "supported"
+          },
+          {
+            "item": "data preprocessing",
+            "kind": "required",
+            "status": "supported"
+          },
+          {
+            "item": "exploratory data analysis",
+            "kind": "required",
+            "status": "supported"
+          },
+          {
+            "item": "data visualization",
+            "kind": "required",
+            "status": "supported"
+          },
+          {
+            "item": "pandas",
+            "kind": "required",
+            "status": "supported"
+          },
+          {
+            "item": "numpy",
+            "kind": "required",
+            "status": "supported"
+          },
+          {
+            "item": "git",
+            "kind": "preferred",
+            "status": "review"
+          },
+          {
+            "item": "github",
+            "kind": "preferred",
+            "status": "review"
+          },
+          {
+            "item": "github",
+            "kind": "unsupported",
+            "status": "unsupported"
+          }
+        ],
+        "documents": [
+          {
+            "item": "Tailored resume",
+            "status": "pending"
+          },
+          {
+            "item": "Cover letter",
+            "status": "pending"
+          }
+        ],
+        "manual_actions": [
+          {
+            "item": "Submit application",
+            "status": "pending"
+          },
+          {
+            "item": "Upload resume",
+            "status": "pending"
+          },
+          {
+            "item": "Upload cover letter",
+            "status": "pending"
+          },
+          {
+            "item": "Complete application questions",
+            "status": "pending"
+          },
+          {
+            "item": "Verify contact information",
+            "status": "pending"
+          },
+          {
+            "item": "Final manual submission",
+            "status": "pending"
+          }
+        ]
+      },
+      "application_notes": [],
+      "follow_up_date": null,
+      "last_updated": "2026-10-01T10:04:09.396913+00:00",
+      "phase8_plan_reference": "output\\reports\\app_d003a3f71d8c_phase8_plan_f78b70889415502e.json",
+      "resume_generation_allowed": true,
+      "provenance": {
+        "job_source": "user_provided",
+        "candidate_source": "data/*.json",
+        "phase8_source": "output\\reports\\app_d003a3f71d8c_phase8_plan_f78b70889415502e.json"
+      },
+      "manual_submission_required": true,
+      "automatic_submission_enabled": false,
+      "working_resume_reference": "output\\resumes\\insightedge_solutions_junior_business_data_analyst_fresher_app_d003a3f71d8c_Working.docx",
+      "working_resume_pdf_reference": "output\\resumes\\insightedge_solutions_junior_business_data_analyst_fresher_app_d003a3f71d8c_Working.pdf",
+      "working_resume_docx_path": "output\\resumes\\insightedge_solutions_junior_business_data_analyst_fresher_app_d003a3f71d8c_Working.docx",
+      "working_resume_pdf_path": "output\\resumes\\insightedge_solutions_junior_business_data_analyst_fresher_app_d003a3f71d8c_Working.pdf",
+      "working_resume_docx_sha256": "1c7ade4f3764e64b83bedc146c44d213dfe86947f22eb0b999a3e62b65b976b1",
+      "working_resume_pdf_sha256": "da73ddb0b290143c048cac135f5442be3f8096ca7e7d9691c09f33d7e90c562d",
+      "working_resume_generation_id": "gen_cff8f39424ae4e32a74e7b4722ce9878",
+      "working_resume_generated_at": "2026-10-01T10:04:09.396913+00:00",
+      "resume_validation_reference": "output\\reports\\app_d003a3f71d8c_resume_validation.json",
+      "resume_working_artifact_stale": false,
+      "resume_pdf_reference": "output\\resumes\\insightedge_solutions_junior_business_data_analyst_fresher_app_d003a3f71d8c_Final.pdf",
+      "resume_docx_path": "output\\resumes\\insightedge_solutions_junior_business_data_analyst_fresher_app_d003a3f71d8c_Final.docx",
+      "resume_pdf_path": "output\\resumes\\insightedge_solutions_junior_business_data_analyst_fresher_app_d003a3f71d8c_Final.pdf",
+      "resume_docx_sha256": "48efc1597e520bcc0528cae420f0bea2945868e533ed54f9f76538467a4192b3",
+      "resume_pdf_sha256": "bbc97a49819215e55645a55450ebd88258a28b611d3dafe5b74cdae1125ba783",
+      "resume_generation_id": "gen_5c8be9b5e0074bb8816fd92a1dafa14f",
+      "resume_finalized_at": "2026-10-01T06:19:30.200304+00:00",
+      "resume_status": "final",
+      "cover_letter_working_reference": "output\\cover_letters\\insightedge_solutions_junior_business_data_analyst_fresher_app_d003a3f71d8c_CoverLetter_Working.md",
+      "cover_letter_source_reference": "output\\cover_letters\\insightedge_solutions_junior_business_data_analyst_fresher_app_d003a3f71d8c_CoverLetter_Working.md",
+      "cover_letter_edited_at": "2026-10-01T06:19:46.330973+00:00",
+      "selected_experience": [],
+      "resume_final_stale": true
+    },
+    {
+      "application_id": "app_03fefedd7498",
+      "company_name": "VectorMind AI",
+      "job_title": "Junior Generative AI / RAG Engineer — Fresher",
+      "job_url": "",
+      "source_platform": "user_provided",
+      "location": "",
+      "employment_type": "",
+      "job_description_reference": "job_descriptions\\app_03fefedd7498_junior_generative_ai_rag_engineer_fresher.txt",
+      "job_description_text": "We are looking for a Junior Generative AI / RAG Engineer to help build retrieval-augmented AI applications and LLM-powered tools.\n\nResponsibilities\nBuild and maintain Retrieval-Augmented Generation (RAG) pipelines.\nProcess and chunk documents for retrieval.\nGenerate embeddings and store documents in a vector database.\nImplement semantic search and retrieve relevant context for LLM responses.\nIntegrate LLMs into Python applications.\nDevelop prompts and evaluate generated responses.\nBuild simple interfaces for demonstrating AI applications.\nDebug and improve RAG pipelines for relevance and reliability.\nRequired Skills\nPython\nGenerative AI\nLarge Language Models (LLMs)\nRetrieval-Augmented Generation (RAG)\nNatural Language Processing (NLP)\nEmbeddings\nVector Databases\nPrompt Engineering\nGit/GitHub\nPreferred Skills\nLangChain\nChromaDB\nFAISS\nOllama\nStreamlit\nDocker\nLLM Evaluation\nREST APIs\nEducation\nBachelor's degree in Computer Science, Artificial Intelligence, Data Science, or a related field.\nFreshers are welcome.\nRole\n\nJunior Generative AI / RAG Engineer — Fresher\n\nExperience\n\n0–1 year / Freshers\n\nLocation\n\nHyderabad, Telangana",
+      "date_added": "2026-10-01",
+      "date_applied": null,
+      "current_status": "resume_ready",
+      "status_history": [
+        {
+          "old_status": null,
+          "new_status": "awaiting_resume_approval",
+          "timestamp": "2026-10-01T10:12:24.812357+00:00",
+          "source": "application_assistant"
+        },
+        {
+          "old_status": "awaiting_resume_approval",
+          "new_status": "resume_ready",
+          "timestamp": "2026-10-01T10:12:39.799564+00:00",
+          "source": "explicit_user_approval"
+        }
+      ],
+      "resume_reference": null,
+      "cover_letter_reference": null,
+      "project_selection_mode": "automatic",
+      "project_selection_source": "automatic",
+      "project_selection_record_ids": [
+        "project_student_performance_rag",
+        "project_text_to_sql_project",
+        "project_ai_resume_jd_match_tool"
+      ],
+      "selected_projects": [
+        "Student Performance RAG Chatbot",
+        "Text-to-SQL Project",
+        "AI Resume-JD Match Tool"
+      ],
+      "selected_skills": [
+        "Python",
+        "ChromaDB",
+        "RAG",
+        "Embeddings",
+        "Generative AI",
+        "Ollama",
+        "Streamlit",
+        "ChromaDB",
+        "Ollama"
+      ],
+      "selected_certifications": [
+        "Altair RapidMiner Data Science Master",
+        "AI-ML Virtual Internship",
+        "Artificial Intelligence Internship",
+        "Essentials of Coding and Programming"
+      ],
+      "experience_decision": [
+        {
+          "record_id": "experience_ediglobe_ai_intern",
+          "organization": "Ediglobe",
+          "title": "Artificial Intelligence Intern",
+          "decision": "NOT RELEVANT ENOUGH FOR RESUME",
+          "matched_requirements": [],
+          "reason": "Actual responsibilities/evidence were compared; broad AI/Python wording alone is insufficient."
+        },
+        {
+          "record_id": "experience_eduskills_ai_ml_virtual_internship",
+          "organization": "EduSkills",
+          "title": "AI-ML Virtual Internship",
+          "decision": "NOT RELEVANT ENOUGH FOR RESUME",
+          "matched_requirements": [],
+          "reason": "Actual responsibilities/evidence were compared; broad AI/Python wording alone is insufficient."
+        }
+      ],
+      "requirements_summary": [
+        {
+          "canonical": "python",
+          "jd_phrases": [
+            "python"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "vector databases",
+          "jd_phrases": [
+            "vector database",
+            "vector databases",
+            "chromadb",
+            "faiss"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "rag",
+          "jd_phrases": [
+            "rag",
+            "retrieval augmented generation"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "embeddings",
+          "jd_phrases": [
+            "embeddings"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "generative ai",
+          "jd_phrases": [
+            "generative ai"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "llm integration",
+          "jd_phrases": [
+            "llm",
+            "llms",
+            "ollama"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "nlp",
+          "jd_phrases": [
+            "nlp",
+            "natural language processing"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "streamlit",
+          "jd_phrases": [
+            "streamlit"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "langchain",
+          "jd_phrases": [
+            "langchain"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "chromadb",
+          "jd_phrases": [
+            "chromadb"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "faiss",
+          "jd_phrases": [
+            "faiss"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "ollama",
+          "jd_phrases": [
+            "ollama"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "docker",
+          "jd_phrases": [
+            "docker"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "git",
+          "jd_phrases": [
+            "git"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "github",
+          "jd_phrases": [
+            "github"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "prompt engineering",
+          "jd_phrases": [
+            "prompt engineering"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "semantic search",
+          "jd_phrases": [
+            "semantic search"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "data science",
+          "jd_phrases": [
+            "data science"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        }
+      ],
+      "supported_requirements": [
+        "python",
+        "vector databases",
+        "rag",
+        "embeddings",
+        "generative ai",
+        "llm integration",
+        "nlp",
+        "streamlit",
+        "chromadb",
+        "ollama",
+        "prompt engineering",
+        "semantic search",
+        "data science"
+      ],
+      "partial_requirements": [],
+      "unsupported_requirements": [
+        "langchain",
+        "faiss",
+        "docker",
+        "github"
+      ],
+      "candidate_gap_summary": [
+        {
+          "requirement": "langchain",
+          "status": "unsupported",
+          "message": "No supporting profile evidence; do not add this claim."
+        },
+        {
+          "requirement": "faiss",
+          "status": "unsupported",
+          "message": "No supporting profile evidence; do not add this claim."
+        },
+        {
+          "requirement": "docker",
+          "status": "unsupported",
+          "message": "No supporting profile evidence; do not add this claim."
+        },
+        {
+          "requirement": "github",
+          "status": "unsupported",
+          "message": "No supporting profile evidence; do not add this claim."
+        }
+      ],
+      "application_checklist": {
+        "requirements": [
+          {
+            "item": "langchain",
+            "kind": "unsupported",
+            "status": "unsupported"
+          },
+          {
+            "item": "faiss",
+            "kind": "unsupported",
+            "status": "unsupported"
+          },
+          {
+            "item": "docker",
+            "kind": "unsupported",
+            "status": "unsupported"
+          },
+          {
+            "item": "github",
+            "kind": "unsupported",
+            "status": "unsupported"
+          }
+        ],
+        "documents": [
+          {
+            "item": "Tailored resume",
+            "status": "pending"
+          },
+          {
+            "item": "Cover letter",
+            "status": "pending"
+          }
+        ],
+        "manual_actions": [
+          {
+            "item": "Submit application",
+            "status": "pending"
+          },
+          {
+            "item": "Upload resume",
+            "status": "pending"
+          },
+          {
+            "item": "Upload cover letter",
+            "status": "pending"
+          },
+          {
+            "item": "Complete application questions",
+            "status": "pending"
+          },
+          {
+            "item": "Verify contact information",
+            "status": "pending"
+          },
+          {
+            "item": "Final manual submission",
+            "status": "pending"
+          }
+        ]
+      },
+      "application_notes": [],
+      "follow_up_date": null,
+      "last_updated": "2026-10-01T11:13:22.422629+00:00",
+      "phase8_plan_reference": "output\\reports\\app_03fefedd7498_phase8_plan_62a5811fb343de05.json",
+      "resume_generation_allowed": true,
+      "provenance": {
+        "job_source": "user_provided",
+        "candidate_source": "data/*.json",
+        "phase8_source": "output\\reports\\app_03fefedd7498_phase8_plan_62a5811fb343de05.json"
+      },
+      "manual_submission_required": true,
+      "automatic_submission_enabled": false,
+      "selected_experience": [],
+      "resume_working_artifact_stale": false,
+      "working_resume_reference": "output\\resumes\\working_revisions\\app_03fefedd7498_20261001\\vectormind_ai_junior_generative_ai_rag_engineer_fresher_app_03fefedd7498_Working.docx",
+      "working_resume_pdf_reference": "output\\resumes\\working_revisions\\app_03fefedd7498_20261001\\vectormind_ai_junior_generative_ai_rag_engineer_fresher_app_03fefedd7498_Working.pdf",
+      "working_resume_docx_path": "output\\resumes\\working_revisions\\app_03fefedd7498_20261001\\vectormind_ai_junior_generative_ai_rag_engineer_fresher_app_03fefedd7498_Working.docx",
+      "working_resume_pdf_path": "output\\resumes\\working_revisions\\app_03fefedd7498_20261001\\vectormind_ai_junior_generative_ai_rag_engineer_fresher_app_03fefedd7498_Working.pdf",
+      "working_resume_docx_sha256": "5923fd7f981b1725ce167624055401f01cee06e51e0c01218ecee94c015e577b",
+      "working_resume_pdf_sha256": "5e6323f59ad28856ba28b15e8fa56369e71e051d882a64d29de4dd6c61015370",
+      "working_resume_generation_id": "gen_4814231cd7f44556935bb31e235612d2",
+      "working_resume_generated_at": "2026-10-01T11:13:22.422629+00:00",
+      "resume_validation_reference": "output\\reports\\working_revisions\\app_03fefedd7498_20261001\\app_03fefedd7498_resume_validation.json",
+      "resume_final_stale": false
+    },
+    {
+      "application_id": "app_b70a2228a165",
+      "company_name": "NeuralForge Technologies",
+      "job_title": "Junior Machine Learning Engineer — Fresher",
+      "job_url": "",
+      "source_platform": "user_provided",
+      "location": "",
+      "employment_type": "",
+      "job_description_reference": "job_descriptions\\app_b70a2228a165_junior_machine_learning_engineer_fresher.txt",
+      "job_description_text": "Responsibilities:\n- Develop and evaluate machine learning models for business and analytical problems.\n- Clean, preprocess, and transform structured datasets.\n- Perform exploratory data analysis and identify useful patterns and relationships.\n- Engineer and select relevant features for machine learning models.\n- Train, evaluate, and compare classification and regression algorithms.\n- Tune model hyperparameters and improve model performance.\n- Use Python and standard machine learning libraries for experimentation.\n- Visualize model results and communicate findings clearly.\n- Maintain reproducible notebooks, scripts, and Git/GitHub workflows.\n\nRequired Skills:\n- Python\n- Pandas\n- NumPy\n- Scikit-learn\n- Machine Learning\n- Data Preprocessing\n- Feature Engineering\n- Exploratory Data Analysis\n- Model Evaluation\n- Classification\n- Regression\n- Data Visualization\n- Git/GitHub\n\nPreferred Skills:\n- XGBoost\n- Random Forest\n- Decision Trees\n- Hyperparameter Tuning\n- Streamlit\n- SQL\n- Matplotlib\n- Seaborn\n\nEducation:\n- Bachelor's degree in Computer Science, Data Science, Artificial Intelligence, or a related field.\n- Freshers are welcome.",
+      "date_added": "2026-10-01",
+      "date_applied": null,
+      "current_status": "resume_ready",
+      "status_history": [
+        {
+          "old_status": null,
+          "new_status": "awaiting_resume_approval",
+          "timestamp": "2026-10-01T11:17:53.396229+00:00",
+          "source": "application_assistant"
+        },
+        {
+          "old_status": "awaiting_resume_approval",
+          "new_status": "resume_ready",
+          "timestamp": "2026-10-01T11:19:20.244714+00:00",
+          "source": "explicit_user_approval"
+        },
+        {
+          "old_status": "resume_ready",
+          "new_status": "resume_ready",
+          "timestamp": "2026-10-01T11:19:50.418410+00:00",
+          "source": "explicit_user_approval"
+        }
+      ],
+      "resume_reference": null,
+      "cover_letter_reference": null,
+      "project_selection_mode": "automatic",
+      "project_selection_source": "automatic",
+      "project_selection_record_ids": [
+        "project_smartfraud_classifier",
+        "project_bank_customer_clustering_dashboard",
+        "project_telecom_churn_logistic_regression"
+      ],
+      "selected_projects": [
+        "SmartFraud Classifier",
+        "Bank Customer Clustering and Financial Analytics Dashboard",
+        "Telecom Churn Logistic Regression"
+      ],
+      "selected_skills": [
+        "Python",
+        "SQL",
+        "SQLite",
+        "MySQL",
+        "Text-to-SQL",
+        "Streamlit",
+        "Pandas",
+        "NumPy",
+        "Scikit-learn",
+        "Scikit-learn pipelines",
+        "XGBoost"
+      ],
+      "selected_certifications": [
+        "Altair RapidMiner Data Science Master",
+        "AI-ML Virtual Internship",
+        "Artificial Intelligence Internship",
+        "Essentials of Coding and Programming"
+      ],
+      "experience_decision": [
+        {
+          "record_id": "experience_ediglobe_ai_intern",
+          "organization": "Ediglobe",
+          "title": "Artificial Intelligence Intern",
+          "decision": "INCLUDE",
+          "matched_requirements": [
+            "scikit-learn"
+          ],
+          "reason": "Actual responsibilities/evidence were compared; broad AI/Python wording alone is insufficient."
+        },
+        {
+          "record_id": "experience_eduskills_ai_ml_virtual_internship",
+          "organization": "EduSkills",
+          "title": "AI-ML Virtual Internship",
+          "decision": "NOT RELEVANT ENOUGH FOR RESUME",
+          "matched_requirements": [],
+          "reason": "Actual responsibilities/evidence were compared; broad AI/Python wording alone is insufficient."
+        }
+      ],
+      "requirements_summary": [
+        {
+          "canonical": "python",
+          "jd_phrases": [
+            "python"
+          ],
+          "classification": "required",
+          "match_classification": null
+        },
+        {
+          "canonical": "sql",
+          "jd_phrases": [
+            "sql"
+          ],
+          "classification": "preferred",
+          "match_classification": null
+        },
+        {
+          "canonical": "data preprocessing",
+          "jd_phrases": [
+            "data preprocessing",
+            "preprocessing"
+          ],
+          "classification": "required",
+          "match_classification": null
+        },
+        {
+          "canonical": "exploratory data analysis",
+          "jd_phrases": [
+            "exploratory data analysis",
+            "visualization"
+          ],
+          "classification": "required",
+          "match_classification": null
+        },
+        {
+          "canonical": "data visualization",
+          "jd_phrases": [
+            "data visualization",
+            "visualization"
+          ],
+          "classification": "required",
+          "match_classification": null
+        },
+        {
+          "canonical": "streamlit",
+          "jd_phrases": [
+            "streamlit"
+          ],
+          "classification": "preferred",
+          "match_classification": null
+        },
+        {
+          "canonical": "git",
+          "jd_phrases": [
+            "git"
+          ],
+          "classification": "required",
+          "match_classification": null
+        },
+        {
+          "canonical": "github",
+          "jd_phrases": [
+            "github"
+          ],
+          "classification": "required",
+          "match_classification": null
+        },
+        {
+          "canonical": "pandas",
+          "jd_phrases": [
+            "pandas"
+          ],
+          "classification": "required",
+          "match_classification": null
+        },
+        {
+          "canonical": "numpy",
+          "jd_phrases": [
+            "numpy"
+          ],
+          "classification": "required",
+          "match_classification": null
+        },
+        {
+          "canonical": "scikit-learn",
+          "jd_phrases": [
+            "scikit-learn"
+          ],
+          "classification": "required",
+          "match_classification": null
+        },
+        {
+          "canonical": "xgboost",
+          "jd_phrases": [
+            "xgboost"
+          ],
+          "classification": "preferred",
+          "match_classification": null
+        },
+        {
+          "canonical": "ai evaluation",
+          "jd_phrases": [
+            "model evaluation"
+          ],
+          "classification": "required",
+          "match_classification": null
+        },
+        {
+          "canonical": "data science",
+          "jd_phrases": [
+            "data science"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "machine learning",
+          "jd_phrases": [
+            "machine learning"
+          ],
+          "classification": "required",
+          "match_classification": null
+        }
+      ],
+      "supported_requirements": [
+        "python",
+        "sql",
+        "data preprocessing",
+        "exploratory data analysis",
+        "data visualization",
+        "streamlit",
+        "pandas",
+        "numpy",
+        "scikit-learn",
+        "xgboost",
+        "ai evaluation",
+        "data science",
+        "machine learning"
+      ],
+      "partial_requirements": [],
+      "unsupported_requirements": [],
+      "candidate_gap_summary": [],
+      "application_checklist": {
+        "requirements": [
+          {
+            "item": "python",
+            "kind": "required",
+            "status": "supported"
+          },
+          {
+            "item": "data preprocessing",
+            "kind": "required",
+            "status": "supported"
+          },
+          {
+            "item": "exploratory data analysis",
+            "kind": "required",
+            "status": "supported"
+          },
+          {
+            "item": "data visualization",
+            "kind": "required",
+            "status": "supported"
+          },
+          {
+            "item": "git",
+            "kind": "required",
+            "status": "review"
+          },
+          {
+            "item": "github",
+            "kind": "required",
+            "status": "review"
+          },
+          {
+            "item": "pandas",
+            "kind": "required",
+            "status": "supported"
+          },
+          {
+            "item": "numpy",
+            "kind": "required",
+            "status": "supported"
+          },
+          {
+            "item": "scikit-learn",
+            "kind": "required",
+            "status": "supported"
+          },
+          {
+            "item": "ai evaluation",
+            "kind": "required",
+            "status": "supported"
+          },
+          {
+            "item": "machine learning",
+            "kind": "required",
+            "status": "supported"
+          },
+          {
+            "item": "sql",
+            "kind": "preferred",
+            "status": "review"
+          },
+          {
+            "item": "streamlit",
+            "kind": "preferred",
+            "status": "review"
+          },
+          {
+            "item": "xgboost",
+            "kind": "preferred",
+            "status": "review"
+          }
+        ],
+        "documents": [
+          {
+            "item": "Tailored resume",
+            "status": "pending"
+          },
+          {
+            "item": "Cover letter",
+            "status": "ready"
+          }
+        ],
+        "manual_actions": [
+          {
+            "item": "Submit application",
+            "status": "pending"
+          },
+          {
+            "item": "Upload resume",
+            "status": "pending"
+          },
+          {
+            "item": "Upload cover letter",
+            "status": "pending"
+          },
+          {
+            "item": "Complete application questions",
+            "status": "pending"
+          },
+          {
+            "item": "Verify contact information",
+            "status": "pending"
+          },
+          {
+            "item": "Final manual submission",
+            "status": "pending"
+          }
+        ]
+      },
+      "application_notes": [],
+      "follow_up_date": null,
+      "last_updated": "2026-10-01T11:38:37.215254+00:00",
+      "phase8_plan_reference": "output\\reports\\app_b70a2228a165_phase8_plan_7ba25035363760a7.json",
+      "resume_generation_allowed": true,
+      "provenance": {
+        "job_source": "user_provided",
+        "candidate_source": "data/*.json",
+        "phase8_source": "output\\reports\\app_b70a2228a165_phase8_plan_7ba25035363760a7.json"
+      },
+      "manual_submission_required": true,
+      "automatic_submission_enabled": false,
+      "resume_working_artifact_stale": false,
+      "selected_experience": [
+        "experience_ediglobe_ai_intern"
+      ],
+      "cover_letter_working_reference": "output\\cover_letters\\neuralforge_technologies_junior_machine_learning_engineer_fresher_app_b70a2228a165_CoverLetter_Working.md",
+      "cover_letter_source_reference": "output\\cover_letters\\neuralforge_technologies_junior_machine_learning_engineer_fresher_app_b70a2228a165_CoverLetter_Working.md",
+      "cover_letter_working_docx_reference": "output\\cover_letters\\neuralforge_technologies_junior_machine_learning_engineer_fresher_app_b70a2228a165_CoverLetter_Working.docx",
+      "cover_letter_working_pdf_reference": "output\\cover_letters\\neuralforge_technologies_junior_machine_learning_engineer_fresher_app_b70a2228a165_CoverLetter_Working.pdf"
+    },
+    {
+      "application_id": "app_272b8028c562",
+      "company_name": "ABCD",
+      "job_title": "FRESHER",
+      "job_url": "",
+      "source_platform": "user_provided",
+      "location": "",
+      "employment_type": "",
+      "job_description_reference": "job_descriptions\\app_272b8028c562_fresher.txt",
+      "job_description_text": "Key Responsibilities\n• Model Training: Build, train, validate, and monitor machine learning or deep learning models.\n• Data Processing: Clean, analyze, and transform large datasets into usable data prototypes.\n• Collaboration: Work with data science and IT teams to deploy predictive tools and maintain pipelines.\nRequired Skills & Qualifications\n• Programming: Strong proficiency in Python along with core libraries like NumPy, Pandas, and scikit-learn.\n• ML Frameworks: Experience with frameworks such as PyTorch, TensorFlow, or Keras.\n• Foundations: Solid understanding of probability, statistics, and data modeling.\n• Education: A Bachelor’s degree in Computer Science, Mathematics, Engineering, or a related quantitative field.",
+      "date_added": "2026-10-01",
+      "date_applied": null,
+      "current_status": "resume_ready",
+      "status_history": [
+        {
+          "old_status": null,
+          "new_status": "awaiting_resume_approval",
+          "timestamp": "2026-10-01T11:23:12.333500+00:00",
+          "source": "application_assistant"
+        },
+        {
+          "old_status": "awaiting_resume_approval",
+          "new_status": "resume_ready",
+          "timestamp": "2026-10-01T11:23:20.006489+00:00",
+          "source": "explicit_user_approval"
+        }
+      ],
+      "resume_reference": "output\\resumes\\abcd_fresher_app_272b8028c562_Final.docx",
+      "cover_letter_reference": null,
+      "project_selection_mode": "automatic",
+      "project_selection_source": "automatic",
+      "project_selection_record_ids": [
+        "project_bank_customer_clustering_dashboard",
+        "project_telecom_churn_logistic_regression",
+        "project_fuel_regression_crispmlq"
+      ],
+      "selected_projects": [
+        "Bank Customer Clustering and Financial Analytics Dashboard",
+        "Telecom Churn Logistic Regression",
+        "Flight Fuel-Burn Prediction"
+      ],
+      "selected_skills": [
+        "Python",
+        "Pandas",
+        "NumPy",
+        "Scikit-learn",
+        "Scikit-learn pipelines"
+      ],
+      "selected_certifications": [
+        "Altair RapidMiner Data Science Master",
+        "AI-ML Virtual Internship",
+        "Artificial Intelligence Internship",
+        "Essentials of Coding and Programming"
+      ],
+      "experience_decision": [
+        {
+          "record_id": "experience_ediglobe_ai_intern",
+          "organization": "Ediglobe",
+          "title": "Artificial Intelligence Intern",
+          "decision": "INCLUDE",
+          "matched_requirements": [
+            "scikit-learn"
+          ],
+          "reason": "Actual responsibilities/evidence were compared; broad AI/Python wording alone is insufficient."
+        },
+        {
+          "record_id": "experience_eduskills_ai_ml_virtual_internship",
+          "organization": "EduSkills",
+          "title": "AI-ML Virtual Internship",
+          "decision": "NOT RELEVANT ENOUGH FOR RESUME",
+          "matched_requirements": [],
+          "reason": "Actual responsibilities/evidence were compared; broad AI/Python wording alone is insufficient."
+        }
+      ],
+      "requirements_summary": [
+        {
+          "canonical": "python",
+          "jd_phrases": [
+            "python"
+          ],
+          "classification": "required",
+          "match_classification": null
+        },
+        {
+          "canonical": "pandas",
+          "jd_phrases": [
+            "pandas"
+          ],
+          "classification": "required",
+          "match_classification": null
+        },
+        {
+          "canonical": "numpy",
+          "jd_phrases": [
+            "numpy"
+          ],
+          "classification": "required",
+          "match_classification": null
+        },
+        {
+          "canonical": "scikit-learn",
+          "jd_phrases": [
+            "scikit-learn"
+          ],
+          "classification": "required",
+          "match_classification": null
+        },
+        {
+          "canonical": "data science",
+          "jd_phrases": [
+            "data science"
+          ],
+          "classification": "uncertain",
+          "match_classification": null
+        },
+        {
+          "canonical": "machine learning",
+          "jd_phrases": [
+            "machine learning",
+            "ml"
+          ],
+          "classification": "required",
+          "match_classification": null
+        }
+      ],
+      "supported_requirements": [
+        "python",
+        "pandas",
+        "numpy",
+        "scikit-learn",
+        "data science",
+        "machine learning"
+      ],
+      "partial_requirements": [],
+      "unsupported_requirements": [],
+      "candidate_gap_summary": [],
+      "application_checklist": {
+        "requirements": [
+          {
+            "item": "python",
+            "kind": "required",
+            "status": "supported"
+          },
+          {
+            "item": "pandas",
+            "kind": "required",
+            "status": "supported"
+          },
+          {
+            "item": "numpy",
+            "kind": "required",
+            "status": "supported"
+          },
+          {
+            "item": "scikit-learn",
+            "kind": "required",
+            "status": "supported"
+          },
+          {
+            "item": "machine learning",
+            "kind": "required",
+            "status": "supported"
+          }
+        ],
+        "documents": [
+          {
+            "item": "Tailored resume",
+            "status": "pending"
+          },
+          {
+            "item": "Cover letter",
+            "status": "ready"
+          }
+        ],
+        "manual_actions": [
+          {
+            "item": "Submit application",
+            "status": "pending"
+          },
+          {
+            "item": "Upload resume",
+            "status": "pending"
+          },
+          {
+            "item": "Upload cover letter",
+            "status": "pending"
+          },
+          {
+            "item": "Complete application questions",
+            "status": "pending"
+          },
+          {
+            "item": "Verify contact information",
+            "status": "pending"
+          },
+          {
+            "item": "Final manual submission",
+            "status": "pending"
+          }
+        ]
+      },
+      "application_notes": [],
+      "follow_up_date": null,
+      "last_updated": "2026-10-01T11:24:56.572986+00:00",
+      "phase8_plan_reference": "output\\reports\\app_272b8028c562_phase8_plan_0f9aa01163d7923a.json",
+      "resume_generation_allowed": true,
+      "provenance": {
+        "job_source": "user_provided",
+        "candidate_source": "data/*.json",
+        "phase8_source": "output\\reports\\app_272b8028c562_phase8_plan_0f9aa01163d7923a.json"
+      },
+      "manual_submission_required": true,
+      "automatic_submission_enabled": false,
+      "selected_experience": [
+        "experience_ediglobe_ai_intern"
+      ],
+      "resume_working_artifact_stale": false,
+      "working_resume_reference": "output\\resumes\\abcd_fresher_app_272b8028c562_Working.docx",
+      "working_resume_pdf_reference": "output\\resumes\\abcd_fresher_app_272b8028c562_Working.pdf",
+      "working_resume_docx_path": "output\\resumes\\abcd_fresher_app_272b8028c562_Working.docx",
+      "working_resume_pdf_path": "output\\resumes\\abcd_fresher_app_272b8028c562_Working.pdf",
+      "working_resume_docx_sha256": "76a92d12c33424df3ae7f7891815f0f74ee98c01cbdab3ef5b1a22142d9b858f",
+      "working_resume_pdf_sha256": "9365700a86bb853afd26033756b198ce2d32de7ed29ad408fe07432828fb4286",
+      "working_resume_generation_id": "gen_22bc4197dc424de384df8f251d8acb03",
+      "working_resume_generated_at": "2026-10-01T11:23:30.242149+00:00",
+      "resume_validation_reference": "output\\reports\\app_272b8028c562_resume_validation.json",
+      "resume_final_stale": false,
+      "resume_pdf_reference": "output\\resumes\\abcd_fresher_app_272b8028c562_Final.pdf",
+      "resume_docx_path": "output\\resumes\\abcd_fresher_app_272b8028c562_Final.docx",
+      "resume_pdf_path": "output\\resumes\\abcd_fresher_app_272b8028c562_Final.pdf",
+      "resume_docx_sha256": "76a92d12c33424df3ae7f7891815f0f74ee98c01cbdab3ef5b1a22142d9b858f",
+      "resume_pdf_sha256": "73ec69ce90489034452b41de57c9d19377e57145832243330a3d2bf5b4c322ba",
+      "resume_generation_id": "gen_3cdb70711b034296ab438c0100ef66fa",
+      "resume_finalized_at": "2026-10-01T11:24:40.184571+00:00",
+      "resume_status": "final",
+      "cover_letter_working_reference": "output\\cover_letters\\abcd_fresher_app_272b8028c562_CoverLetter_Working.md",
+      "cover_letter_source_reference": "output\\cover_letters\\abcd_fresher_app_272b8028c562_CoverLetter_Working.md"
     }
   ]
 }

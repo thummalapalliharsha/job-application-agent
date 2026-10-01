@@ -9,9 +9,10 @@ import argparse, copy, hashlib, json, re, shutil, tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+from career_os_config import CODE_ROOT, DATA_DIR, OUTPUT_DIR, STORAGE_ROOT, storage_root
 
-ROOT=Path(__file__).resolve().parent
-DATA=ROOT/'data'; REPORTS=ROOT/'output'/'reports'
+ROOT=CODE_ROOT
+DATA=DATA_DIR; REPORTS=OUTPUT_DIR/'reports'
 CATEGORIES=['projects','skills','certifications','education','experience','achievements','master_profile']
 STATUSES={'idea','planned','in_progress','completed','unknown'}
 GITHUB_STATUSES={'github_verified','github_not_uploaded','github_pending','github_unverified'}
@@ -25,14 +26,14 @@ CATEGORY_HINTS={
 }
 TOOL_SKILLS={'docker','git','github','vs code','vscode','n8n','ollama','streamlit'}
 
-def load(name,root=ROOT): return json.loads((root/'data'/f'{name}.json').read_text(encoding='utf-8'))
-def dump(name,obj,root): (root/'data'/f'{name}.json').write_text(json.dumps(obj,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
+def load(name,root=None): return json.loads((storage_root(root)/'data'/f'{name}.json').read_text(encoding='utf-8'))
+def dump(name,obj,root=None): (storage_root(root)/'data'/f'{name}.json').write_text(json.dumps(obj,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
 def now(): return datetime.now(timezone.utc).isoformat()
 def norm(s): return re.sub(r'[^a-z0-9]+',' ',str(s).lower()).strip()
 def slug(s): return re.sub(r'[^a-z0-9]+','_',str(s).lower()).strip('_')
 def source(): return {'source_id':'user_provided','evidence_type':'explicit_user_statement','evidence_location':'Phase 7 profile update request'}
 def prov(): return {'source_id':'user_provided','evidence_type':'explicit_user_statement','evidence_location':'Phase 7 profile update request','claims_supported':['user-provided update']}
-def all_data(root=ROOT): return {n:load(n,root) for n in CATEGORIES}
+def all_data(root=None): return {n:load(n,root) for n in CATEGORIES}
 
 def project_records(data): return data['projects'].get('projects',[])
 def skill_groups(data): return data['skills'].get('skill_groups',[])
@@ -96,7 +97,22 @@ def route(text):
         return 'ambiguous'
     return 'ambiguous'
 
-def plan_request(text,root=ROOT):
+def plan_skill_gap_addition(name,category,root=None,application_id=None):
+    data=all_data(root)
+    name=str(name or '').strip()
+    if not name or len(name)>100:
+        return result(f'Confirm JD skill gap: {name}','ask_clarification','skills',[],[],['Provide a valid skill name.'])
+    _,existing=find_skill(data,name)
+    if existing:
+        return result(f'Confirm JD skill gap: {name}','no_change_duplicate','skills',[{'action':'no_change','record':existing.get('name'),'reason':'skill already exists'}],[],[])
+    categories={group.get('category') for group in skill_groups(data)}
+    if category not in categories:
+        return result(f'Confirm JD skill gap: {name}','ask_clarification','skills',[],[],['Choose an existing canonical skill category.'])
+    evidence={'source_id':'user_provided','evidence_type':'explicit_user_confirmation','evidence_location':f'Confirmed JD skill gap for {application_id}' if application_id else 'Confirmed JD skill gap','claims_supported':[name]}
+    action={'action':'add_skill','category':category,'name':name,'status':'candidate_provided','evidence':evidence}
+    return result(f'User explicitly confirmed adding candidate-provided skill: {name}','planned','skills',[action],[],[])
+
+def plan_request(text,root=None):
     data=all_data(root); low=text.lower(); category=route(text); actions=[]; conflicts=[]; questions=[]
     status=parse_status(text); github=parse_github(text)
     if re.search(r'\b(delete|remove)\b',low) and 'project' in low:
@@ -173,7 +189,7 @@ def plan_request(text,root=ROOT):
 def result(request,decision,category,actions,conflicts,questions):
     return {'request':request,'decision':decision,'category':category,'actions':actions,'conflicts':conflicts,'questions':questions,'persistent_write_allowed':decision=='planned' and bool(actions),'resume_regeneration':False}
 
-def apply_plan(plan,root=ROOT,confirm=False,confirm_delete=False):
+def apply_plan(plan,root=None,confirm=False,confirm_delete=False):
     if not confirm: raise PermissionError('Persistent profile writes require explicit --confirm.')
     if plan.get('decision')!='planned' or not plan.get('actions'): raise ValueError('Only a non-ambiguous planned update can be applied.')
     supported={'add_skill','update_project_github','update_project_status','add_project_technologies','create_project','create_certification','create_achievement'}
@@ -183,7 +199,7 @@ def apply_plan(plan,root=ROOT,confirm=False,confirm_delete=False):
     for a in plan['actions']:
         action=a['action']
         if action=='add_skill':
-            group=next(g for g in skill_groups(data) if g.get('category')==a['category']); group.setdefault('skills',[]).append({'name':a['name'],'status':'candidate_provided','evidence':[source()],'review_flags':[]}); changed.append('skills.json')
+            group=next(g for g in skill_groups(data) if g.get('category')==a['category']); group.setdefault('skills',[]).append({'name':a['name'],'status':'candidate_provided','evidence':[a.get('evidence') or source()],'review_flags':[]}); changed.append('skills.json')
         elif action=='update_project_github':
             p=next(p for p in project_records(data) if p['record_id']==a['record_id']); p['github_url']=a['github_url']; p['github_availability']=a['github_availability']; p.setdefault('provenance',[]).append(prov()); p.setdefault('sources',[]).append(source()); changed.append('projects.json')
         elif action=='update_project_status':
@@ -217,7 +233,7 @@ def sync_master(data):
     idx['project_lifecycle_statuses']={p['record_id']:p.get('project_status','unknown') for p in project_records(data)}
     idx['project_github_availability']={p['record_id']:p.get('github_availability','github_unverified') for p in project_records(data)}
 
-def validate_data(root=ROOT):
+def validate_data(root=None):
     data=all_data(root); errors=[]
     for p in project_records(data):
         if p.get('project_status') not in STATUSES: errors.append('invalid project status '+p.get('record_id',''))
@@ -230,7 +246,7 @@ def validate_data(root=ROOT):
     return {'valid':not errors,'errors':errors,'project_count':len(pids),'certification_count':len(cids),'skill_group_count':len(skill_groups(data))}
 
 def main():
-    ap=argparse.ArgumentParser(); ap.add_argument('--request',required=True); ap.add_argument('--apply',action='store_true'); ap.add_argument('--confirm',action='store_true'); ap.add_argument('--confirm-delete',action='store_true'); ap.add_argument('--root',default=str(ROOT)); args=ap.parse_args(); root=Path(args.root)
+    ap=argparse.ArgumentParser(); ap.add_argument('--request',required=True); ap.add_argument('--apply',action='store_true'); ap.add_argument('--confirm',action='store_true'); ap.add_argument('--confirm-delete',action='store_true'); ap.add_argument('--root',default=str(STORAGE_ROOT)); args=ap.parse_args(); root=Path(args.root)
     plan=plan_request(args.request,root)
     if args.apply: changed=apply_plan(plan,root,args.confirm,args.confirm_delete); plan['changed_files']=changed; plan['applied_at']=now(); plan['persistent_write_allowed']=True
     else: plan['changed_files']=[]
