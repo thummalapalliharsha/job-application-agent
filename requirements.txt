@@ -1,0 +1,8 @@
+python-docx
+reportlab
+streamlit
+pandas
+numpy
+scikit-learn
+requests
+python-dotenv
