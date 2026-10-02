@@ -93,8 +93,13 @@ def classify(terms,required,preferred):
  if any(contains(required,term) for term in terms): return 'required'
  if any(contains(preferred,term) for term in terms): return 'preferred'
  return 'uncertain'
+def _is_job_description_heading(line):
+ return bool(re.fullmatch(r'job description\s*:',line,re.I))
+def _headline_role(line):
+ return re.split(r'\s+[–—]\s+',line,maxsplit=1)[0].strip()
 def extract_identity(raw):
  lines=[x.strip() for x in raw.splitlines() if x.strip()]; title=lines[0] if lines else 'Unspecified role'
+ if lines and (_is_job_description_heading(lines[0]) or re.search(r'\s+[–—]\s+',lines[0])): title=infer_target_role(raw)
  def field(labels):
   for l in lines:
    for label in labels:
@@ -106,6 +111,8 @@ def extract_identity(raw):
 def infer_target_role(raw):
  lines=[line.strip() for line in raw.splitlines() if line.strip()]
  title=lines[0] if lines else ''
+ if _is_job_description_heading(title): title=''
+ elif re.search(r'\s+[–—]\s+',title): title=_headline_role(title)
  if title and len(title)<=80 and not re.search(r'\b(is hiring|we are looking|we are seeking|responsibilities|minimum qualifications)\b',title,re.I):
   return re.sub(r'\s*[-—]\s*fresher\s*$','',title,flags=re.I).strip()
  for pattern in (r'(?:job title|position|role)\s*[:\-]\s*([^\n.]{3,80})',r'\b((?:junior|entry[- ]level|graduate|fresher)\s+[A-Za-z][A-Za-z &/-]{1,45}\b(?:analyst|engineer|developer|specialist|associate|intern|consultant))\b'):
