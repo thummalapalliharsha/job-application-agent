@@ -19,20 +19,21 @@ import application_assistant as aa
 import jd_resume_planner as planner
 import profile_update_agent as pua
 from career_os_config import (
-    CODE_ROOT,
     DATA_DIR,
     FRONTEND_DIST_DIR,
     OUTPUT_DIR,
     STORAGE_ROOT,
+    production_storage_is_configured,
     resolve_storage_reference,
     storage_reference,
+    storage_root,
 )
 try:
     import resume_generator as rg
 except ModuleNotFoundError:
     rg = None
 
-ROOT = CODE_ROOT
+ROOT = STORAGE_ROOT
 FRONTEND = FRONTEND_DIST_DIR
 _RESUME_DOCUMENT_LOCK = threading.RLock()
 _LOCAL_ALLOWED_HOSTS = {
@@ -115,6 +116,22 @@ def _contained_file(base, relative):
     return candidate if candidate.is_file() else None
 
 
+def _storage_root():
+    return storage_root(ROOT)
+
+
+def _resolve_storage_reference(reference):
+    return resolve_storage_reference(reference, ROOT)
+
+
+def _storage_reference(path):
+    resolved = Path(path).resolve()
+    try:
+        return resolved.relative_to(_storage_root()).as_posix()
+    except ValueError:
+        return storage_reference(resolved)
+
+
 def _artifact_path(reference):
     """Resolve a stored artifact reference into one of the public artifact trees."""
     if (not isinstance(reference, str) or not reference
@@ -130,17 +147,17 @@ def _artifact_path(reference):
         return None
 
     allowed = (
-        (ROOT / "output" / "resumes", {".docx", ".pdf"}),
-        (ROOT / "output" / "cover_letters", {".md", ".docx", ".pdf"}),
+        (Path("output") / "resumes", {".docx", ".pdf"}),
+        (Path("output") / "cover_letters", {".md", ".docx", ".pdf"}),
     )
-    for base, extensions in allowed:
+    for prefix, extensions in allowed:
         try:
-            relative = Path(normalized).relative_to(base.relative_to(ROOT))
+            relative = Path(normalized).relative_to(prefix)
         except ValueError:
             continue
         if relative.suffix.lower() not in extensions:
             return None
-        return _contained_file(base, relative)
+        return _contained_file(_storage_root() / prefix, relative)
     return None
 
 
@@ -177,7 +194,7 @@ def confirm_skill_gap(aid, payload):
             store_path = aa.DATA / "applications.json"
             original_store = store_path.read_bytes()
             original_plan = plan_path.read_bytes()
-            profile_paths = [ROOT / "data" / "skills.json", ROOT / "data" / "master_profile.json"]
+            profile_paths = [_storage_root() / "data" / "skills.json", _storage_root() / "data" / "master_profile.json"]
             original_profile = {path: path.read_bytes() for path in profile_paths}
             profile = pua.all_data(ROOT)
             update_plan = pua.plan_skill_gap_addition(skill_name, category, root=ROOT, application_id=aid)
@@ -263,12 +280,7 @@ def get_application(aid):
 def _safe_project_path(reference):
     if not isinstance(reference, str) or not reference.strip():
         return None
-    candidate = (ROOT / reference.replace("\\", "/")).resolve()
-    try:
-        candidate.relative_to(ROOT.resolve())
-    except ValueError:
-        return None
-    return candidate
+    return _resolve_storage_reference(reference)
 
 
 def _resume_document_context(app):
@@ -393,7 +405,7 @@ def validate_resume_document_payload(aid, payload):
 
 
 def resolve_ref(reference):
-    return ROOT / str(reference).replace("\\", "/")
+    return _resolve_storage_reference(reference)
 
 
 def file_sha256(path):
@@ -775,10 +787,28 @@ def generate_working_resume(aid):
         return {"decision": "not_found"}
     if not app.get("resume_generation_allowed"):
         return {"decision": "approval_required", "message": "Approve the Resume Plan in JD Intelligence before generating a resume."}
+
     plan_path = resolve_ref(app.get("phase8_plan_reference"))
-    if not plan_path.exists():
-        return {"decision": "error", "message": "The approved Resume Plan could not be found."}
-    plan = json.loads(plan_path.read_text(encoding="utf-8"))
+    if not plan_path or not plan_path.exists():
+        jd_text = str(app.get("job_description_text") or "").strip()
+        if not jd_text:
+            return {"decision": "error", "message": "The approved Resume Plan could not be found and no durable JD text is available to reconstruct it."}
+
+        plan = planner.plan_resume(jd_text, planner.load_profile())
+        plan_payload = json.dumps(plan, indent=2, ensure_ascii=False) + "\n"
+        plan_digest = hashlib.sha256(plan_payload.encode("utf-8")).hexdigest()[:16]
+        plan_path = aa.REPORTS / f"{aid}_phase8_plan_{plan_digest}.json"
+        plan_path.parent.mkdir(parents=True, exist_ok=True)
+        if not plan_path.exists():
+            plan_path.write_text(plan_payload, encoding="utf-8")
+
+        store = aa.load_store()
+        target = next(item for item in store["applications"] if item.get("application_id") == aid)
+        target["phase8_plan_reference"] = aa.storage_reference(plan_path, root=aa.ROOT)
+        aa.save_store(store)
+    else:
+        plan = json.loads(plan_path.read_text(encoding="utf-8"))
+
     plan.setdefault("approval_checkpoint", {})["resume_generation_allowed"] = True
     profile = rg.profile()
     output = aa.RESUMES / f"{aa.slug(app.get('company_name') or 'company')}_{aa.slug(app.get('job_title') or 'role')}_{aid}_Working.docx"
@@ -1019,6 +1049,12 @@ class Handler(BaseHTTPRequestHandler):
         if (request_path.startswith("/api/")
                 and not _valid_api_token(self.command, request_path, self._single_header("Authorization"))):
             self.send_json({"error": "authentication required"}, 401)
+            return False
+
+        if (self.command == "POST" and request_path.startswith("/api/") and request_path != "/api/analyze"
+            and not request_path.endswith("/resume-document/validate")
+                and not production_storage_is_configured()):
+            self.send_json({"error": "Persistent storage is not configured for production writes."}, 503)
             return False
 
         fetch_values = {
