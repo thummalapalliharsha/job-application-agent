@@ -199,8 +199,8 @@ def generate_cover_letter(aid):
     a['cover_letter_working_reference']=storage_reference(path, root=ROOT)
     a['cover_letter_source_reference']=storage_reference(path, root=ROOT)
     a['cover_letter_reference']=storage_reference(path, root=ROOT)
-   a['application_checklist']['documents'][1]['status']='ready'
-   a['last_updated']=now()
+    a['application_checklist']['documents'][1]['status']='ready'
+    a['last_updated']=now()
  save_store(store)
  return {'decision':'created','cover_letter_reference':storage_reference(path, root=ROOT),'cover_letter_working_reference':storage_reference(path, root=ROOT),'content':content}
 def edit_cover_letter(aid, content):
