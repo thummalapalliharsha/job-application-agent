@@ -1051,12 +1051,6 @@ class Handler(BaseHTTPRequestHandler):
             self.send_json({"error": "authentication required"}, 401)
             return False
 
-        if (self.command == "POST" and request_path.startswith("/api/") and request_path != "/api/analyze"
-            and not request_path.endswith("/resume-document/validate")
-                and not production_storage_is_configured()):
-            self.send_json({"error": "Persistent storage is not configured for production writes."}, 503)
-            return False
-
         fetch_values = {
             "Sec-Fetch-Site": {"same-origin", "same-site", "none"},
             "Sec-Fetch-Mode": {"navigate", "same-origin", "no-cors", "cors", "websocket"},
