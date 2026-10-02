@@ -424,7 +424,7 @@ function Resume({ app, go, setNotice, refresh }: { app?: AppRecord; go: (r: Rout
 
   const canFinalize = !!(working && !app?.resume_working_artifact_stale && (!finalized || finalStale))
 
-  const action = async (endpoint: string, success: string) => { if (!app) return; setBusyLabel(endpoint === 'finalize-resume' ? 'FINALIZING…' : 'BUILDING RESUME…'); setBusy(true); try { const result: any = await api(`/api/applications/${app.application_id}/${endpoint}`, { method: 'POST' }); if (result.decision && !['created', 'finalized'].includes(result.decision)) throw new Error(result.message || 'Resume action could not be completed.'); if (endpoint === 'generate-resume') confirmation.show('RESUME READY'); else setNotice(success); refresh() } catch (e: any) { setNotice(e.message) } finally { setBusy(false); setBusyLabel('') } }
+  const action = async (endpoint: string, success: string) => { if (!app) return; setBusyLabel(endpoint === 'finalize-resume' ? 'FINALIZING…' : 'BUILDING RESUME…'); setBusy(true); try { const result: any = await api(`/api/applications/${app.application_id}/${endpoint}`, { method: 'POST', body: JSON.stringify({}) }); if (result.decision && !['created', 'finalized'].includes(result.decision)) throw new Error(result.message || 'Resume action could not be completed.'); if (endpoint === 'generate-resume') confirmation.show('RESUME READY'); else setNotice(success); refresh() } catch (e: any) { setNotice(e.message) } finally { setBusy(false); setBusyLabel('') } }
 
   const openEditor = async () => { if (!app) return; setBusyLabel('LOADING PROJECTS…'); setBusy(true); try { setEditor(await api(`/api/applications/${app.application_id}/resume-editor`)) } catch (e: any) { setNotice(e.message) } finally { setBusy(false); setBusyLabel('') } }
 
