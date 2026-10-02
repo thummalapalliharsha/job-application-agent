@@ -518,7 +518,7 @@ function Letter({ app, setNotice, refresh, go }: { app?: AppRecord; setNotice: (
 
     try {
 
-      const result: any = await api(`/api/applications/${app.application_id}/cover-letter`, { method: 'POST' })
+      const result: any = await api(`/api/applications/${app.application_id}/cover-letter`, { method: 'POST', body: JSON.stringify({}) })
 
       const next = result.content || (mdRef ? await loadMd(mdRef) : content)
 
