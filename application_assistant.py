@@ -76,7 +76,7 @@ def create_application(company,title,url,jd_text,source=None,location=None,emplo
 	plan_report=REPORTS/f'{aid}_phase8_plan.json'; plan=phase8_plan(jd_text,plan_report)
 	plan.setdefault('resume_plan',{})['automatic_projects_to_include']=copy.deepcopy(plan['resume_plan'].get('projects_to_include',[]))
 	plan_report.write_text(json.dumps(plan,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
-	app={'application_id':aid,'company_name':company,'job_title':title,'job_url':url,'source_platform':source,'location':location,'employment_type':employment_type,'job_description_reference':storage_reference(jd_path),'job_description_text':jd_text,'date_added':date.today().isoformat(),'date_applied':None,'current_status':'awaiting_resume_approval','status_history':[{'old_status':None,'new_status':'awaiting_resume_approval','timestamp':now(),'source':'application_assistant'}],'resume_reference':None,'cover_letter_reference':None,'project_selection_mode':'automatic','project_selection_source':'automatic','project_selection_record_ids':[x.get('record_id') for x in plan['resume_plan']['projects_to_include']],'selected_projects':[x.get('name') for x in plan['resume_plan']['projects_to_include']],'selected_skills':[x.get('name') for x in plan['resume_plan']['skills_to_include']],'selected_certifications':[x.get('name') for x in plan['resume_plan']['certifications_to_include']],'experience_decision':plan['resume_plan']['experience_decisions'],'requirements_summary':plan['jd_analysis'].get('requirements',[]),'supported_requirements':[x.get('requirement') for x in plan['evidence_summary']['supported_requirements']],'partial_requirements':[x.get('requirement') for x in plan['evidence_summary']['partial_requirements']],'unsupported_requirements':[x.get('requirement') for x in plan['evidence_summary']['unsupported_requirements']],'candidate_gap_summary':gap_summary(plan),'application_checklist':checklist(plan),'application_notes':[],'follow_up_date':None,'last_updated':now(),'phase8_plan_reference':storage_reference(plan_report),'resume_generation_allowed':False,'provenance':{'job_source':'user_provided','candidate_source':'data/*.json','phase8_source':storage_reference(plan_report)},'manual_submission_required':True,'automatic_submission_enabled':False}
+	app={'application_id':aid,'company_name':company,'job_title':title,'job_url':url,'source_platform':source,'location':location,'employment_type':employment_type,'job_description_reference':storage_reference(jd_path, root=ROOT),'job_description_text':jd_text,'date_added':date.today().isoformat(),'date_applied':None,'current_status':'awaiting_resume_approval','status_history':[{'old_status':None,'new_status':'awaiting_resume_approval','timestamp':now(),'source':'application_assistant'}],'resume_reference':None,'cover_letter_reference':None,'project_selection_mode':'automatic','project_selection_source':'automatic','project_selection_record_ids':[x.get('record_id') for x in plan['resume_plan']['projects_to_include']],'selected_projects':[x.get('name') for x in plan['resume_plan']['projects_to_include']],'selected_skills':[x.get('name') for x in plan['resume_plan']['skills_to_include']],'selected_certifications':[x.get('name') for x in plan['resume_plan']['certifications_to_include']],'experience_decision':plan['resume_plan']['experience_decisions'],'requirements_summary':plan['jd_analysis'].get('requirements',[]),'supported_requirements':[x.get('requirement') for x in plan['evidence_summary']['supported_requirements']],'partial_requirements':[x.get('requirement') for x in plan['evidence_summary']['partial_requirements']],'unsupported_requirements':[x.get('requirement') for x in plan['evidence_summary']['unsupported_requirements']],'candidate_gap_summary':gap_summary(plan),'application_checklist':checklist(plan),'application_notes':[],'follow_up_date':None,'last_updated':now(),'phase8_plan_reference':storage_reference(plan_report, root=ROOT),'resume_generation_allowed':False,'provenance':{'job_source':'user_provided','candidate_source':'data/*.json','phase8_source':storage_reference(plan_report, root=ROOT)},'manual_submission_required':True,'automatic_submission_enabled':False}
 	store['applications'].append(app); save_store(store); return {'decision':'created','application':app,'persistent_write_allowed':True}
 def get_app(aid=None,company=None,title=None,url=None):
  apps=load_store().get('applications',[]); matches=[]
@@ -196,12 +196,13 @@ def generate_cover_letter(aid):
  path.write_text(content,encoding='utf-8')
  for a in store['applications']:
   if a['application_id']==aid:
-   a['cover_letter_working_reference']=storage_reference(path)
-   a['cover_letter_source_reference']=storage_reference(path)
+    a['cover_letter_working_reference']=storage_reference(path, root=ROOT)
+    a['cover_letter_source_reference']=storage_reference(path, root=ROOT)
+    a['cover_letter_reference']=storage_reference(path, root=ROOT)
    a['application_checklist']['documents'][1]['status']='ready'
    a['last_updated']=now()
  save_store(store)
- return {'decision':'created','cover_letter_reference':storage_reference(path),'cover_letter_working_reference':storage_reference(path),'content':content}
+ return {'decision':'created','cover_letter_reference':storage_reference(path, root=ROOT),'cover_letter_working_reference':storage_reference(path, root=ROOT),'content':content}
 def edit_cover_letter(aid, content):
  store=load_store(); app=next((x for x in store['applications'] if x['application_id']==aid),None)
  if not app:return {'decision':'not_found'}
@@ -251,7 +252,7 @@ def approve_resume(aid,reviewed_plan=None):
         return {'decision':'plan_reference_conflict','message':'The deterministic approved-plan reference already contains different content.'}
     else:
       plan_path.write_text(plan_payload,encoding='utf-8')
-    plan_ref=storage_reference(plan_path)
+    plan_ref=storage_reference(plan_path, root=ROOT)
     resume_plan=approved_plan['resume_plan']
     projects=resume_plan.get('projects_to_include',[])
     experiences=resume_plan.get('experience_to_include',[])
@@ -312,6 +313,6 @@ def main():
  elif args.command=='status': out=update_status(args.application_id,args.value,args.explicit_submission)
  elif args.command=='note': out=add_note(args.application_id,args.text,args.follow_up_date)
  elif args.command=='search': out={'applications':search(args.query,args.status)}
- else: out={'report':storage_reference(summary_report())}
+ else: out={'report':storage_reference(summary_report(), root=ROOT)}
  print(json.dumps(out,indent=2,ensure_ascii=False))
 if __name__=='__main__': main()
