@@ -6,7 +6,10 @@ import re
 from pathlib import Path, PurePosixPath
 
 CODE_ROOT = Path(__file__).resolve().parent
-STORAGE_ROOT = Path(os.environ.get("CAREER_OS_STORAGE_ROOT", CODE_ROOT)).expanduser().resolve()
+_CONFIGURED_STORAGE_ROOT = os.environ.get("CAREER_OS_STORAGE_ROOT", "").strip()
+STORAGE_ROOT = Path(_CONFIGURED_STORAGE_ROOT or CODE_ROOT).expanduser().resolve()
+_RUNTIME_ENV = os.environ.get("CAREER_OS_ENV", "development").strip().casefold()
+PRODUCTION_STORAGE_CONFIGURED = bool(_CONFIGURED_STORAGE_ROOT) and STORAGE_ROOT != CODE_ROOT
 DATA_DIR = STORAGE_ROOT / "data"
 JOB_DESCRIPTIONS_DIR = STORAGE_ROOT / "job_descriptions"
 OUTPUT_DIR = STORAGE_ROOT / "output"
@@ -21,13 +24,21 @@ def storage_root(root: str | Path | None = None) -> Path:
     return Path(root).expanduser().resolve()
 
 
-def storage_reference(path: str | Path) -> str:
+def production_storage_is_configured() -> bool:
+    return _RUNTIME_ENV not in {"production", "prod"} or PRODUCTION_STORAGE_CONFIGURED
+
+
+def storage_reference(path: str | Path, root: str | Path | None = None) -> str:
     resolved = Path(path).resolve()
-    for prefix, base in (
-        ("data", DATA_DIR),
-        ("job_descriptions", JOB_DESCRIPTIONS_DIR),
-        ("output", OUTPUT_DIR),
-    ):
+    configured_root = storage_root(root)
+    bases = (
+        {"data": configured_root / "data",
+         "job_descriptions": configured_root / "job_descriptions",
+         "output": configured_root / "output"}
+        if root is not None and Path(root).resolve() != CODE_ROOT
+        else {"data": DATA_DIR, "job_descriptions": JOB_DESCRIPTIONS_DIR, "output": OUTPUT_DIR}
+    )
+    for prefix, base in bases.items():
         try:
             relative = resolved.relative_to(base.resolve())
         except ValueError:
