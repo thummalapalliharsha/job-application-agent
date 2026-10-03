@@ -126,7 +126,9 @@ class ResumeGeneratorSelectionTests(unittest.TestCase):
         self.assertEqual([x["record_id"] for x in first["resume_plan"]["projects_to_include"]],
                          [x["record_id"] for x in second["resume_plan"]["projects_to_include"]])
         self.assertEqual(rg.summary_lines(first, profile), rg.summary_lines(second, profile))
-        self.assertIn("Junior Business Data Analyst", " ".join(rg.summary_lines(first, profile)))
+        summary = " ".join(rg.summary_lines(first, profile))
+        self.assertIn("Junior Business Data Analyst", summary)
+        self.assertFalse(summary.startswith("I am"))
 
     def test_resume_role_reparses_jd_when_plan_role_is_generic(self):
         profile = copy.deepcopy(self.profile)

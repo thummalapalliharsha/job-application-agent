@@ -293,7 +293,7 @@ def summary_lines(plan,prof):
             selected.extend(value for value in evidence if value not in selected and len(selected)<2)
         return selected
 
-    lead=f'I am a Computer Science fresher targeting the {role} role'
+    lead=f'Computer Science fresher targeting the {role} role'
     if skills:
         lead+=f', with verified skills in {join_names(skills[:3])}'
     lines=[lead+'.']
@@ -303,9 +303,9 @@ def summary_lines(plan,prof):
         if evidence:
             name=project.get('name')
             if index==0:
-                lines.append(f'My completed {name} demonstrates {join_names(evidence[:2])}.')
+                lines.append(f'Completed {name} project demonstrates {join_names(evidence[:2])}.')
             else:
-                lines.append(f'The completed {name} adds evidence in {join_names(evidence[:2])}.')
+                lines.append(f'Additional {name} project demonstrates {join_names(evidence[:2])}.')
 
     if len(lines)<3 and projects:
         evidence=[value.strip() for value in projects[0].get('demonstrated_skills',[]) if isinstance(value,str) and value.strip()]
@@ -317,7 +317,7 @@ def summary_lines(plan,prof):
             organization=experience.get('organization')
             title=experience.get('title')
             if organization and title:
-                lines.append(f'My selected experience as {title} at {organization} complements this role.')
+                lines.append(f'Relevant experience as {title} at {organization} complements this role.')
                 break
     return lines
 
