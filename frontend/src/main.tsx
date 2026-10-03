@@ -411,7 +411,7 @@ function Analysis({ app, setNotice, refresh, go }: { app?: AppRecord; setNotice:
 
         {skillAnswers[gap.requirement] === 'yes' && <>
           <p>Where should we add it?</p>
-          <label className="field-label">PROFILE CATEGORY<select value={skillCategories[gap.requirement] || ''} onChange={(event) => setSkillCategories({ ...skillCategories, [gap.requirement]: event.target.value })}><option value="">Choose a category</option>{(plan.candidate_skill_categories || []).map((category: string) => <option key={category} value={category}>{category.split('_').join(' ')}</option>)}</select></label>
+          <label className="field-label skill-gap-category">PROFILE CATEGORY<select className="skill-gap-category-select" value={skillCategories[gap.requirement] || ''} onChange={(event) => setSkillCategories({ ...skillCategories, [gap.requirement]: event.target.value })}><option value="">Choose a category</option>{(plan.candidate_skill_categories || []).map((category: string) => <option key={category} value={category}>{category.split('_').join(' ')}</option>)}</select></label>
 
           <button className="button outline" onClick={() => confirmSkill(gap.requirement)} disabled={busy || !skillCategories[gap.requirement]}>CONFIRM ADD AS CANDIDATE-PROVIDED</button>
         </>}

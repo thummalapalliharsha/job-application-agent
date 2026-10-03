@@ -50,4 +50,7 @@
 .timeline-remove{border:1px solid var(--line);background:transparent;color:var(--muted);padding:9px 10px;font:10px 'DM Mono';letter-spacing:.06em}
 .timeline-remove:hover:not(:disabled),.timeline-remove:focus-visible{border-color:var(--hot);color:var(--hot);background:rgba(255,116,77,.07)}
 .timeline-remove:disabled{opacity:.55;cursor:wait}
+.skill-gap-category{display:block;width:min(100%,320px);margin:12px 0 16px;color:var(--dim);font:9px 'DM Mono';letter-spacing:.07em}
+.skill-gap-category-select{display:block;width:100%;margin-top:8px;padding:10px 12px;border:1px solid var(--line);border-radius:2px;background:#161211;color:var(--ink);font:11px 'DM Mono';color-scheme:dark}
+.skill-gap-category-select:focus-visible{outline:2px solid var(--warm);outline-offset:2px}
 
