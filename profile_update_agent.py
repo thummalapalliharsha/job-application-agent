@@ -25,6 +25,17 @@ CATEGORY_HINTS={
  'degree':('education',), 'education':('education',), 'cgpa':('education',), 'summary':('master_profile',)
 }
 TOOL_SKILLS={'docker','git','github','vs code','vscode','n8n','ollama','streamlit'}
+PROFILE_EDIT_FIELDS={
+ 'master_profile':{'name','headline','location'},
+ 'skills':{'name'},
+ 'projects':{'name','purpose','functionality','technical_details','technologies'},
+ 'experience':{'organization','title','experience_type','work_mode','start_date','end_date','description','responsibilities','technologies','outcomes','learning_outcomes'},
+ 'education':{'institution','degree','field_of_study','start_date','end_date','location','grade','coursework'},
+ 'certifications':{'name','issuer','credential_type','issue_date','expiration_date','credential_id','verification_url'},
+}
+PROFILE_EDIT_COLLECTIONS={'projects':'projects','experience':'experiences','education':'education','certifications':'certifications'}
+PROFILE_EDIT_LIST_FIELDS={'functionality','technical_details','technologies','description','responsibilities','outcomes','learning_outcomes','coursework'}
+PROFILE_EDIT_REQUIRED_FIELDS={'name','organization','title','institution','degree'}
 
 def load(name,root=None): return json.loads((storage_root(root)/'data'/f'{name}.json').read_text(encoding='utf-8'))
 def dump(name,obj,root=None): (storage_root(root)/'data'/f'{name}.json').write_text(json.dumps(obj,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
@@ -189,10 +200,83 @@ def plan_request(text,root=None):
 def result(request,decision,category,actions,conflicts,questions):
     return {'request':request,'decision':decision,'category':category,'actions':actions,'conflicts':conflicts,'questions':questions,'persistent_write_allowed':decision=='planned' and bool(actions),'resume_regeneration':False}
 
+def _profile_revision(data):
+    encoded=json.dumps(data,sort_keys=True,ensure_ascii=False,separators=(',',':')).encode('utf-8')
+    return hashlib.sha256(encoded).hexdigest()
+
+def _profile_edit_value(field,value):
+    if field in PROFILE_EDIT_LIST_FIELDS:
+        if not isinstance(value,list) or len(value)>100 or any(not isinstance(item,str) or len(item)>1000 or '\x00' in item for item in value):
+            raise ValueError(f'{field} must be a list of up to 100 text values.')
+        return [item.strip() for item in value if item.strip()]
+    if not isinstance(value,str) or len(value)>4000 or '\x00' in value:
+        raise ValueError(f'{field} must be text no longer than 4000 characters.')
+    value=value.strip()
+    if field in PROFILE_EDIT_REQUIRED_FIELDS and not value:
+        raise ValueError(f'{field} cannot be blank.')
+    return value
+
+def plan_profile_edit(updates,root=None):
+    data=all_data(root)
+    if not isinstance(updates,dict) or not updates:
+        return result('Edit canonical profile','invalid','profile',[],[],['Provide at least one profile field to update.'])
+    unknown_categories=set(updates)-set(PROFILE_EDIT_FIELDS)
+    if unknown_categories:
+        return result('Edit canonical profile','invalid','profile',[],[],['Unsupported profile category: '+', '.join(sorted(unknown_categories))])
+    actions=[]; seen=set()
+    try:
+        for category,entries in updates.items():
+            if category=='master_profile':
+                if not isinstance(entries,dict) or set(entries)-PROFILE_EDIT_FIELDS[category]:
+                    raise ValueError('Only name, headline, and location can be edited on the candidate profile.')
+                record=data['master_profile'].get('profile',{})
+                fields={field:_profile_edit_value(field,value) for field,value in entries.items()}
+                if fields.get('name','')=='' and 'name' in fields: raise ValueError('name cannot be blank.')
+                fields={field:value for field,value in fields.items() if record.get(field,'')!=value}
+                if fields: actions.append({'action':'update_profile_fields','category':category,'selector':{'record_id':'master_profile'},'fields':fields})
+                continue
+            if not isinstance(entries,list): raise ValueError(f'{category} updates must be a list.')
+            for entry in entries:
+                if not isinstance(entry,dict) or set(entry)-{'record_id','category','name','fields'} or not isinstance(entry.get('fields'),dict):
+                    raise ValueError(f'Each {category} update must identify a canonical record and its changed fields.')
+                fields_in=entry['fields']
+                if not fields_in or set(fields_in)-PROFILE_EDIT_FIELDS[category]:
+                    raise ValueError(f'Unsupported or empty field update for {category}.')
+                if category=='skills':
+                    group_name=str(entry.get('category') or '').strip()
+                    skill_name=str(entry.get('name') or '').strip()
+                    group=next((item for item in skill_groups(data) if item.get('category')==group_name),None)
+                    record=next((item for item in (group or {}).get('skills',[]) if item.get('name')==skill_name),None)
+                    selector={'category':group_name,'name':skill_name}
+                    identity=(category,group_name,skill_name)
+                else:
+                    record_id=str(entry.get('record_id') or '').strip()
+                    records=data[category].get(PROFILE_EDIT_COLLECTIONS[category],[])
+                    record=next((item for item in records if item.get('record_id')==record_id),None)
+                    selector={'record_id':record_id}
+                    identity=(category,record_id)
+                if not record: raise ValueError(f'The selected canonical {category} record was not found.')
+                if identity in seen: raise ValueError(f'Duplicate {category} record updates are not allowed.')
+                seen.add(identity)
+                fields={field:_profile_edit_value(field,value) for field,value in fields_in.items()}
+                if category=='skills' and 'name' in fields and any(
+                    item is not record and norm(item.get('name',''))==norm(fields['name'])
+                    for item in (group or {}).get('skills',[])
+                ):
+                    raise ValueError('A skill with that name already exists in the selected category.')
+                fields={field:value for field,value in fields.items() if record.get(field) != value}
+                if fields: actions.append({'action':'update_profile_fields','category':category,'selector':selector,'fields':fields})
+    except (TypeError,ValueError) as exc:
+        return result('Edit canonical profile','invalid','profile',[],[],[str(exc)])
+    plan=result('Edit canonical profile','planned' if actions else 'no_change_duplicate','profile',actions,[],[])
+    plan['base_revision']=_profile_revision(data)
+    plan['updates']=copy.deepcopy(updates)
+    return plan
+
 def apply_plan(plan,root=None,confirm=False,confirm_delete=False):
     if not confirm: raise PermissionError('Persistent profile writes require explicit --confirm.')
     if plan.get('decision')!='planned' or not plan.get('actions'): raise ValueError('Only a non-ambiguous planned update can be applied.')
-    supported={'add_skill','update_project_github','update_project_status','add_project_technologies','create_project','create_certification','create_achievement'}
+    supported={'add_skill','update_project_github','update_project_status','add_project_technologies','create_project','create_certification','create_achievement','update_profile_fields'}
     unsupported=[a.get('action') for a in plan['actions'] if a.get('action') not in supported]
     if unsupported: raise ValueError('Unsupported profile update action(s): '+', '.join(str(x) for x in unsupported))
     data=all_data(root); changed=[]
@@ -215,6 +299,31 @@ def apply_plan(plan,root=None,confirm=False,confirm_delete=False):
             data['certifications']['certifications'].append({'record_id':a['record_id'],'status':'candidate_provided','sources':[source()],'review_flags':['Issuer, date, credential ID, and URL were not provided.'],'conflicts':[],'name':a['name'],'issuer':a['issuer'],'credential_type':'certificate','issue_date':a['issue_date'],'expiration_date':None,'credential_id':a['credential_id'],'verification_url':a['verification_url'],'related_experience_id':None}); changed.append('certifications.json')
         elif action=='create_achievement':
             data['achievements'].setdefault('achievements',[]).append({'record_id':'achievement_'+slug(a.get('name') or 'user_provided_achievement'),'status':'candidate_provided','sources':[source()],'review_flags':[],'conflicts':[],'name':a.get('name'),'description':a.get('details'),'date':None,'issuer':None,'provenance':[prov()]}); changed.append('achievements.json')
+        elif action=='update_profile_fields':
+            category=a['category']; selector=a['selector']
+            if category=='master_profile':
+                master=data['master_profile']; record=master.setdefault('profile',{})
+            else: master=None
+            if category=='skills':
+                group=next(group for group in skill_groups(data) if group.get('category')==selector['category'])
+                record=next(skill for skill in group.get('skills',[]) if skill.get('name')==selector['name'])
+            elif category!='master_profile':
+                records=data[category].get(PROFILE_EDIT_COLLECTIONS[category],[])
+                record=next(item for item in records if item.get('record_id')==selector['record_id'])
+            fields=copy.deepcopy(a['fields']); claims=[f'{field}: {", ".join(value) if isinstance(value,list) else value}' for field,value in fields.items()]
+            evidence=source(); evidence.update({'evidence_type':'explicit_user_statement','evidence_location':'Career OS Profile / Evidence editor','claims_supported':claims})
+            record.update(fields)
+            if category=='master_profile':
+                master.setdefault('sources',[]).append(evidence)
+                provenance=prov(); provenance.update({'evidence_location':'Career OS Profile / Evidence editor','claims_supported':claims})
+                master.setdefault('provenance',[]).append(provenance)
+            elif category=='skills': record.setdefault('evidence',[]).append(evidence)
+            else:
+                record.setdefault('sources',[]).append(evidence)
+                provenance=prov(); provenance.update({'evidence_location':'Career OS Profile / Evidence editor','claims_supported':claims})
+                record.setdefault('provenance',[]).append(provenance)
+            if record.get('status')=='verified': record['status']='candidate_provided'
+            changed.append(category+'.json')
     sync_master(data)
     for n in sorted(set(changed)):
         key=n[:-5] if n.endswith('.json') else n
@@ -232,6 +341,29 @@ def sync_master(data):
     idx['skill_categories']=[g.get('category') for g in skill_groups(data)]
     idx['project_lifecycle_statuses']={p['record_id']:p.get('project_status','unknown') for p in project_records(data)}
     idx['project_github_availability']={p['record_id']:p.get('github_availability','github_unverified') for p in project_records(data)}
+
+def apply_profile_edit_plan(plan,root=None,confirm=False):
+    if not confirm: raise PermissionError('Persistent profile writes require explicit confirmation.')
+    if not isinstance(plan,dict) or plan.get('decision')!='planned':
+        return {'decision':'invalid','message':'Only a planned profile update can be applied.'}
+    current=plan_profile_edit(plan.get('updates'),root)
+    if current.get('decision')!='planned': return {'decision':'invalid','message':'The profile update is no longer valid.'}
+    if plan.get('base_revision')!=current.get('base_revision'):
+        return {'decision':'stale_profile','message':'The canonical profile changed after this edit was planned. Reload and review the current profile.'}
+    if plan.get('actions')!=current.get('actions'):
+        return {'decision':'invalid','message':'The planned profile changes do not match the submitted edits.'}
+    names={action['category'] for action in current['actions']}|{'master_profile'}
+    paths={name:storage_root(root)/'data'/f'{name}.json' for name in names}
+    originals={path:path.read_bytes() for path in paths.values()}
+    try:
+        changed=apply_plan(current,root,confirm=True)
+        validation=validate_data(root)
+        if not validation.get('valid'):
+            raise ValueError('Profile validation failed: '+', '.join(validation.get('errors',[])))
+    except Exception:
+        for path,content in originals.items(): path.write_bytes(content)
+        raise
+    return {'decision':'profile_updated','changed_files':changed,'validation':validation}
 
 def validate_data(root=None):
     data=all_data(root); errors=[]

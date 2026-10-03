@@ -228,7 +228,7 @@ function App() {
 
       {route === 'history' && <History apps={boot.applications} openApplication={openApplication} go={go} setNotice={setNotice} refresh={refresh} />}
 
-      {route === 'profile' && <Profile profile={boot.profile} />}
+      {route === 'profile' && <Profile profile={boot.profile} refresh={refresh} setNotice={setNotice} />}
 
       {route === 'search' && <Search openApplication={openApplication} />}
 
@@ -729,13 +729,135 @@ function History({ apps, openApplication, go, setNotice, refresh }: { apps: AppR
   </div>)}</div></Workspace>
 }
 
-function Profile({ profile }: { profile: AppRecord }) { return <Workspace title="KNOW YOUR EVIDENCE" eyebrow="07 / PROFILE" intro="The canonical profile stays authoritative. This surface makes its clusters, projects, and proof readable."><div className="profile-grid"><div className="profile-intro"><div className="eyebrow">CANDIDATE</div><h3>{profile.name || 'Profile'}</h3><p>{profile.headline || 'Evidence-backed career profile'}</p><span>{profile.location || 'Local profile store'}</span></div><div className="profile-block"><span className="card-label">SKILL CLUSTERS</span><div className="tag-cloud">{(profile.skills || []).slice(0, 18).map((s: any) => <span key={s.name}>{s.name}</span>)}</div></div><div className="profile-block"><span className="card-label">PROJECTS</span>{(profile.projects || []).map((p: any) => {
-  const projectDetails = <><b>{p.name}</b><small>{p.project_status || 'unknown'} · {p.github_availability || 'source recorded'}</small></>
-  const hasRepository = typeof p.github_url === 'string' && p.github_url.trim().length > 0
-  return hasRepository
-    ? <a className="proof-row" key={p.record_id} href={p.github_url} target="_blank" rel="noopener noreferrer" aria-label={`Open ${p.name} GitHub repository in a new tab`} style={{ color: 'inherit', textDecoration: 'none' }}>{projectDetails}<span aria-hidden="true" style={{ marginLeft: 'auto' }}>↗</span></a>
-    : <div className="proof-row" key={p.record_id}>{projectDetails}</div>
-})}</div></div></Workspace> }
+function Profile({ profile, refresh, setNotice }: { profile: AppRecord; refresh: () => Promise<void>; setNotice: NoticeSetter }) {
+  const [canonical, setCanonical] = useState(profile)
+  const [draft, setDraft] = useState<AppRecord>(() => JSON.parse(JSON.stringify(profile)))
+  const [editing, setEditing] = useState(false)
+  const [plan, setPlan] = useState<AppRecord | null>(null)
+  const [saving, setSaving] = useState(false)
+
+  useEffect(() => {
+    setCanonical(profile)
+    setDraft(JSON.parse(JSON.stringify(profile)))
+  }, [profile])
+
+  const updateIdentity = (field: string, value: string) => setDraft((current: AppRecord) => ({ ...current, [field]: value }))
+  const updateRecord = (collection: string, index: number, field: string, value: string | string[]) => setDraft((current: AppRecord) => ({
+    ...current,
+    [collection]: current[collection].map((record: AppRecord, recordIndex: number) => recordIndex === index ? { ...record, [field]: value } : record),
+  }))
+  const changedFields = (before: AppRecord, after: AppRecord, fields: string[]) => Object.fromEntries(fields
+    .filter((field) => JSON.stringify(before?.[field] ?? '') !== JSON.stringify(after?.[field] ?? ''))
+    .map((field) => [field, after[field]]))
+  const collectionUpdates = (category: string, fields: string[], selector: (record: AppRecord) => AppRecord) => (canonical[category] || []).flatMap((record: AppRecord, index: number) => {
+    const changed = changedFields(record, draft[category]?.[index], fields)
+    return Object.keys(changed).length ? [{ ...selector(record), fields: changed }] : []
+  })
+  const profileUpdates = () => {
+    const updates: AppRecord = {}
+    const identity = changedFields(canonical, draft, ['name', 'headline', 'location'])
+    if (Object.keys(identity).length) updates.master_profile = identity
+    updates.skills = collectionUpdates('skills', ['name'], (skill) => ({ category: skill.category, name: skill.name }))
+    updates.projects = collectionUpdates('projects', ['name', 'purpose', 'functionality', 'technical_details', 'technologies'], (project) => ({ record_id: project.record_id }))
+    updates.experience = collectionUpdates('experience', ['organization', 'title', 'experience_type', 'work_mode', 'start_date', 'end_date', 'description', 'responsibilities', 'technologies', 'outcomes', 'learning_outcomes'], (item) => ({ record_id: item.record_id }))
+    updates.education = collectionUpdates('education', ['institution', 'degree', 'field_of_study', 'start_date', 'end_date', 'location', 'grade', 'coursework'], (item) => ({ record_id: item.record_id }))
+    updates.certifications = collectionUpdates('certifications', ['name', 'issuer', 'credential_type', 'issue_date', 'expiration_date', 'credential_id', 'verification_url'], (item) => ({ record_id: item.record_id }))
+    for (const category of ['skills', 'projects', 'experience', 'education', 'certifications']) if (!updates[category].length) delete updates[category]
+    return updates
+  }
+  const beginEditing = () => {
+    setDraft(JSON.parse(JSON.stringify(canonical)))
+    setPlan(null)
+    setEditing(true)
+  }
+  const cancelEditing = () => {
+    setDraft(JSON.parse(JSON.stringify(canonical)))
+    setPlan(null)
+    setEditing(false)
+  }
+  const makePlan = async () => {
+    setSaving(true)
+    try {
+      const result = await api<AppRecord>('/api/profile/edit/plan', { method: 'POST', body: JSON.stringify({ updates: profileUpdates() }) })
+      if (result.decision === 'no_change_duplicate') {
+        setNotice('No profile changes to save.', 'success')
+        return
+      }
+      if (result.decision !== 'planned') throw new Error(result.message || 'The profile changes could not be planned.')
+      setPlan(result)
+    } catch (error: any) {
+      setNotice(error.message)
+    } finally {
+      setSaving(false)
+    }
+  }
+  const confirmSave = async () => {
+    if (!plan || saving) return
+    setSaving(true)
+    try {
+      await api('/api/profile/edit/apply', { method: 'POST', body: JSON.stringify({ plan, confirmed: true }) })
+      const updated = await api<AppRecord>('/api/profile')
+      setCanonical(updated)
+      setDraft(JSON.parse(JSON.stringify(updated)))
+      setPlan(null)
+      setEditing(false)
+      void refresh()
+      setNotice('Canonical profile updated. Existing application plans and documents were not changed.', 'success')
+    } catch (error: any) {
+      setNotice(error.message)
+    } finally {
+      setSaving(false)
+    }
+  }
+  const scalarInput = (label: string, value: unknown, onChange: (value: string) => void, multiline = false) => <label className="profile-edit-field">{label}{multiline
+    ? <textarea value={typeof value === 'string' ? value : ''} onChange={(event) => onChange(event.target.value)} rows={3} />
+    : <input value={typeof value === 'string' ? value : ''} onChange={(event) => onChange(event.target.value)} />}</label>
+  const listInput = (label: string, values: unknown, onChange: (value: string[]) => void) => scalarInput(label, Array.isArray(values) ? values.join('\n') : '', (value) => onChange(value.split('\n').map((item) => item.trim()).filter(Boolean)), true)
+  const recordFields = (record: AppRecord, index: number, collection: string, scalar: string[], lists: string[]) => <div className="profile-edit-fields">
+    {scalar.map((field) => scalarInput(field.replace(/_/g, ' '), record[field], (value) => updateRecord(collection, index, field, value), ['purpose', 'credential_id', 'verification_url'].includes(field)))}
+    {lists.map((field) => listInput(field.replace(/_/g, ' '), record[field], (value) => updateRecord(collection, index, field, value)))}
+  </div>
+  const projectRow = (project: AppRecord, index: number) => {
+    const projectDetails = <><b>{project.name}</b><small>{project.project_status || 'unknown'} · {project.github_availability || 'source recorded'}</small></>
+    const hasRepository = typeof project.github_url === 'string' && project.github_url.trim().length > 0
+    if (!editing) return hasRepository
+      ? <a className="proof-row" key={project.record_id} href={project.github_url} target="_blank" rel="noopener noreferrer" aria-label={`Open ${project.name} GitHub repository in a new tab`} style={{ color: 'inherit', textDecoration: 'none' }}>{projectDetails}<span aria-hidden="true" style={{ marginLeft: 'auto' }}>↗</span></a>
+      : <div className="proof-row" key={project.record_id}>{projectDetails}</div>
+    return <details className="profile-record" key={project.record_id}>
+      <summary><span>{projectDetails}</span>{hasRepository && <a href={project.github_url} target="_blank" rel="noopener noreferrer" onClick={(event) => event.stopPropagation()}>GITHUB ↗</a>}</summary>
+      {recordFields(project, index, 'projects', ['name', 'purpose'], ['functionality', 'technical_details', 'technologies'])}
+    </details>
+  }
+
+  return <Workspace title="KNOW YOUR EVIDENCE" eyebrow="07 / PROFILE" intro="The canonical profile stays authoritative. This surface makes its clusters, projects, and proof readable.">
+    <div className="profile-edit-toolbar">
+      {editing ? <><span>{plan ? 'Review the exact canonical changes before confirming.' : 'Edits are staged locally until you review and confirm them.'}</span>{!plan && <button className="button quiet" onClick={cancelEditing} disabled={saving}>CANCEL</button>}{!plan && <button className="button primary" onClick={makePlan} disabled={saving}>{saving ? 'PREPARING…' : 'SAVE CHANGES'}</button>}</>
+        : <><span>Changes require review and confirmation before they reach canonical evidence.</span><button className="button outline" onClick={beginEditing}>EDIT PROFILE</button></>}
+    </div>
+    <div className="profile-grid">
+      <div className="profile-intro">
+        <div className="eyebrow">CANDIDATE</div>
+        {editing ? <div className="profile-edit-fields">{scalarInput('Name', draft.name, (value) => updateIdentity('name', value))}{scalarInput('Headline / professional summary', draft.headline, (value) => updateIdentity('headline', value), true)}{scalarInput('Location', draft.location, (value) => updateIdentity('location', value))}</div>
+          : <><h3>{canonical.name || 'Profile'}</h3><p>{canonical.headline || 'Evidence-backed career profile'}</p><span>{canonical.location || 'Local profile store'}</span></>}
+      </div>
+      <div className="profile-block">
+        <span className="card-label">SKILLS</span>
+        {editing ? <div className="profile-record-list">{(draft.skills || []).map((skill: AppRecord, index: number) => <div className="profile-skill-edit" key={`${skill.category}:${skill.name}`}>
+          <small>{skill.category?.replaceAll('_', ' ') || 'Skill'}</small>{scalarInput('Name', skill.name, (value) => updateRecord('skills', index, 'name', value))}<small>{skill.status || 'unverified'} · evidence retained</small>
+        </div>)}</div> : <div className="tag-cloud">{(canonical.skills || []).slice(0, 18).map((skill: AppRecord) => <span key={`${skill.category}:${skill.name}`}>{skill.name}</span>)}</div>}
+      </div>
+      <div className="profile-block"><span className="card-label">PROJECTS</span>{(editing ? draft.projects : canonical.projects || []).map(projectRow)}</div>
+      <div className="profile-block"><span className="card-label">EXPERIENCE</span>{(editing ? draft.experience : canonical.experience || []).map((item: AppRecord, index: number) => <details className="profile-record" key={item.record_id}><summary><span><b>{item.title}</b><small>{item.organization} · {item.start_date || 'dates not listed'}–{item.end_date || 'present'}</small></span></summary>{editing && recordFields(item, index, 'experience', ['organization', 'title', 'experience_type', 'work_mode', 'start_date', 'end_date'], ['description', 'responsibilities', 'technologies', 'outcomes', 'learning_outcomes'])}{!editing && <p>{(item.responsibilities || []).join(' ')}</p>}</details>)}</div>
+      <div className="profile-block"><span className="card-label">EDUCATION</span>{(editing ? draft.education : canonical.education || []).map((item: AppRecord, index: number) => <details className="profile-record" key={item.record_id}><summary><span><b>{item.degree} · {item.institution}</b><small>{item.field_of_study} · {item.start_date}–{item.end_date}</small></span></summary>{editing && recordFields(item, index, 'education', ['institution', 'degree', 'field_of_study', 'start_date', 'end_date', 'location', 'grade'], ['coursework'])}{!editing && <p>{item.grade}</p>}</details>)}</div>
+      <div className="profile-block"><span className="card-label">CERTIFICATIONS</span>{(editing ? draft.certifications : canonical.certifications || []).map((item: AppRecord, index: number) => <details className="profile-record" key={item.record_id}><summary><span><b>{item.name}</b><small>{item.issuer} · {item.issue_date || 'date not listed'}</small></span></summary>{editing && recordFields(item, index, 'certifications', ['name', 'issuer', 'credential_type', 'issue_date', 'expiration_date', 'credential_id', 'verification_url'], [])}{!editing && <p>{item.credential_type}</p>}</details>)}</div>
+    </div>
+    {editing && plan && <section className="profile-edit-review" aria-live="polite">
+      <div><span className="card-label">CHANGE REVIEW</span><p>{plan.actions.length} canonical record{plan.actions.length === 1 ? '' : 's'} will be updated. Existing evidence is retained; changed verified records will be marked candidate-provided.</p></div>
+      <ul>{plan.actions.map((action: AppRecord, index: number) => <li key={`${action.category}:${index}`}><b>{action.category.replaceAll('_', ' ')}</b><pre>{JSON.stringify(action.fields, null, 2)}</pre></li>)}</ul>
+      <div className="profile-edit-review-actions"><button className="button quiet" onClick={cancelEditing} disabled={saving}>CANCEL</button><button className="button primary" onClick={confirmSave} disabled={saving}>{saving ? 'SAVING…' : 'CONFIRM & SAVE'}</button></div>
+    </section>}
+  </Workspace>
+}
 
 function Search({ openApplication }: { openApplication: (id: string, r?: Route) => void }) { const [q, setQ] = useState(''); const [results, setResults] = useState<AppRecord[]>([]); useEffect(() => { if (q.length < 2) { setResults([]); return } const timer = setTimeout(() => api<{ applications: AppRecord[] }>(`/api/search?q=${encodeURIComponent(q)}`).then((x) => setResults(x.applications)), 250); return () => clearTimeout(timer) }, [q]); return <Workspace title="FIND THE SIGNAL" eyebrow="08 / SEARCH" intro="Search the local application store without losing the spatial context of the work."><input className="search-input" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search company, role, note…" /><div className="search-results">{results.map((a) => <button className="stream-row" key={a.application_id} onClick={() => openApplication(a.application_id)}><span className="stream-main"><b>{a.company_name}</b><small>{a.job_title}</small></span><span className="stream-status">{a.current_status}</span>↗</button>)}</div></Workspace> }
 

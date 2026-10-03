@@ -162,11 +162,30 @@ def _artifact_path(reference):
 
 
 def profile_summary():
-    profile = planner.load_profile()
+    profile = pua.all_data(ROOT)
     master = profile.get("master_profile", {}).get("profile", {})
     projects = profile.get("projects", {}).get("projects", [])
-    skills = [s for group in profile.get("skills", {}).get("skill_groups", []) for s in group.get("skills", [])]
+    skills = [{**skill, "category": group.get("category")} for group in profile.get("skills", {}).get("skill_groups", []) for skill in group.get("skills", [])]
     return {"name": master.get("name"), "headline": master.get("headline") or master.get("summary"), "location": master.get("location"), "projects": projects, "skills": skills, "education": profile.get("education", {}).get("education", []), "experience": profile.get("experience", {}).get("experiences", []), "certifications": profile.get("certifications", {}).get("certifications", [])}
+
+
+def plan_profile_edit(payload):
+    if not isinstance(payload, dict):
+        return {"decision": "invalid", "message": "Profile edits must be sent as a JSON object."}
+    plan = pua.plan_profile_edit(payload.get("updates"), root=ROOT)
+    if plan.get("decision") == "invalid":
+        return {**plan, "message": "; ".join(plan.get("questions", [])) or "The profile edit is invalid."}
+    return plan
+
+
+def apply_profile_edit(payload):
+    if not isinstance(payload, dict) or payload.get("confirmed") is not True:
+        return {"decision": "confirmation_required", "message": "Review the planned profile changes and explicitly confirm before saving."}
+    with _RESUME_DOCUMENT_LOCK:
+        result = pua.apply_profile_edit_plan(payload.get("plan"), root=ROOT, confirm=True)
+        if result.get("decision") == "profile_updated":
+            return {**result, "profile": profile_summary()}
+        return result
 
 
 def confirm_skill_gap(aid, payload):
@@ -1344,6 +1363,14 @@ class Handler(BaseHTTPRequestHandler):
             return self.send_json({"error": "not found"}, 404)
         payload = self.read_json()
         try:
+            if path == "/api/profile/edit/plan":
+                result = plan_profile_edit(payload)
+                status = 400 if result.get("decision") == "invalid" else 200
+                return self.send_json(result, status)
+            if path == "/api/profile/edit/apply":
+                result = apply_profile_edit(payload)
+                status = 200 if result.get("decision") == "profile_updated" else 404 if result.get("decision") == "not_found" else 409 if result.get("decision") in {"confirmation_required", "stale_profile"} else 400 if result.get("decision") == "invalid" else 500
+                return self.send_json(result, status)
             if path == "/api/analyze":
                 jd = str(payload.get("job_description", "")).strip()
                 if not jd:
