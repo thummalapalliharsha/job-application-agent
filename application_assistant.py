@@ -6,7 +6,7 @@ in, submits applications, automates portals, sends email, or uses a browser.
 Resume generation is a separate explicit action requiring approval.
 """
 from __future__ import annotations
-import argparse, copy, hashlib, json, re, subprocess, uuid
+import argparse, copy, hashlib, json, re, subprocess, threading, uuid
 from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -23,6 +23,8 @@ ROOT=CODE_ROOT
 DATA=DATA_DIR; JOBS=JOB_DESCRIPTIONS_DIR; OUT=OUTPUT_DIR; REPORTS=OUT/'reports'; LETTERS=OUT/'cover_letters'; RESUMES=OUT/'resumes'
 STATUSES={'saved','analyzing','awaiting_resume_approval','resume_ready','ready_to_apply','applied','assessment','interview','offer','rejected','withdrawn','closed'}
 FINAL_SUBMISSION_WORDS=('applied','submitted','i submitted','application submitted')
+APPLICATION_STORE_LOCK=threading.RLock()
+DELETED_APPLICATION_IDS=set()
 
 def now(): return datetime.now(timezone.utc).isoformat()
 def slug(s): return re.sub(r'[^a-z0-9]+','_',str(s).lower()).strip('_')[:80]
@@ -35,7 +37,11 @@ def load_store():
  p=DATA/'applications.json'
  if not p.exists(): return {'applications':[]}
  return json.loads(p.read_text(encoding='utf-8'))
-def save_store(store): (DATA/'applications.json').write_text(json.dumps(store,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
+def save_store(store):
+ with APPLICATION_STORE_LOCK:
+  applications=[app for app in store.get('applications',[]) if app.get('application_id') not in DELETED_APPLICATION_IDS]
+  payload={**store,'applications':applications}
+  (DATA/'applications.json').write_text(json.dumps(payload,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
 def load_profile(): return {n:json.loads((DATA/f'{n}.json').read_text(encoding='utf-8')) for n in ['master_profile','skills','projects','experience','certifications','education','achievements']}
 def phase8_plan(jd_text,report_path):
  import jd_resume_planner

@@ -406,8 +406,8 @@ def _generate(plan,prof,output):
     included=effective_selection(plan,prof); names=effective_skill_names(plan,prof,included)
     section(doc,'Skills')
     for label,supported in effective_skill_groups(plan,prof,included):
-        add_labeled_line(doc,f'{label}: ',', '.join(supported),11,12)
-    add_labeled_line(doc,'Languages: ','English, Telugu, Hindi, Tamil',11,12)
+        add_labeled_line(doc,f'{label}: ',', '.join(supported),11,12,before=1.5,after=1.5)
+    add_labeled_line(doc,'Languages: ','English, Telugu, Hindi, Tamil',11,12,before=1.5,after=1.5)
     section(doc,'Projects')
     for index,pjt in enumerate(included):
         add_line(doc,pjt['name'],12,True,before=1.5 if index==0 else 5.5,after=1.5)

@@ -277,6 +277,143 @@ def get_application(aid):
     return next((item for item in aa.load_store().get("applications", []) if item.get("application_id") == aid), None)
 
 
+def _application_artifact_references(value):
+    references = []
+    if isinstance(value, dict):
+        for key, child in value.items():
+            if isinstance(child, str) and (key.endswith("_reference") or key.endswith("_path") or key in {"phase8_source", "docx", "pdf"}):
+                references.append(child)
+            else:
+                references.extend(_application_artifact_references(child))
+    elif isinstance(value, list):
+        for child in value:
+            references.extend(_application_artifact_references(child))
+    return references
+
+
+def _application_artifact_roots():
+    return tuple(Path(path).resolve() for path in (
+        aa.JOBS,
+        aa.REPORTS,
+        aa.RESUMES,
+        aa.LETTERS,
+        ROOT / "output" / "resume_edits",
+    ))
+
+
+def _path_is_within(path, root):
+    try:
+        Path(path).resolve().relative_to(Path(root).resolve())
+    except (OSError, RuntimeError, ValueError):
+        return False
+    return True
+
+
+def _resolve_application_artifact(reference, roots):
+    path = _safe_project_path(reference)
+    if path is None:
+        return None
+    resolved = path.resolve()
+    return resolved if any(_path_is_within(resolved, root) for root in roots) else None
+
+
+def _path_is_application_owned(path, application_id):
+    return re.search(r"(?<![A-Za-z0-9])" + re.escape(application_id) + r"(?![A-Za-z0-9])", Path(path).as_posix()) is not None
+
+
+def delete_application(aid):
+    """Remove one application, its history index entries, and safely scoped artifacts."""
+    store_path = aa.DATA / "applications.json"
+    history_path = aa.DATA / "document_history.json"
+    with aa.APPLICATION_STORE_LOCK:
+        store = aa.load_store()
+        applications = store.get("applications", [])
+        target = next((item for item in applications if item.get("application_id") == aid), None)
+        if target is None:
+            return {"decision": "not_found", "message": "Application was not found."}
+
+        try:
+            history = json.loads(history_path.read_text(encoding="utf-8")) if history_path.is_file() else {"documents": []}
+        except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+            return {"decision": "error", "message": f"Document history could not be read safely: {exc}"}
+        if not isinstance(history, dict) or not isinstance(history.get("documents", []), list):
+            return {"decision": "error", "message": "Document history has an invalid format; no application data was removed."}
+
+        history_documents = history.get("documents", [])
+        target_history = [item for item in history_documents if isinstance(item, dict) and item.get("application_id") == aid]
+        remaining_history = [item for item in history_documents if not (isinstance(item, dict) and item.get("application_id") == aid)]
+        roots = _application_artifact_roots()
+
+        target_references = _application_artifact_references(target)
+        target_references.extend(_application_artifact_references(target_history))
+        protected_references = []
+        for item in applications:
+            if item is not target:
+                protected_references.extend(_application_artifact_references(item))
+        protected_references.extend(_application_artifact_references(remaining_history))
+
+        protected_paths = {
+            path for path in (_resolve_application_artifact(reference, roots) for reference in protected_references)
+            if path is not None
+        }
+        artifact_paths = {
+            path for path in (_resolve_application_artifact(reference, roots) for reference in target_references)
+            if path is not None and path not in protected_paths
+        }
+
+        for root in roots:
+            if not root.is_dir():
+                continue
+            for candidate in root.rglob("*"):
+                if not candidate.is_file():
+                    continue
+                resolved = candidate.resolve()
+                if _path_is_within(resolved, root) and _path_is_application_owned(resolved, aid) and resolved not in protected_paths:
+                    artifact_paths.add(resolved)
+
+        updated_store = {**store, "applications": [item for item in applications if item.get("application_id") != aid]}
+        updated_history = {**history, "documents": remaining_history}
+        cleanup_errors = []
+        removed_artifacts = 0
+        for path in artifact_paths:
+            try:
+                if path.is_file():
+                    path.unlink()
+                    removed_artifacts += 1
+            except OSError as exc:
+                cleanup_errors.append({"path": str(path), "error": str(exc)})
+
+        if cleanup_errors:
+            return {
+                "decision": "error",
+                "message": "Some associated files could not be deleted; the application remains in history so you can retry.",
+                "cleanup_errors": cleanup_errors,
+            }
+
+        original_history = history_path.read_bytes() if history_path.is_file() else None
+        try:
+            if target_history:
+                _atomic_write_json(history_path, updated_history)
+            _atomic_write_json(store_path, updated_store)
+        except OSError as exc:
+            try:
+                if original_history is None:
+                    history_path.unlink(missing_ok=True)
+                else:
+                    history_path.write_bytes(original_history)
+            except OSError:
+                pass
+            return {"decision": "error", "message": f"Application data could not be removed safely: {exc}"}
+
+        aa.DELETED_APPLICATION_IDS.add(aid)
+        return {
+            "decision": "deleted",
+            "message": "Application removed from history.",
+            "application_id": aid,
+            "artifacts_removed": removed_artifacts,
+        }
+
+
 def _safe_project_path(reference):
     if not isinstance(reference, str) or not reference.strip():
         return None
@@ -1113,7 +1250,7 @@ class Handler(BaseHTTPRequestHandler):
         requested_methods = self.headers.get_all("Access-Control-Request-Method", [])
         if len(requested_methods) > 1:
             return self.send_json({"error": "request denied"}, 400)
-        if requested_methods and requested_methods[0] not in {"GET", "POST", "OPTIONS"}:
+        if requested_methods and requested_methods[0] not in {"GET", "POST", "DELETE", "OPTIONS"}:
             return self.send_json({"error": "method not allowed"}, 405)
         requested_headers = self.headers.get_all("Access-Control-Request-Headers", [])
         if len(requested_headers) > 1:
@@ -1129,7 +1266,7 @@ class Handler(BaseHTTPRequestHandler):
         self._send_cors_headers()
         origin = self.headers.get("Origin")
         if origin in _ALLOWED_ORIGINS:
-            self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+            self.send_header("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS")
             self.send_header("Access-Control-Allow-Headers", "Content-Type")
             self.send_header("Access-Control-Max-Age", "600")
         self.send_header("X-Content-Type-Options", "nosniff")
@@ -1278,6 +1415,22 @@ class Handler(BaseHTTPRequestHandler):
             return self.send_json({"error": str(exc), "decision": "approval_required"}, 409)
         except Exception as exc:
             return self.send_json({"error": f"{type(exc).__name__}: {exc}"}, 500)
+
+    def do_DELETE(self):
+        if not self._guard_request():
+            return
+        parsed = urlparse(self.path)
+        if parsed.scheme or parsed.netloc or parsed.fragment or parsed.query:
+            return self.send_json({"error": "not found"}, 404)
+        path = _decode_url_path(parsed.path)
+        if path is None:
+            return self.send_json({"error": "not found"}, 404)
+        parts = path.strip("/").split("/")
+        if len(parts) != 3 or parts[:2] != ["api", "applications"] or not parts[2]:
+            return self.send_json({"error": "not found"}, 404)
+        result = delete_application(parts[2])
+        status = 200 if result.get("decision") == "deleted" else 404 if result.get("decision") == "not_found" else 500
+        return self.send_json(result, status)
 
     def serve_frontend(self, path):
         decoded = _decode_url_path(path)

@@ -18,6 +18,10 @@ type Boot = { profile: AppRecord; applications: AppRecord[]; counts: Record<stri
 
 type Route = 'home' | 'new' | 'analysis' | 'resume' | 'letter' | 'package' | 'history' | 'profile' | 'search' | 'settings'
 
+type NoticeKind = 'success' | 'error'
+
+type NoticeSetter = (message: string, kind?: NoticeKind) => void
+
 
 
 function ApplicationInfo({ app, go }: { app?: AppRecord; go: (r: Route) => void }) {
@@ -140,7 +144,25 @@ function App() {
 
   const [applicationInfoMode, setApplicationInfoMode] = useState(false)
 
-  const [notice, setNotice] = useState('')
+  const [notice, setNoticeState] = useState<{ message: string; kind: NoticeKind } | null>(null)
+
+  const noticeTimer = useRef<number | null>(null)
+
+  const setNotice: NoticeSetter = (message, kind = 'error') => {
+    if (noticeTimer.current !== null) window.clearTimeout(noticeTimer.current)
+    if (!message) {
+      setNoticeState(null)
+      noticeTimer.current = null
+      return
+    }
+    setNoticeState({ message, kind })
+    noticeTimer.current = window.setTimeout(() => {
+      setNoticeState(null)
+      noticeTimer.current = null
+    }, 3200)
+  }
+
+  useEffect(() => () => { if (noticeTimer.current !== null) window.clearTimeout(noticeTimer.current) }, [])
 
   const [guide, setGuide] = useState(false)
 
@@ -188,7 +210,7 @@ function App() {
 
       <header className="topbar"><span className="topbar-kicker">CAREER OPERATING SYSTEM / 2026</span><div className="topbar-tools"><button className="guide-trigger" onClick={() => setGuide(true)}>HOW TO USE</button><span className="topbar-state"><i /> LOCAL-FIRST · EVIDENCE LOCKED</span></div></header>
 
-      {notice && <div className="notice" onClick={() => setNotice('')}>{notice}</div>}
+      {notice && <div className={`notice ${notice.kind}`} onClick={() => setNotice('')}>{notice.message}</div>}
 
       {guide && <Guide close={() => setGuide(false)} />}
 
@@ -204,7 +226,7 @@ function App() {
 
       {route === 'package' && <Package app={selectedApp} go={(next) => next === 'new' ? openApplicationInfo() : go(next)} />}
 
-      {route === 'history' && <History apps={boot.applications} openApplication={openApplication} go={go} />}
+      {route === 'history' && <History apps={boot.applications} openApplication={openApplication} go={go} setNotice={setNotice} refresh={refresh} />}
 
       {route === 'profile' && <Profile profile={boot.profile} />}
 
@@ -270,13 +292,13 @@ function Reveal({ className, children }: { className: string; children: ReactNod
 
 
 
-function NewApplication({ app, onCreated, setNotice, go }: { app?: AppRecord; onCreated: (id: string) => void; setNotice: (s: string) => void; go: (r: Route) => void }) {
+function NewApplication({ app, onCreated, setNotice, go }: { app?: AppRecord; onCreated: (id: string) => void; setNotice: NoticeSetter; go: (r: Route) => void }) {
 
   const [form, setForm] = useState({ company: '', title: '', url: '', source: '', location: '', employment_type: '', job_description: '' }); const [busy, setBusy] = useState(false)
 
   const update = (key: string, value: string) => setForm({ ...form, [key]: value })
 
-  const submit = async () => { setBusy(true); try { const result: any = await api('/api/applications', { method: 'POST', body: JSON.stringify(form) }); if (result.application?.application_id) onCreated(result.application.application_id); else setNotice(result.message || 'Application created') } catch (e: any) { setNotice(e.message) } finally { setBusy(false) } }
+  const submit = async () => { setBusy(true); try { const result: any = await api('/api/applications', { method: 'POST', body: JSON.stringify(form) }); if (result.application?.application_id) onCreated(result.application.application_id); else setNotice(result.message || 'Application created', 'success') } catch (e: any) { setNotice(e.message) } finally { setBusy(false) } }
 
   return <Workspace title="START WITH THE ROLE" eyebrow="01 / INTAKE" intro="Give the system the raw material. It will extract the signal without inventing the evidence." workflow="new" go={go}><div className="form-layout"><div><label>JOB DESCRIPTION<textarea value={form.job_description} onChange={(e) => update('job_description', e.target.value)} placeholder="Paste the complete job description here…" /></label></div><div className="form-stack"><label>COMPANY<input value={form.company} onChange={(e) => update('company', e.target.value)} placeholder="Company name" /></label><label>ROLE<input value={form.title} onChange={(e) => update('title', e.target.value)} placeholder="Job title" /></label><label>JOB URL<input value={form.url} onChange={(e) => update('url', e.target.value)} placeholder="https://…" /></label><div className="form-row"><label>LOCATION<input value={form.location} onChange={(e) => update('location', e.target.value)} placeholder="Remote / city" /></label><label>SOURCE<input value={form.source} onChange={(e) => update('source', e.target.value)} placeholder="LinkedIn / referral" /></label></div><button className="button primary wide" onClick={submit} disabled={busy}>{busy ? <LoadingStatus label="ANALYZING…" /> : 'CREATE + ANALYZE ROLE ↗'}</button></div></div></Workspace>
 
@@ -284,13 +306,15 @@ function NewApplication({ app, onCreated, setNotice, go }: { app?: AppRecord; on
 
 
 
-function Analysis({ app, setNotice, refresh, go }: { app?: AppRecord; setNotice: (s: string) => void; refresh: () => void; go: (r: Route) => void }) {
+function Analysis({ app, setNotice, refresh, go }: { app?: AppRecord; setNotice: NoticeSetter; refresh: () => void; go: (r: Route) => void }) {
 
   const [plan, setPlan] = useState<AppRecord | null>(null)
 
   const [busy, setBusy] = useState(false)
 
   const [skillCategories, setSkillCategories] = useState<Record<string, string>>({})
+
+  const [skillAnswers, setSkillAnswers] = useState<Record<string, 'yes' | 'no'>>({})
 
   const confirmation = useTransientConfirmation()
 
@@ -324,7 +348,7 @@ function Analysis({ app, setNotice, refresh, go }: { app?: AppRecord; setNotice:
 
       setPlan(null)
 
-      setNotice('Reviewed Resume Plan approved and saved for this application.')
+      setNotice('Reviewed Resume Plan approved and saved for this application.', 'success')
 
       refresh()
 
@@ -348,7 +372,7 @@ function Analysis({ app, setNotice, refresh, go }: { app?: AppRecord; setNotice:
 
       const result: any = await api(`/api/applications/${app.application_id}/confirm-skill-gap`, { method: 'POST', body: JSON.stringify({ skill, category, confirmed: true }) })
 
-      setNotice(result.message || 'Skill recorded as candidate-provided. Verify it before using it in a resume.')
+      setNotice(result.message || 'Skill recorded as candidate-provided. Verify it before using it in a resume.', 'success')
 
       setPlan(null)
 
@@ -378,11 +402,19 @@ function Analysis({ app, setNotice, refresh, go }: { app?: AppRecord; setNotice:
 
         <span className="card-label">REQUIRED SKILL GAP</span>
 
-        <p>This JD strongly requires <b>{gap.requirement}</b>, but it is not currently in your profile. Do you want to add it?</p>
+        <p>This job requires the skill "<b>{gap.requirement}</b>". This skill is not currently in your profile. Do you have this skill?</p>
 
-        <label className="field-label">PROFILE CATEGORY<select value={skillCategories[gap.requirement] || ''} onChange={(event) => setSkillCategories({ ...skillCategories, [gap.requirement]: event.target.value })}><option value="">Choose a category</option>{(plan.candidate_skill_categories || []).map((category: string) => <option key={category} value={category}>{category.split('_').join(' ')}</option>)}</select></label>
+        <div className="resume-actions" role="group" aria-label={`Do you have ${gap.requirement}?`}>
+          <button className={`button ${skillAnswers[gap.requirement] === 'yes' ? 'primary' : 'outline'}`} aria-pressed={skillAnswers[gap.requirement] === 'yes'} onClick={() => setSkillAnswers({ ...skillAnswers, [gap.requirement]: 'yes' })} disabled={busy}>Yes, I have this skill</button>
+          <button className={`button ${skillAnswers[gap.requirement] === 'no' ? 'primary' : 'outline'}`} aria-pressed={skillAnswers[gap.requirement] === 'no'} onClick={() => setSkillAnswers({ ...skillAnswers, [gap.requirement]: 'no' })} disabled={busy}>No, I don't have this skill</button>
+        </div>
 
-        <button className="button outline" onClick={() => confirmSkill(gap.requirement)} disabled={busy || !skillCategories[gap.requirement]}>CONFIRM ADD AS CANDIDATE-PROVIDED</button>
+        {skillAnswers[gap.requirement] === 'yes' && <>
+          <p>Where should we add it?</p>
+          <label className="field-label">PROFILE CATEGORY<select value={skillCategories[gap.requirement] || ''} onChange={(event) => setSkillCategories({ ...skillCategories, [gap.requirement]: event.target.value })}><option value="">Choose a category</option>{(plan.candidate_skill_categories || []).map((category: string) => <option key={category} value={category}>{category.split('_').join(' ')}</option>)}</select></label>
+
+          <button className="button outline" onClick={() => confirmSkill(gap.requirement)} disabled={busy || !skillCategories[gap.requirement]}>CONFIRM ADD AS CANDIDATE-PROVIDED</button>
+        </>}
 
       </div>)}
 
@@ -396,7 +428,7 @@ function Analysis({ app, setNotice, refresh, go }: { app?: AppRecord; setNotice:
 
 
 
-function Resume({ app, go, setNotice, refresh }: { app?: AppRecord; go: (r: Route) => void; setNotice: (s: string) => void; refresh: () => void }) {
+function Resume({ app, go, setNotice, refresh }: { app?: AppRecord; go: (r: Route) => void; setNotice: NoticeSetter; refresh: () => void }) {
 
   const [busy, setBusy] = useState(false)
 
@@ -424,13 +456,13 @@ function Resume({ app, go, setNotice, refresh }: { app?: AppRecord; go: (r: Rout
 
   const canFinalize = !!(working && !app?.resume_working_artifact_stale && (!finalized || finalStale))
 
-  const action = async (endpoint: string, success: string) => { if (!app) return; setBusyLabel(endpoint === 'finalize-resume' ? 'FINALIZING…' : 'BUILDING RESUME…'); setBusy(true); try { const result: any = await api(`/api/applications/${app.application_id}/${endpoint}`, { method: 'POST', body: JSON.stringify({}) }); if (result.decision && !['created', 'finalized'].includes(result.decision)) throw new Error(result.message || 'Resume action could not be completed.'); if (endpoint === 'generate-resume') confirmation.show('RESUME READY'); else setNotice(success); refresh() } catch (e: any) { setNotice(e.message) } finally { setBusy(false); setBusyLabel('') } }
+  const action = async (endpoint: string, success: string) => { if (!app) return; setBusyLabel(endpoint === 'finalize-resume' ? 'FINALIZING…' : 'BUILDING RESUME…'); setBusy(true); try { const result: any = await api(`/api/applications/${app.application_id}/${endpoint}`, { method: 'POST', body: JSON.stringify({}) }); if (result.decision && !['created', 'finalized'].includes(result.decision)) throw new Error(result.message || 'Resume action could not be completed.'); if (endpoint === 'generate-resume') confirmation.show('RESUME READY'); else setNotice(success, 'success'); refresh() } catch (e: any) { setNotice(e.message) } finally { setBusy(false); setBusyLabel('') } }
 
   const openEditor = async () => { if (!app) return; setBusyLabel('LOADING PROJECTS…'); setBusy(true); try { setEditor(await api(`/api/applications/${app.application_id}/resume-editor`)) } catch (e: any) { setNotice(e.message) } finally { setBusy(false); setBusyLabel('') } }
 
   const openTextEditor = () => { if (!app) return; setEditor(null); setTextEditorOpen(true) }
 
-  const saveEditor = async () => { if (!app || !editor) return; setBusyLabel('SAVING WORKING RESUME…'); setBusy(true); try { const result: any = await api(`/api/applications/${app.application_id}/resume-edit`, { method: 'POST', body: JSON.stringify({ mode: editor.mode, record_ids: editor.selected_record_ids }) }); setEditor(null); setNotice(result.message || 'Supported project selection saved.'); refresh() } catch (e: any) { setNotice(e.message) } finally { setBusy(false); setBusyLabel('') } }
+  const saveEditor = async () => { if (!app || !editor) return; setBusyLabel('SAVING WORKING RESUME…'); setBusy(true); try { const result: any = await api(`/api/applications/${app.application_id}/resume-edit`, { method: 'POST', body: JSON.stringify({ mode: editor.mode, record_ids: editor.selected_record_ids }) }); setEditor(null); setNotice(result.message || 'Supported project selection saved.', 'success'); refresh() } catch (e: any) { setNotice(e.message) } finally { setBusy(false); setBusyLabel('') } }
 
   const toggleProject = (id: string) => setEditor({ ...editor, selected_record_ids: editor.selected_record_ids.includes(id) ? editor.selected_record_ids.filter((x: string) => x !== id) : [...editor.selected_record_ids, id] })
 
@@ -460,7 +492,7 @@ function Resume({ app, go, setNotice, refresh }: { app?: AppRecord; go: (r: Rout
 
 function Artifact({ label, title, state, reference, pdfReference, docxAvailable, pdfAvailable, generatedAt, viewLabel }: { label: string; title: string; state: string; reference?: string; pdfReference?: string; docxAvailable?: boolean; pdfAvailable?: boolean; generatedAt?: string; viewLabel: string }) { return <div className="artifact"><span className="card-label">{label}</span><h3>{title}</h3><span className={state === 'FINAL' || state === 'READY' ? 'pill live' : 'pill'}>{state}</span>{generatedAt && <small className="artifact-date">{generatedAt}</small>}<div className="artifact-sheet"><span>DOCUMENT SURFACE</span><span>evidence-aligned structure</span><span>one-page validation</span></div>{(docxAvailable || pdfAvailable) && <div className="artifact-links">{pdfAvailable && pdfReference && <a className="artifact-view" href={apiUrl(`/api/artifact?ref=${encodeURIComponent(pdfReference)}&view=inline`)} target="_blank" rel="noreferrer">{viewLabel}</a>}{docxAvailable && reference && <a href={apiUrl(`/api/artifact?ref=${encodeURIComponent(reference)}`)} download>DOWNLOAD DOCX</a>}{pdfAvailable && pdfReference && <a href={apiUrl(`/api/artifact?ref=${encodeURIComponent(pdfReference)}`)} download>DOWNLOAD PDF</a>}</div>}</div> }
 
-function Letter({ app, setNotice, refresh, go }: { app?: AppRecord; setNotice: (s: string) => void; refresh: () => void; go: (r: Route) => void }) {
+function Letter({ app, setNotice, refresh, go }: { app?: AppRecord; setNotice: NoticeSetter; refresh: () => void; go: (r: Route) => void }) {
 
   const [content, setContent] = useState('')
 
@@ -548,7 +580,7 @@ function Letter({ app, setNotice, refresh, go }: { app?: AppRecord; setNotice: (
 
       if (result.cover_letter_working_pdf_reference) setWorkingPdfRef(result.cover_letter_working_pdf_reference)
 
-      setEditing(false); setNotice('Working cover letter saved.'); refresh()
+      setEditing(false); setNotice('Working cover letter saved.', 'success'); refresh()
 
     } catch (e: any) { setNotice(e.message) } finally { setBusy(false); setBusyLabel('') }
 
@@ -672,9 +704,38 @@ function Letter({ app, setNotice, refresh, go }: { app?: AppRecord; setNotice: (
 
 function Package({ app, go }: { app?: AppRecord; go: (r: Route) => void }) { const cards: [string, Route][] = [['RESUME', 'resume'], ['COVER LETTER', 'letter'], ['JD ANALYSIS', 'analysis'], ['APPLICATION INFO', 'new']]; const checks: [string, boolean, Route][] = [['JD analyzed', !!app?.phase8_plan_reference, 'analysis'], ['Resume plan approved', !!app?.resume_generation_allowed, 'resume'], ['Working resume', !!app?.working_resume_docx_path, 'resume'], ['Final resume', !!app?.resume_reference, 'resume'], ['Cover letter', !!app?.cover_letter_reference, 'letter']]; return <Workspace title="ASSEMBLE THE MOMENT" eyebrow="05 / PACKAGE ASSEMBLY" intro="Documents and application information converge into a package you can submit manually with confidence." workflow="package" go={go}><div className="assembly"><div className="assembly-stack">{cards.map(([label, route], i) => <button key={label} className="assembly-card" style={{ '--i': i } as CSSProperties} onClick={() => go(route)} aria-label={`Open ${label}`}>{label}<span>+</span></button>)}</div><div className="assembly-result">APPLICATION<br /><em>PACKAGE</em><small>MANUAL SUBMISSION ONLY</small></div></div><div className="check-list">{checks.map(([label, ok, route]) => <button className="check-row" key={label} onClick={() => go(route)}><i className={ok ? 'check on' : 'check'} />{label}<span>{ok ? 'READY' : 'PENDING'}</span></button>)}</div></Workspace> }
 
-function History({ apps, openApplication, go }: { apps: AppRecord[]; openApplication: (id: string, r?: Route) => void; go: (r: Route) => void }) { return <Workspace title="FOLLOW THE TRACE" eyebrow="06 / HISTORY" intro="A spatial record of every application state, decision, and artifact milestone." workflow="history" go={go}><div className="timeline">{[...apps].reverse().map((a, i) => <button className="timeline-row" key={a.application_id} onClick={() => openApplication(a.application_id, 'analysis')}><span className="timeline-dot" /><span className="timeline-date">{a.date_added || '—'}</span><span><b>{a.company_name || 'Unknown company'}</b><small>{a.job_title || 'Untitled role'}</small></span><span className="stream-status">{a.current_status}</span><span>↗</span></button>)}</div></Workspace> }
+function History({ apps, openApplication, go, setNotice, refresh }: { apps: AppRecord[]; openApplication: (id: string, r?: Route) => void; go: (r: Route) => void; setNotice: NoticeSetter; refresh: () => Promise<void> }) {
+  const [removingApplicationId, setRemovingApplicationId] = useState<string | null>(null)
 
-function Profile({ profile }: { profile: AppRecord }) { return <Workspace title="KNOW YOUR EVIDENCE" eyebrow="07 / PROFILE" intro="The canonical profile stays authoritative. This surface makes its clusters, projects, and proof readable."><div className="profile-grid"><div className="profile-intro"><div className="eyebrow">CANDIDATE</div><h3>{profile.name || 'Profile'}</h3><p>{profile.headline || 'Evidence-backed career profile'}</p><span>{profile.location || 'Local profile store'}</span></div><div className="profile-block"><span className="card-label">SKILL CLUSTERS</span><div className="tag-cloud">{(profile.skills || []).slice(0, 18).map((s: any) => <span key={s.name}>{s.name}</span>)}</div></div><div className="profile-block"><span className="card-label">PROJECTS</span>{(profile.projects || []).map((p: any) => <div className="proof-row" key={p.record_id}><b>{p.name}</b><small>{p.project_status || 'unknown'} · {p.github_availability || 'source recorded'}</small></div>)}</div></div></Workspace> }
+  const removeApplication = async (application: AppRecord) => {
+    if (removingApplicationId !== null) return
+    const title = application.job_title || 'Untitled role'
+    if (!window.confirm(`Remove this application from history?\n\n${title}`)) return
+
+    setRemovingApplicationId(application.application_id)
+    try {
+      await api(`/api/applications/${encodeURIComponent(application.application_id)}`, { method: 'DELETE' })
+      setNotice('Application removed from history.', 'success')
+    } catch (error: any) {
+      setNotice(error.message)
+    } finally {
+      try { await refresh() } finally { setRemovingApplicationId(null) }
+    }
+  }
+
+  return <Workspace title="FOLLOW THE TRACE" eyebrow="06 / HISTORY" intro="A spatial record of every application state, decision, and artifact milestone." workflow="history" go={go}><div className="timeline">{[...apps].reverse().map((a) => <div className="timeline-entry" key={a.application_id}>
+    <button className="timeline-row" onClick={() => openApplication(a.application_id, 'analysis')}><span className="timeline-dot" /><span className="timeline-date">{a.date_added || '—'}</span><span><b>{a.company_name || 'Unknown company'}</b><small>{a.job_title || 'Untitled role'}</small></span><span className="stream-status">{a.current_status}</span><span>↗</span></button>
+    <button type="button" className="timeline-remove" onClick={() => removeApplication(a)} disabled={removingApplicationId !== null} aria-label={`Remove application ${a.job_title || 'Untitled role'} from history`}>{removingApplicationId === a.application_id ? 'REMOVING…' : 'REMOVE'}</button>
+  </div>)}</div></Workspace>
+}
+
+function Profile({ profile }: { profile: AppRecord }) { return <Workspace title="KNOW YOUR EVIDENCE" eyebrow="07 / PROFILE" intro="The canonical profile stays authoritative. This surface makes its clusters, projects, and proof readable."><div className="profile-grid"><div className="profile-intro"><div className="eyebrow">CANDIDATE</div><h3>{profile.name || 'Profile'}</h3><p>{profile.headline || 'Evidence-backed career profile'}</p><span>{profile.location || 'Local profile store'}</span></div><div className="profile-block"><span className="card-label">SKILL CLUSTERS</span><div className="tag-cloud">{(profile.skills || []).slice(0, 18).map((s: any) => <span key={s.name}>{s.name}</span>)}</div></div><div className="profile-block"><span className="card-label">PROJECTS</span>{(profile.projects || []).map((p: any) => {
+  const projectDetails = <><b>{p.name}</b><small>{p.project_status || 'unknown'} · {p.github_availability || 'source recorded'}</small></>
+  const hasRepository = typeof p.github_url === 'string' && p.github_url.trim().length > 0
+  return hasRepository
+    ? <a className="proof-row" key={p.record_id} href={p.github_url} target="_blank" rel="noopener noreferrer" aria-label={`Open ${p.name} GitHub repository in a new tab`} style={{ color: 'inherit', textDecoration: 'none' }}>{projectDetails}<span aria-hidden="true" style={{ marginLeft: 'auto' }}>↗</span></a>
+    : <div className="proof-row" key={p.record_id}>{projectDetails}</div>
+})}</div></div></Workspace> }
 
 function Search({ openApplication }: { openApplication: (id: string, r?: Route) => void }) { const [q, setQ] = useState(''); const [results, setResults] = useState<AppRecord[]>([]); useEffect(() => { if (q.length < 2) { setResults([]); return } const timer = setTimeout(() => api<{ applications: AppRecord[] }>(`/api/search?q=${encodeURIComponent(q)}`).then((x) => setResults(x.applications)), 250); return () => clearTimeout(timer) }, [q]); return <Workspace title="FIND THE SIGNAL" eyebrow="08 / SEARCH" intro="Search the local application store without losing the spatial context of the work."><input className="search-input" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search company, role, note…" /><div className="search-results">{results.map((a) => <button className="stream-row" key={a.application_id} onClick={() => openApplication(a.application_id)}><span className="stream-main"><b>{a.company_name}</b><small>{a.job_title}</small></span><span className="stream-status">{a.current_status}</span>↗</button>)}</div></Workspace> }
 
