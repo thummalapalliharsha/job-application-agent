@@ -107,9 +107,11 @@ def add_note(aid,note,follow_up_date=None):
 def generate_cover_letter(aid):
  store=load_store(); app=next((x for x in store['applications'] if x['application_id']==aid),None)
  if not app:return {'decision':'not_found'}
+ import jd_resume_planner as planner
+ import resume_generator as resume
  profile=load_profile(); name=profile['master_profile']['profile']['name']
  jd=app.get('job_description_text','').strip()
- plan_ref=app.get('phase8_plan_reference'); plan_path=resolve_storage_reference(plan_ref) if plan_ref else None
+ plan_ref=app.get('phase8_plan_reference'); plan_path=resolve_storage_reference(plan_ref,root=ROOT) if plan_ref else None
  plan=json.loads(plan_path.read_text(encoding='utf-8')) if plan_path and plan_path.exists() else {}
  approved=plan.get('evidence_summary',{})
  supported={str(x.get('requirement','')).lower() for x in approved.get('supported_requirements',[]) if isinstance(x,dict)}
@@ -124,16 +126,42 @@ def generate_cover_letter(aid):
  if not projects:
   projects=[x for x in profile.get('projects',{}).get('projects',[]) if x.get('name') in (app.get('selected_projects') or []) and x.get('project_status')=='completed']
  jd_lower=jd.lower()
- if app.get('job_title'):
-    role=app['job_title'].strip()
-    role=re.sub(r'\s*[-—]\s*fresher\s*$','',role,flags=re.I).strip()
- elif 'data labeling' in jd_lower or 'rlhf' in jd_lower or 'prompt evaluation' in jd_lower:
-  role='AI/ML Training Data and Evaluation role'
- else:
-  role='entry-level AI/ML role'
+ jd_analysis=plan.get('jd_analysis',{})
+ generic_roles={'entry level technical','entry level technical role','fresher','freshers','role not specified','unspecified role'}
+ role=None
+ for candidate in (app.get('job_title'),jd_analysis.get('target_role'),jd_analysis.get('job_title'),planner.infer_target_role(jd)):
+  candidate=str(candidate or '').strip()
+  normalized=re.sub(r'[\s_-]+',' ',candidate.casefold()).strip()
+  if candidate and normalized not in generic_roles and not re.fullmatch(r'fresher(?:s)? role',normalized) and len(candidate)<=80 and not re.search(r'\b(is hiring|we are looking|we are seeking|responsibilities|minimum qualifications)\b',candidate,re.I):
+    role=re.sub(r'\s*[-—]\s*fresher\s*$','',candidate,flags=re.I).strip()
+    break
+ if not role:
+  role='AI/ML Training Data and Evaluation' if any(term in jd_lower for term in ('data labeling','rlhf','prompt evaluation')) else 'entry-level AI/ML'
  company_value=str(app.get('company_name') or '').strip()
  company=company_value if norm(company_value) not in {'abcd','company name','your company','unknown company','your organization'} else ''
  is_ml_engineering='machine learning engineer' in norm(role) or ('machine learning' in jd_lower and 'feature engineering' in jd_lower)
+ def join_evidence(values):
+  if len(values)==1: return values[0]
+  if len(values)==2: return f'{values[0]} and {values[1]}'
+  return ', '.join(values[:-1])+f', and {values[-1]}'
+ def project_evidence_sentences(project):
+  project_name=project.get('name','')
+  action_verbs={'accepted','analyzed','applied','built','cleaned','compared','created','displayed','evaluated','exported','generated','implemented','inspected','integrated','loaded','optimized','performed','prepared','removed','returned','saved','stored','used'}
+  sentences=[]
+  bullets=resume.project_bullets(project,plan)[:2]
+  for index,bullet in enumerate(bullets):
+   evidence=str(bullet).strip().rstrip('.!?')
+   if not evidence: continue
+   first_word=re.match(r'([A-Za-z]+)\b',evidence)
+   if first_word and first_word.group(1).casefold() in action_verbs:
+    prefix=f'For the {project_name} project, I ' if index==0 else 'I '
+   else:
+    prefix=f'The {project_name} project involved ' if index==0 else 'The project also involved '
+   sentences.append(prefix+evidence[0].lower()+evidence[1:]+'.')
+  if not sentences:
+   evidence=[str(value).strip() for value in project.get('demonstrated_skills',[]) if isinstance(value,str) and value.strip()]
+   if evidence: sentences.append(f'The completed {project_name} project demonstrates {join_evidence(evidence[:2])}.')
+  return sentences
  project_sentences=[]
  for project in projects[:3]:
   name_text=project.get('name','')
@@ -147,56 +175,39 @@ def generate_cover_letter(aid):
    if project_id in ml_project_sentences:
     project_sentences.append(ml_project_sentences[project_id])
     continue
-  functionality=project.get('functionality') or project.get('demonstrated_skills') or []
-  relevant=[]
-  for item in functionality:
-   item_lower=str(item).lower()
-   if any(term in item_lower for term in ('preprocess','evaluation','query','retrieval','embedding','classification','data','quality','analysis','prompt','cleaning','dashboard','reporting','visualization','cluster')):
-    relevant.append(str(item))
-  if name_text=='Text-to-SQL Project':
-   detail='building Python and SQL workflows for natural-language querying, generated-query execution, and result validation'
-  elif name_text=='Student Performance RAG Chatbot':
-   detail='preprocessing structured data and building a retrieval-augmented workflow with embeddings and vector search'
-  elif relevant:
-   detail=', '.join(relevant[:2])
-  else:
-   detail='an evidence-backed, completed project'
-  project_sentences.append(f'{name_text}, where I worked on {detail}')
- if not project_sentences:
-  project_sentences.append('completed Python and data-focused projects documented in my canonical profile')
+  project_sentences.extend(project_evidence_sentences(project))
  skill_phrases=[]
  for phrase in ('python','scikit-learn','pandas','numpy','xgboost','sql','nlp','machine learning','llm integration'):
   if phrase in supported and phrase not in unsupported:
    m={'python':'Python','scikit-learn':'Scikit-learn','sql':'SQL','pandas':'Pandas','numpy':'NumPy','xgboost':'XGBoost','nlp':'NLP','machine learning':'machine learning','llm integration':'LLM integration'}
    skill_phrases.append(m[phrase])
- skills_sentence=', '.join(skill_phrases[:4])
+ skills_sentence=join_evidence(skill_phrases[:4])
+ sql_supported='sql' in supported and 'sql' not in unsupported
  is_ai_eval=any(term in jd_lower for term in ('data labeling','rlhf','prompt evaluation','annotation guidelines','content safety','evaluation and calibration','language-model','large language model','training-data quality','training data quality'))
- is_analytics=any(term in jd_lower for term in ('data analyst','business analyst','analytics','data cleaning','exploratory data analysis','data visualization','reporting','dashboard','dashboards'))
+ is_analytics=any(term in jd_lower for term in ('data analyst','business analyst','business intelligence','analytics','data cleaning','exploratory data analysis','data visualization','reporting','dashboard','dashboards'))
  if is_ai_eval:
-  intro_focus="The role's focus on training-data quality, prompt and QA evaluation, and careful analysis of language-model outputs matches the evidence-backed work I have completed in Python and data/ML projects."
-  skill_suffix='Python/SQL data checks and NLP/LLM-oriented analysis.'
-  closing_target=f"{company}'s evaluation and calibration workflows while continuing to learn from experienced AI/ML teams." if company else 'evidence-based AI/ML evaluation work while continuing to learn from experienced teams.'
+  intro_focus="The role's focus on training-data quality and evaluation aligns with the completed project evidence in my profile."
+  skill_suffix='SQL-based data checks and evaluation workflows' if sql_supported else 'data checks and evaluation workflows'
+  closing_target=f'evaluation and calibration work at {company}' if company else 'evaluation and calibration work with an AI/ML team'
  elif is_ml_engineering:
-  intro_focus="The role's focus on structured-data preparation, feature engineering, and evaluating machine-learning models aligns with my completed classification and clustering project work."
+  intro_focus="The role's focus on data preparation, feature engineering, and model evaluation aligns with the completed projects in my profile."
   skill_suffix='data preprocessing, feature engineering, and model evaluation.'
-  closing_target=f"machine-learning work at {company} while continuing to develop through hands-on projects." if company else 'hands-on machine-learning work while continuing to develop through evidence-based projects.'
+  closing_target=f'machine-learning work at {company}' if company else 'evidence-based machine-learning work'
  elif is_analytics:
-  intro_focus="The role's focus on data cleaning, exploratory data analysis, reporting, and dashboard visualization matches the evidence-backed work I have completed in Python and SQL/data projects."
-  skill_suffix='structured data analysis, data cleaning, and reporting workflows.'
-  closing_target=f"{company}'s data and analytics workflows while continuing to learn from experienced data teams." if company else 'data and analytics workflows while continuing to learn from experienced teams.'
+  intro_focus="The role's focus on data cleaning, analysis, reporting, and dashboards aligns with the completed projects in my profile."
+  skill_suffix='data analysis and SQL-based workflows' if sql_supported else 'data analysis and reporting workflows'
+  closing_target=f'data and analytics work at {company}' if company else 'data and analytics work'
  else:
-  intro_focus="The role's focus on hands-on data analysis, problem-solving, and building structured technical workflows matches the evidence-backed work I have completed in Python and data projects."
-  skill_suffix='Python and SQL data workflows.'
-  closing_target=f"{company}'s technical and data workflows while continuing to deliver reliable results." if company else 'evidence-based technical work while continuing to deliver reliable results.'
+  intro_focus="The role's focus on hands-on data analysis and technical workflows aligns with the completed projects in my profile."
+  skill_suffix='SQL-based technical workflows' if sql_supported else 'technical workflows'
+  closing_target=f'technical and data work at {company}' if company else 'technical and data work'
  application_target=f'the {role} role'+(f' at {company}' if company else '')
- if is_ml_engineering:
-  project_summary='My relevant project work includes these completed projects. '+' '.join(project_sentences)+' These projects demonstrate work in data preparation, feature engineering, and model comparison.'
- else:
-  project_summary=f"My relevant project work includes {'; '.join(project_sentences)}. These projects developed my ability to inspect data, structure repeatable workflows, evaluate outputs, and document results clearly."
- lines=['Dear Hiring Manager,','',f"I am writing to apply for {application_target}. {intro_focus}",'',project_summary]
+ project_summary=' '.join(project_sentences)
+ lines=['Dear Hiring Manager,','',f"I am writing to apply for {application_target}. {intro_focus}"]
+ if project_summary: lines += ['',project_summary]
  if skills_sentence:
-  lines += ['', f'My supported experience with {skills_sentence} is especially relevant to {skill_suffix}']
- lines += ['', f"I would be glad to bring this analytical, detail-oriented approach to {closing_target} Thank you for your consideration.",'', 'Regards,', name]
+  lines += ['', f'My experience with {skills_sentence} is relevant to {skill_suffix.rstrip(".")}.']
+ lines += ['', f"I would welcome the opportunity to contribute to {closing_target}. Thank you for your consideration.",'', 'Regards,', name]
  content='\n'.join(lines)+'\n'
  base=artifact_stem(app,'cover_letter','Working'); path=LETTERS/f'{base}.md'; path.parent.mkdir(parents=True,exist_ok=True)
  path.write_text(content,encoding='utf-8')
@@ -204,7 +215,8 @@ def generate_cover_letter(aid):
   if a['application_id']==aid:
     a['cover_letter_working_reference']=storage_reference(path, root=ROOT)
     a['cover_letter_source_reference']=storage_reference(path, root=ROOT)
-    a['cover_letter_reference']=storage_reference(path, root=ROOT)
+    if not a.get('cover_letter_reference'):
+     a['cover_letter_reference']=storage_reference(path, root=ROOT)
     a['application_checklist']['documents'][1]['status']='ready'
     a['last_updated']=now()
  save_store(store)

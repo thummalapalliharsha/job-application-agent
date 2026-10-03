@@ -13,6 +13,7 @@ from docx import Document
 
 import application_assistant as aa
 import career_os_api as api
+import jd_resume_planner as planner
 
 ROOT = Path(__file__).resolve().parent
 APPLICATION_ID = "app_b70a2228a165"
@@ -94,6 +95,8 @@ class CoverLetterPdfLifecycleTests(unittest.TestCase):
         self.assertIn("applied SMOTE during preprocessing", content)
         self.assertIn("8,950-record credit-card dataset", content)
         self.assertIn("tuned the classifier with GridSearchCV", content)
+        self.assertNotIn("where I worked on", content)
+        self.assertNotIn("Loaded and explored an 8,950-record", content)
         self.assertNotIn("ABCD", content)
         for unsupported in ("PyTorch", "TensorFlow", "Keras", "Deep Learning", "probability expertise", "statistics expertise"):
             self.assertNotIn(unsupported.casefold(), content.casefold())
@@ -126,6 +129,105 @@ class CoverLetterPdfLifecycleTests(unittest.TestCase):
         for placeholder_text in ("ABCD", "Company Name", "your organization", "ROLE NOT SPECIFIED"):
             self.assertNotIn(placeholder_text.casefold(), result["content"].casefold())
         self.assertIn("Junior Machine Learning Engineer", result["content"])
+
+    def test_unmapped_project_evidence_is_composed_as_complete_prose(self):
+        store = aa.load_store()
+        source = next(item for item in store["applications"] if item["application_id"] == APPLICATION_ID)
+        application = copy.deepcopy(source)
+        application.update({
+            "application_id": "app_cover_letter_prose_test",
+            "company_name": "Example Analytics",
+            "job_title": "Junior Data Analyst",
+            "job_description_text": "Junior Data Analyst role requiring data analysis and reporting.",
+            "project_selection_record_ids": ["project_imdb_movie_analysis"],
+            "selected_projects": ["IMDb Movie Analysis"],
+        })
+        store["applications"].append(application)
+        aa.save_store(store)
+
+        result = aa.generate_cover_letter(application["application_id"])
+        content = result["content"]
+        self.assertIn(
+            "For the IMDb Movie Analysis project, I loaded and inspected the IMDb movie dataset",
+            content,
+        )
+        self.assertIn("I performed exploratory data analysis in a Jupyter notebook", content)
+        self.assertNotIn("where I worked on", content)
+        self.assertIn("My experience with", content)
+        self.assertNotIn(", relevant to", content)
+
+    def test_fresher_title_uses_jd_role_and_project_bullets_become_prose(self):
+        jd = "Job Description:\nJunior Business Intelligence Analyst – Fresher\nRequired Skills:\n- Python\n- SQL\n- Pandas\nResponsibilities:\n- Build dashboards and reports."
+        project_ids = [
+            "project_bank_customer_clustering_dashboard",
+            "project_imdb_movie_analysis",
+            "project_fuel_regression_crispmlq",
+        ]
+        plan = planner.plan_resume(jd, aa.load_profile())
+        plan["jd_analysis"]["target_role"] = "entry-level technical"
+        plan_path = self.reports / "bi_role_plan.json"
+        plan_path.write_text(json.dumps(plan, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+
+        store = aa.load_store()
+        source = next(item for item in store["applications"] if item["application_id"] == APPLICATION_ID)
+        application = copy.deepcopy(source)
+        application.update({
+            "application_id": "app_bi_role_cover_letter_test",
+            "company_name": "Example Analytics",
+            "job_title": "FRESHER",
+            "job_description_text": jd,
+            "phase8_plan_reference": "output/reports/bi_role_plan.json",
+            "project_selection_record_ids": project_ids,
+            "selected_projects": [
+                "Bank Customer Clustering and Financial Analytics Dashboard",
+                "IMDb Movie Analysis",
+                "Fuel Consumption Prediction",
+            ],
+        })
+        store["applications"].append(application)
+        aa.save_store(store)
+
+        content = aa.generate_cover_letter(application["application_id"])["content"]
+        self.assertIn("I am writing to apply for the Junior Business Intelligence Analyst role", content)
+        self.assertNotIn("FRESHER role", content)
+        self.assertNotIn("entry-level technical role", content)
+        self.assertIn("I cleaned an 8,950-record credit-card dataset", content)
+        self.assertIn("I applied K-Means, Agglomerative, and DBSCAN clustering; evaluated", content)
+        self.assertIn("I loaded and inspected the IMDb movie dataset", content)
+        self.assertIn("I prepared flight data with numerical and categorical preprocessing", content)
+        for fragment in (
+            "where I worked on Loaded and explored",
+            "Implemented and benchmarked K-Means",
+            "where I worked on data inspection",
+            "where I worked on numerical and categorical preprocessing",
+        ):
+            self.assertNotIn(fragment, content)
+        self.assertIn(
+            "My experience with Python, Pandas, and SQL is relevant to data analysis and SQL-based workflows.",
+            content,
+        )
+
+    def test_cover_letter_does_not_mention_unsupported_sql(self):
+        jd = "Job Description:\nJunior Business Intelligence Analyst\nRequired Skills:\n- Python\nResponsibilities:\n- Build dashboards and reports."
+        plan = planner.plan_resume(jd, aa.load_profile())
+        plan_path = self.reports / "bi_no_sql_plan.json"
+        plan_path.write_text(json.dumps(plan, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        store = aa.load_store()
+        source = next(item for item in store["applications"] if item["application_id"] == APPLICATION_ID)
+        application = copy.deepcopy(source)
+        application.update({
+            "application_id": "app_bi_no_sql_cover_letter_test",
+            "job_title": "FRESHER",
+            "job_description_text": jd,
+            "phase8_plan_reference": "output/reports/bi_no_sql_plan.json",
+            "project_selection_record_ids": ["project_bank_customer_clustering_dashboard"],
+            "selected_projects": ["Bank Customer Clustering and Financial Analytics Dashboard"],
+        })
+        store["applications"].append(application)
+        aa.save_store(store)
+
+        content = aa.generate_cover_letter(application["application_id"])["content"]
+        self.assertNotIn("SQL", content)
 
     def test_react_consumes_api_pdf_reference_and_renders_working_download(self):
         source = (ROOT / "frontend" / "src" / "main.tsx").read_text(encoding="utf-8")

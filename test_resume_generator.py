@@ -128,6 +128,18 @@ class ResumeGeneratorSelectionTests(unittest.TestCase):
         self.assertEqual(rg.summary_lines(first, profile), rg.summary_lines(second, profile))
         self.assertIn("Junior Business Data Analyst", " ".join(rg.summary_lines(first, profile)))
 
+    def test_resume_role_reparses_jd_when_plan_role_is_generic(self):
+        profile = copy.deepcopy(self.profile)
+        jd = "Job Description:\nJunior Business Intelligence Analyst – Fresher\nRequired Skills:\n- Python\nResponsibilities:\n- Build dashboards."
+        plan = planner.plan_resume(jd, profile)
+        plan["jd_analysis"]["target_role"] = "entry-level technical"
+        plan["jd_analysis"]["job_title"] = "entry-level technical"
+
+        self.assertEqual(rg.target_role(plan), "Junior Business Intelligence Analyst")
+        summary = " ".join(rg.summary_lines(plan, profile))
+        self.assertIn("Junior Business Intelligence Analyst", summary)
+        self.assertNotIn("entry-level technical role", summary)
+
     def test_summary_uses_data_analyst_evidence_instead_of_generic_phrase(self):
         profile = copy.deepcopy(self.profile)
         jd = "Junior Data Analyst\nRequired Skills:\n- Python\n- SQL\n- Pandas\n- NumPy\n- Data Visualization\nResponsibilities:\n- Clean and analyze structured datasets.\n- Create business-facing dashboards."

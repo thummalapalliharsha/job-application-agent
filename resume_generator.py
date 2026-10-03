@@ -339,10 +339,13 @@ def effective_certs(plan,prof):
 
 def target_role(plan):
     jd=plan.get('jd_analysis',{})
-    explicit=str(jd.get('target_role') or jd.get('job_title') or '').strip()
     raw=str(plan.get('source_jd_text',''))
-    if explicit and len(explicit)<=80 and not re.search(r'\b(is hiring|we are looking|we are seeking|responsibilities|minimum qualifications)\b',explicit,re.I):
-        return re.sub(r'\s*[-—]\s*fresher\s*$','',explicit,flags=re.IGNORECASE).strip()
+    generic_roles={'entry level technical','entry level technical role','fresher','freshers','role not specified','unspecified role'}
+    for candidate in (jd.get('job_title'),jd.get('target_role')):
+        explicit=str(candidate or '').strip()
+        normalized=re.sub(r'[\s_-]+',' ',explicit.casefold()).strip()
+        if explicit and normalized not in generic_roles and len(explicit)<=80 and not re.search(r'\b(is hiring|we are looking|we are seeking|responsibilities|minimum qualifications)\b',explicit,re.I):
+            return re.sub(r'\s*[-—]\s*fresher\s*$','',explicit,flags=re.IGNORECASE).strip()
     for pattern in (r'(?:job title|position|role)\s*[:\-]\s*([^\n.]{3,80})',r'\b((?:junior|entry[- ]level|graduate|fresher)\s+[A-Za-z][A-Za-z &/-]{1,45}\b(?:analyst|engineer|developer|specialist|associate|intern|consultant))\b'):
         match=re.search(pattern,raw,re.I)
         if match: return re.sub(r'\s*[-—]\s*fresher\s*$','',match.group(1).strip(),flags=re.IGNORECASE)
