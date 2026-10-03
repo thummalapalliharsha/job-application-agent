@@ -1,190 +1,679 @@
-# AI Career OS
-
-AI Career OS is a human-in-the-loop job application workspace for matching job descriptions to candidate evidence, preparing resumes and cover letters, and tracking application progress. Job applications are submitted manually; the service does not automate employer portals.
-
-## Production
-
-- **Frontend:** [job-application-agent-zeta.vercel.app](https://job-application-agent-zeta.vercel.app)
-- **Backend:** [job-application-agent-valc.onrender.com](https://job-application-agent-valc.onrender.com)
-
-The browser uses same-origin `/api/*` requests. It does not call the Render service directly.
-
+AI Career OS
+AI Career OS is a human-in-the-loop job application workspace for analyzing job descriptions, matching requirements with candidate evidence, preparing tailored resumes and cover letters, managing applications, and maintaining a canonical career profile.
+> **Note:** Job applications are submitted manually. AI Career OS does not automatically submit applications to employer portals.
+Production
+Component	Details
+Frontend	https://job-application-agent-zeta.vercel.app
+Backend	https://job-application-agent-valc.onrender.com
+Frontend Hosting	Vercel
+Backend Hosting	Render
+Frontend Framework	React + TypeScript + Vite
+Backend	Python
+Production API	`/api/*` through the Vercel frontend
+Production Architecture
 ```text
-Browser
-  -> Vercel React/Vite frontend
-  -> Vercel /api/* rewrite and serverless proxy
-  -> Render Python backend
-  -> Career OS services and canonical JSON storage
+User Browser
+     |
+     v
+React + Vite Frontend
+     |
+     | /api/*
+     v
+Vercel API Proxy
+     |
+     | CAREER_OS_API_TOKEN
+     v
+Render Python Backend
+     |
+     v
+Career OS Services
+     |
+     +--> Canonical Profile / Application Data
+     +--> Job Description Data
+     +--> Resume Artifacts
+     +--> Cover Letter Artifacts
+     +--> Reports
 ```
-
-The Vercel rewrite sends `/api/:path*` to `frontend/api/[...path].ts`. That proxy forwards the request to `CAREER_OS_RENDER_URL` and adds the server-side bearer token. The browser-facing API origin is the Vercel URL; `CAREER_OS_RENDER_URL` is the backend origin without an `/api` suffix.
-
-## Features
-
-- Analyze job descriptions and map required, preferred, and uncertain requirements to profile evidence.
-- Review and explicitly approve a resume plan before generating a Working Resume.
-- Generate and validate one-page, ATS-oriented DOCX/PDF resumes.
-- Edit Working Resume content through a source-backed document model; validate changes before saving.
-- Generate, edit, and finalize tailored cover letters with DOCX/PDF artifacts.
-- Edit the canonical profile through a plan-and-confirm workflow that preserves evidence and provenance.
-- Track application status, notes, search, history, and readiness checklists.
-- Keep final artifacts and application submission under explicit user control.
-
-## Architecture
-
-- **React + TypeScript + Vite** (`frontend/src/`): production browser application.
-- **Vercel proxy** (`frontend/api/[...path].ts`, `frontend/vercel.json`): same-origin `/api/*` forwarding to the backend.
-- **Python HTTP API** (`career_os_api.py`): standard-library `ThreadingHTTPServer` with request validation, authentication, application workflows, and document operations.
-- **Career services:** `jd_resume_planner.py`, `application_assistant.py`, `profile_update_agent.py`, and the resume document model/renderer/validation modules.
-- **Canonical storage:** JSON records under `data/`; job-description snapshots under `job_descriptions/`; generated documents and reports under `output/`.
-
-The repository also contains `app.py`, an additional Streamlit interface. The deployed production frontend is the React/Vite application described above.
-
-## Project Structure
-
+The browser communicates with the backend through the Vercel `/api/*` proxy and does not directly call the Render backend.
+The Vercel proxy is implemented in `frontend/api/[...path].ts`, with routing configured in `frontend/vercel.json`. It forwards requests to `CAREER_OS_RENDER_URL` and authenticates backend requests using `CAREER_OS_API_TOKEN`.
+Project Overview
+AI Career OS is designed around a canonical candidate evidence model:
 ```text
-.
+Candidate Profile / Evidence
+          |
+          v
+   Job Description
+          |
+          v
+   Requirement Analysis
+          |
+          v
+    Evidence Matching
+          |
+          v
+Resume / Cover Letter / Application
+```
+The system supports:
+Job description analysis
+Requirement extraction
+Required/preferred skill identification
+Candidate evidence matching
+Skill-gap identification
+Resume planning and generation
+Resume validation and editing
+Cover letter generation and editing
+Canonical profile editing
+Evidence and provenance tracking
+Application creation and tracking
+Application notes and search
+Application history and readiness workflows
+Safe application removal
+Manual application submission
+Key Features
+Job Description Intelligence
+Analyze job descriptions.
+Extract role, required skills, preferred skills, and uncertain requirements.
+Match requirements against candidate evidence.
+Identify supported skill gaps.
+Allow explicit confirmation before supported profile updates.
+Avoid adding unsupported candidate claims.
+Resume Workflow
+```text
+Job Description
+      |
+      v
+JD Analysis
+      |
+      v
+Resume Plan
+      |
+      v
+Explicit Approval
+      |
+      v
+Working Resume
+      |
+      v
+Validation / Editing
+      |
+      v
+Final Resume
+```
+Features include:
+Job-specific resume planning
+Explicit resume-plan approval
+Working Resume generation
+DOCX/PDF generation where supported
+Resume validation
+One-page ATS-oriented workflow
+Source-backed resume editing
+Validation before saving
+Explicit resume finalization
+Cover Letter Workflow
+Generate job-specific cover letters.
+Ground content in candidate evidence.
+Support cover-letter editing.
+Generate DOCX/PDF artifacts where supported.
+Finalize cover letters explicitly.
+Profile / Evidence Management
+Supported profile areas include:
+Name
+Headline
+Location
+Skills
+Projects
+Experience
+Education
+Certifications
+Profile editing follows:
+```text
+User Edit
+    |
+    v
+Update Plan
+    |
+    v
+Review
+    |
+    v
+Explicit Confirmation
+    |
+    v
+Canonical Profile Update
+```
+Profile changes do not automatically regenerate resumes or cover letters and do not silently rewrite existing application plans.
+Application Management
+Create applications.
+Track application status.
+Add application notes.
+Search applications.
+View application history.
+Track readiness.
+Remove applications with scoped artifact cleanup.
+Keep final submission under explicit user control.
+Architecture
+Frontend
+The production frontend uses React, TypeScript, Vite, CSS, and Vercel.
+```text
+frontend/
+frontend/src/
+frontend/api/[...path].ts
+frontend/vercel.json
+```
+The frontend uses relative `/api/*` requests.
+Backend
+The backend is implemented in Python.
+Main API entry point:
+```text
+career_os_api.py
+```
+The API uses Python's standard-library `ThreadingHTTPServer`.
+The backend handles:
+API routing
+Authentication
+Request validation
+Host/origin validation
+Application workflows
+Profile operations
+Resume operations
+Cover-letter operations
+Artifact access
+Storage operations
+Career OS Services
+Important modules include:
+```text
+application_assistant.py
+jd_resume_planner.py
+profile_update_agent.py
+resume_generator.py
+resume_document_model.py
+resume_document_renderer.py
+resume_document_validation.py
+```
+Module	Responsibility
+`career_os_api.py`	HTTP API and request handling
+`application_assistant.py`	Application lifecycle and workflows
+`jd_resume_planner.py`	JD analysis and resume planning
+`profile_update_agent.py`	Canonical profile update workflow
+`resume_generator.py`	Resume generation
+`resume_document_model.py`	Source-backed resume document model
+`resume_document_renderer.py`	Resume document rendering
+`resume_document_validation.py`	Resume validation
+Storage
+Canonical structured information is stored under:
+```text
+data/
+```
+Job-description snapshots are stored under:
+```text
+job_descriptions/
+```
+Generated documents and reports are stored under:
+```text
+output/
+```
+The canonical profile/evidence data is the source of truth rather than generated resume documents.
+Project Structure
+```text
+job-application-agent/
+|
 |-- frontend/
-|   |-- api/[...path].ts       # Vercel API proxy
-|   |-- src/                   # React application and styles
+|   |-- api/
+|   |   `-- [...path].ts
+|   |-- public/
+|   |-- src/
 |   |-- package.json
-|   |-- vercel.json            # /api/* rewrite
-|   `-- vite.config.ts         # Local /api proxy to port 8504
-|-- data/                      # Canonical profile and application JSON
-|-- job_descriptions/          # Saved job-description snapshots
-|-- output/                    # Historical/generated documents and reports
-|-- templates/                 # Resume DOCX template
-|-- resumes/                   # Source resume reference
-|-- tests/                     # JD regression fixtures and runners
+|   |-- package-lock.json
+|   |-- vercel.json
+|   |-- vite.config.ts
+|   `-- tsconfig*.json
+|
+|-- data/
+|-- job_descriptions/
+|-- output/
+|-- templates/
+|-- resumes/
+|-- tests/
+|
 |-- docs/
-|   |-- handoffs/              # Historical project handoff notes
-|   `-- reports/               # Historical engineering reports
+|   |-- handoffs/
+|   `-- reports/
+|
 |-- career_os_api.py
 |-- application_assistant.py
 |-- jd_resume_planner.py
 |-- profile_update_agent.py
-|-- resume_document_*.py
 |-- resume_generator.py
-|-- app.py                     # Additional Streamlit interface
-|-- Dockerfile                 # Python backend container
-`-- requirements.txt
+|-- resume_document_model.py
+|-- resume_document_renderer.py
+|-- resume_document_validation.py
+|-- app.py
+|-- Dockerfile
+|-- requirements.txt
+|-- agent_instructions.md
+`-- README.md
 ```
-
-The documents under `docs/reports/` and `docs/handoffs/` are historical records, not current deployment instructions or requirements.
-
-## Local Development
-
-### Backend
-
-Python 3.12 is used by the backend image. Create and activate a virtual environment, then install the Python dependencies:
-
+The `docs/` directory contains historical engineering and project handoff documentation.
+Technology Stack
+Frontend
+React
+TypeScript
+Vite
+CSS
+Vercel
+Vercel serverless API proxy
+Backend
+Python
+`ThreadingHTTPServer`
+JSON-based storage
+`python-docx`
+Document processing
+LibreOffice
+Poppler utilities
+Application Intelligence
+Job description analysis
+Requirement extraction
+Evidence matching
+Resume planning
+Source-backed document generation
+Profile update workflow
+Evidence/provenance preservation
+Testing
+Python `unittest`
+Project-specific regression tests
+Frontend production build validation
+Git whitespace validation
+Local Development
+Prerequisites
+Recommended environment:
+Python 3.12+
+Node.js
+npm
+LibreOffice
+Poppler utilities
+Backend Setup
+From the repository root:
 ```bash
 python -m venv .venv
-# Activate .venv for your shell, then:
+```
+Windows PowerShell activation:
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+Install dependencies:
+```bash
 python -m pip install -r requirements.txt
+```
+Start the backend:
+```bash
 python career_os_api.py
 ```
-
-In development, the API listens on `127.0.0.1:8504` by default. The document workflow uses `python-docx`; PDF rendering requires LibreOffice and Poppler utilities (`soffice`, `pdfinfo`, and `pdftotext`).
-
-### Frontend
-
-In a second terminal:
-
+The development backend listens on:
+```text
+http://127.0.0.1:8504
+```
+Frontend Setup
+Open a second terminal:
 ```bash
 cd frontend
 npm ci
 npm run dev
 ```
-
-Vite serves the app at `http://127.0.0.1:5173` and proxies `/api/*` to `http://127.0.0.1:8504`, as configured in `vite.config.ts`. The current client uses relative `/api` URLs; `VITE_API_BASE_URL` is not read by `frontend/src/apiUrl.ts`.
-
-Build and preview the production frontend locally:
-
+The Vite development server runs at:
+```text
+http://127.0.0.1:5173
+```
+During local development, `/api/*` requests are proxied to:
+```text
+http://127.0.0.1:8504
+```
+Frontend Production Build
 ```bash
 cd frontend
 npm run build
+```
+Preview locally:
+```bash
 npm run preview
 ```
-
-## Deployment Configuration
-
-### Vercel frontend and proxy
-
-Configure the Vercel project root as `frontend/`. Its build command is `npm run build`; `frontend/vercel.json` rewrites `/api/:path*` to the catch-all serverless proxy.
-
-Set these **server-side Vercel environment variables**:
-
-| Variable | Purpose |
-|---|---|
-| `CAREER_OS_RENDER_URL` | Render backend origin, for example `https://job-application-agent-valc.onrender.com`; do not append `/api`. |
-| `CAREER_OS_API_TOKEN` | Shared secret forwarded to Render as a bearer token. Keep it server-side; never expose it as a `VITE_*` variable. |
-
-### Render Python backend
-
-Deploy the repository’s root `Dockerfile`. It installs the Python requirements plus LibreOffice, Poppler, and Liberation fonts, then starts `career_os_api.py`. Render supplies `PORT`.
-
-Configure these backend variables:
-
-| Variable | Purpose |
-|---|---|
-| `CAREER_OS_ENV` | Set to `production` to enable production checks. |
-| `CAREER_OS_API_TOKEN` | Same secret as the Vercel proxy; production requires at least 32 characters. |
-| `CAREER_OS_ALLOWED_HOSTS` | Include the Render service hostname so the backend host check accepts proxy traffic. |
-| `CAREER_OS_STORAGE_ROOT` | Root of storage containing `data/`, `job_descriptions/`, and `output/`. In production, point it at a persistent mount so canonical data and generated artifacts survive service restarts. |
-
-The backend also supports `CAREER_OS_HOST`, `CAREER_OS_PORT`, `CAREER_OS_ALLOWED_ORIGINS`, and `CAREER_OS_ALLOWED_HOSTS` for host, port, origin, and host allow-list configuration. `PORT` takes precedence over `CAREER_OS_PORT`.
-
-## Environment Variables
-
-The Vercel proxy and Render backend must use the same `CAREER_OS_API_TOKEN`. The frontend sends relative `/api` requests, so its production API routing is provided by the Vercel rewrite/proxy rather than a browser-visible backend URL. Never put the API token in frontend code or a `VITE_*` variable.
-
-For local development, no API token is required unless `CAREER_OS_API_TOKEN` is configured. Optional `CAREER_OS_STORAGE_ROOT` can point to a separate local data root with the same `data/`, `job_descriptions/`, and `output/` layout.
-
-## API Overview
-
-The browser-facing API is rooted at the Vercel origin under `/api`; the proxy forwards those paths to the Render backend.
-
-| Method | Routes | Purpose |
-|---|---|---|
-| `GET` | `/api/health`, `/api/bootstrap`, `/api/profile`, `/api/applications`, `/api/search` | Health, initial app data, profile, application list, and search. |
-| `GET` | `/api/applications/{id}/resume-editor`, `/api/applications/{id}/resume-document`, `/api/artifact?ref=...` | Resume editor/document data and validated stored artifacts. |
-| `POST` | `/api/analyze`, `/api/applications` | Analyze a JD or create an application record. |
-| `POST` | `/api/profile/edit/plan`, `/api/profile/edit/apply` | Preview and explicitly confirm canonical profile updates. |
-| `POST` | `/api/applications/{id}/approve-resume`, `/confirm-skill-gap`, `/generate-resume`, `/finalize-resume` | Resume-plan approval, skill-gap confirmation, and resume lifecycle actions. |
-| `POST` | `/api/applications/{id}/resume-document/validate`, `/resume-document/save`, `/resume-edit` | Validate and save source-backed Working Resume edits. |
-| `POST` | `/api/applications/{id}/cover-letter`, `/cover-letter-edit`, `/status`, `/note` | Cover-letter and application-tracking actions. |
-| `DELETE` | `/api/applications/{id}` | Remove an application and its safely scoped artifacts. |
-
-The backend protects API routes with the configured bearer token, validates request hosts and origins, and restricts artifact access to supported output locations.
-
-## Evidence and Provenance
-
-- `data/*.json` is the canonical structured profile and application store; generated resumes are not the source of truth.
-- Skills, projects, experience, education, and certifications retain their source/evidence and verification metadata.
-- JD planning selects supported profile evidence; unsupported claims are not added to resumes or cover letters.
-- Profile edits are planned, reviewed, and explicitly confirmed. Changed verified records are marked candidate-provided; prior evidence is retained.
-- Existing application plans and final documents are not automatically rewritten or regenerated by profile edits.
-- Resume edits are checked against the source-backed document model and validation rules before Working artifacts are saved.
-- Application submission remains manual; the application record changes to `applied` only after explicit confirmation.
-
-## Tests
-
-From the repository root, run the Python unittest suite:
-
+Environment Variables
+Frontend
+The production frontend uses relative `/api/*` requests, so the browser does not need a separate production backend URL.
+Example:
+```text
+frontend/.env.example
+```
+Do not expose backend authentication secrets through frontend variables. In particular, never expose `CAREER_OS_API_TOKEN` through a `VITE_*` variable.
+Vercel
+Variable	Purpose
+`CAREER_OS_RENDER_URL`	Render backend origin
+`CAREER_OS_API_TOKEN`	Shared secret used by the Vercel API proxy
+Example backend origin:
+```text
+https://job-application-agent-valc.onrender.com
+```
+`CAREER_OS_RENDER_URL` should not include `/api`.
+Render
+Variable	Purpose
+`CAREER_OS_ENV`	Production environment configuration
+`CAREER_OS_API_TOKEN`	Shared authentication token
+`CAREER_OS_ALLOWED_HOSTS`	Allowed backend hostnames
+`CAREER_OS_STORAGE_ROOT`	Persistent storage root
+Additional supported configuration includes:
+```text
+CAREER_OS_HOST
+CAREER_OS_PORT
+CAREER_OS_ALLOWED_ORIGINS
+CAREER_OS_ALLOWED_HOSTS
+```
+Render provides the production `PORT`.
+Secrets
+Never commit API tokens, passwords, private credentials, or production secrets.
+Use `.env.example` for placeholders and configure real production secrets through Vercel and Render.
+Deployment
+Frontend
+The production frontend is deployed on Vercel.
+Project root:
+```text
+frontend/
+```
+Build command:
+```bash
+npm run build
+```
+Vercel routing:
+```text
+frontend/vercel.json
+```
+API proxy:
+```text
+frontend/api/[...path].ts
+```
+Backend
+The backend is deployed on Render using the repository's:
+```text
+Dockerfile
+```
+The container starts:
+```text
+career_os_api.py
+```
+Production backend:
+```text
+https://job-application-agent-valc.onrender.com
+```
+Production Request Flow
+```text
+Browser
+   |
+   | GET / POST / DELETE /api/*
+   v
+Vercel React/Vite Frontend
+   |
+   v
+Vercel API Proxy
+   |
+   | CAREER_OS_API_TOKEN
+   v
+Render Python Backend
+   |
+   v
+Career OS Services
+   |
+   +--> data/
+   +--> job_descriptions/
+   +--> output/
+```
+API Overview
+The production browser-facing API is available under `/api` on the Vercel frontend origin.
+Health, Bootstrap, Profile and Search
+Method	Endpoint	Purpose
+`GET`	`/api/health`	Backend health check
+`GET`	`/api/bootstrap`	Initial application/profile data
+`GET`	`/api/profile`	Canonical profile summary
+`GET`	`/api/applications`	Application list
+`GET`	`/api/search`	Application/data search
+Job Analysis
+Method	Endpoint	Purpose
+`POST`	`/api/analyze`	Analyze a job description
+`POST`	`/api/applications`	Create an application
+Profile Editing
+Method	Endpoint	Purpose
+`POST`	`/api/profile/edit/plan`	Create a profile edit plan
+`POST`	`/api/profile/edit/apply`	Explicitly confirm and apply a profile edit
+Resume Workflow
+Method	Endpoint	Purpose
+`POST`	`/api/applications/{id}/approve-resume`	Approve resume plan
+`POST`	`/api/applications/{id}/confirm-skill-gap`	Confirm supported skill-gap update
+`POST`	`/api/applications/{id}/generate-resume`	Generate Working Resume
+`POST`	`/api/applications/{id}/finalize-resume`	Finalize resume
+`POST`	`/api/applications/{id}/resume-document/validate`	Validate resume document changes
+`POST`	`/api/applications/{id}/resume-document/save`	Save validated resume changes
+`POST`	`/api/applications/{id}/resume-edit`	Apply supported resume edits
+Resume and Artifact Retrieval
+Method	Endpoint	Purpose
+`GET`	`/api/applications/{id}/resume-editor`	Retrieve resume editor data
+`GET`	`/api/applications/{id}/resume-document`	Retrieve resume document data
+`GET`	`/api/artifact?ref=...`	Retrieve supported stored artifacts
+Cover Letter
+Method	Endpoint	Purpose
+`POST`	`/api/applications/{id}/cover-letter`	Generate/update cover letter
+`POST`	`/api/applications/{id}/cover-letter-edit`	Edit cover letter
+Application Tracking
+Method	Endpoint	Purpose
+`POST`	`/api/applications/{id}/status`	Update application status
+`POST`	`/api/applications/{id}/note`	Add application note
+`DELETE`	`/api/applications/{id}`	Remove an application and safely scoped related artifacts
+Evidence and Provenance
+AI Career OS uses a canonical evidence model:
+```text
+Canonical Candidate Profile
+          |
+          v
+     Job Description
+          |
+          v
+    Requirement Matching
+          |
+          v
+ Resume / Cover Letter
+```
+Generated application documents are outputs of the evidence model and are not intended to replace the canonical candidate profile.
+Candidate evidence can include:
+Skills
+Projects
+Experience
+Education
+Certifications
+Achievements
+Other supported profile evidence
+Where supported, evidence records retain provenance and verification information.
+Application Workflow
+```text
+Job Description
+       |
+       v
+JD Analysis
+       |
+       v
+Requirement Extraction
+       |
+       v
+Candidate Evidence Matching
+       |
+       v
+Application Record
+       |
+       v
+Resume Plan
+       |
+       v
+Explicit Resume Approval
+       |
+       v
+Working Resume
+       |
+       v
+Resume Validation / Editing
+       |
+       v
+Final Resume
+       |
+       +--------------------+
+       |                    |
+       v                    v
+Cover Letter          Application Package
+       |                    |
+       +----------+---------+
+                  |
+                  v
+        Manual Employer Submission
+                  |
+                  v
+        Explicit Submission Confirmation
+                  |
+                  v
+               Applied
+```
+Application Safety
+The system does not:
+Automatically submit applications.
+Automatically log into employer portals.
+Automatically fill employer application forms.
+Solve CAPTCHAs.
+Store employer portal passwords.
+Automatically send applications to employers.
+Final employer submission is manual and remains under user control.
+Application Removal
+When an application is removed:
+The target application is removed.
+Matching application history is cleaned.
+Related artifacts are cleaned only within approved/scoped locations.
+Shared profile/project/skill information is preserved.
+Unrelated applications and artifacts are preserved.
+Testing
+Python Test Suite
 ```bash
 python -m unittest discover -s . -p "test_*.py"
 ```
-
-The profile-update agent also has a standalone regression runner:
-
+Profile Update Regression
 ```bash
 python test_profile_update_agent.py
 ```
-
-Build the frontend from `frontend/`:
-
+Frontend Build
 ```bash
+cd frontend
 npm ci
 npm run build
 ```
+Git Validation
+```bash
+git diff --check
+```
+Development Notes
+The repository also contains an additional Streamlit interface:
+```text
+app.py
+```
+The deployed production UI is the React/Vite application under:
+```text
+frontend/
+```
+Production architecture:
+```text
+React/Vite Frontend
+        |
+        v
+Vercel API Proxy
+        |
+        v
+Python Backend
+```
+Documentation
+Historical engineering and handoff documentation is organized under:
+```text
+docs/
+|
+|-- handoffs/
+|
+`-- reports/
+```
+These documents preserve development history, engineering decisions, project handoff information, and historical implementation reports.
+The root `README.md` is the primary current project documentation.
+Security
+Never commit API tokens.
+Never commit passwords.
+Never commit private credentials.
+Keep `CAREER_OS_API_TOKEN` server-side.
+Never expose backend authentication tokens through `VITE_*` variables.
+Use `.env.example` for placeholder configuration.
+Configure production secrets through Vercel and Render.
+Do not store employer portal credentials.
+Keep final application submission under explicit user control.
+Production Configuration Summary
+Area	Configuration
+Frontend	React + TypeScript + Vite
+Frontend Hosting	Vercel
+Backend	Python
+Backend Hosting	Render
+API Proxy	Vercel `/api/*`
+Backend API	`career_os_api.py`
+Frontend Production URL	https://job-application-agent-zeta.vercel.app
+Backend Production URL	https://job-application-agent-valc.onrender.com
+Browser API	`/api/*` on frontend origin
+Canonical Storage	`data/`
+Job Description Storage	`job_descriptions/`
+Generated Artifacts	`output/`
+Profile Updates	Plan / Review / Explicit Confirmation
+Application Submission	Manual
+Frontend Build	`npm run build`
+Backend Start	`python career_os_api.py`
+Project Status
+AI Career OS is deployed with:
+React/Vite production frontend
+Vercel API proxy
+Python backend
+Render deployment
+Canonical JSON-backed profile/application storage
+Job description analysis
+Evidence matching
+Resume generation
+Resume validation/editing
+Cover letter generation/editing
+Profile editing
+Application tracking
+Application history
+Safe application removal
+Manual application submission
+Live Application
+https://job-application-agent-zeta.vercel.app
+Backend Service
+https://job-application-agent-valc.onrender.com
+Production Request Flow
+```text
+Browser
+  |
+  v
+Vercel React/Vite Frontend
+  |
+  v
+/ api/*
+  |
+  v
+Vercel Serverless Proxy
+  |
+  v
+Render Python Backend
+  |
+  v
+Career OS Services
+  |
+  +--> Canonical Profile
+  +--> Applications
+  +--> Job Descriptions
+  +--> Resumes
+  +--> Cover Letters
+  +--> Reports
+```
+---
+AI Career OS provides an evidence-backed workflow for preparing job applications while keeping candidate data centralized and important actions under explicit user control.
