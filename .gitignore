@@ -11,7 +11,7 @@ env/
 # Environment / secrets
 .env
 .env.*
-!.env.example
+!**/.env.example
 
 # Python tooling
 .pytest_cache/
@@ -25,6 +25,7 @@ frontend/node_modules/
 
 # Frontend build output
 frontend/dist/
+frontend/tsconfig.tsbuildinfo
 
 # Frontend temporary test artifacts
 frontend/.phase*_e2e.cjs
@@ -44,3 +45,4 @@ Thumbs.db
 # IDE/editor files
 .vscode/
 .idea/
+.vercel/
