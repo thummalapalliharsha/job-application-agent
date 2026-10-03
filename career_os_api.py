@@ -166,13 +166,13 @@ def profile_summary():
     master = profile.get("master_profile", {}).get("profile", {})
     projects = profile.get("projects", {}).get("projects", [])
     skills = [{**skill, "category": group.get("category")} for group in profile.get("skills", {}).get("skill_groups", []) for skill in group.get("skills", [])]
-    return {"name": master.get("name"), "headline": master.get("headline") or master.get("summary"), "location": master.get("location"), "projects": projects, "skills": skills, "education": profile.get("education", {}).get("education", []), "experience": profile.get("experience", {}).get("experiences", []), "certifications": profile.get("certifications", {}).get("certifications", [])}
+    return {"name": master.get("name"), "headline": master.get("headline") or master.get("summary"), "location": master.get("location"), "projects": projects, "skills": skills, "education": profile.get("education", {}).get("education", []), "experience": profile.get("experience", {}).get("experiences", []), "certifications": profile.get("certifications", {}).get("certifications", []), "achievements": profile.get("achievements", {}).get("achievements", [])}
 
 
 def plan_profile_edit(payload):
     if not isinstance(payload, dict):
         return {"decision": "invalid", "message": "Profile edits must be sent as a JSON object."}
-    plan = pua.plan_profile_edit(payload.get("updates"), root=ROOT)
+    plan = pua.plan_profile_edit(payload.get("updates"), root=ROOT, additions=payload.get("additions"))
     if plan.get("decision") == "invalid":
         return {**plan, "message": "; ".join(plan.get("questions", [])) or "The profile edit is invalid."}
     return plan

@@ -735,6 +735,38 @@ function Profile({ profile, refresh, setNotice }: { profile: AppRecord; refresh:
   const [editing, setEditing] = useState(false)
   const [plan, setPlan] = useState<AppRecord | null>(null)
   const [saving, setSaving] = useState(false)
+  const [addSection, setAddSection] = useState<string | null>(null)
+  const [newRecord, setNewRecord] = useState<AppRecord>({})
+
+  const addFieldDefinitions: Record<string, { label: string; kind?: string; options?: string[] }[]> = {
+    skills: [{ label: 'Category', kind: 'skill-category' }, { label: 'Name' }],
+    projects: [
+      { label: 'Name' }, { label: 'Project type', kind: 'select', options: ['project', 'github_project'] },
+      { label: 'Project status', kind: 'select', options: ['idea', 'planned', 'in_progress', 'completed', 'unknown'] },
+      { label: 'Purpose', kind: 'multiline' }, { label: 'Functionality', kind: 'list' },
+      { label: 'Technologies', kind: 'list' }, { label: 'Technical details', kind: 'list' },
+      { label: 'Measurable results', kind: 'list' }, { label: 'Demonstrated skills', kind: 'list' },
+      { label: 'Supported role categories', kind: 'list' }, { label: 'GitHub URL' },
+    ],
+    experience: [
+      { label: 'Organization' }, { label: 'Title' }, { label: 'Experience type' }, { label: 'Work mode' },
+      { label: 'Start date' }, { label: 'End date' }, { label: 'Description', kind: 'list' },
+      { label: 'Responsibilities', kind: 'list' }, { label: 'Technologies', kind: 'list' },
+      { label: 'Outcomes', kind: 'list' }, { label: 'Learning outcomes', kind: 'list' },
+    ],
+    education: [
+      { label: 'Institution' }, { label: 'Degree' }, { label: 'Field of study' },
+      { label: 'Start date' }, { label: 'End date' }, { label: 'Location' },
+      { label: 'Grade' }, { label: 'Coursework', kind: 'list' },
+    ],
+    certifications: [
+      { label: 'Name' }, { label: 'Issuer' },
+      { label: 'Credential type', kind: 'select', options: ['certificate', 'program_credential'] },
+      { label: 'Issue date' }, { label: 'Expiration date' }, { label: 'Credential ID' },
+      { label: 'Verification URL' }, { label: 'Related experience ID' },
+    ],
+    achievements: [{ label: 'Name' }, { label: 'Description', kind: 'multiline' }, { label: 'Date' }, { label: 'Issuer' }],
+  }
 
   useEffect(() => {
     setCanonical(profile)
@@ -765,20 +797,48 @@ function Profile({ profile, refresh, setNotice }: { profile: AppRecord; refresh:
     for (const category of ['skills', 'projects', 'experience', 'education', 'certifications']) if (!updates[category].length) delete updates[category]
     return updates
   }
+  const beginAdd = (category: string) => {
+    const fields: AppRecord = {}
+    for (const field of addFieldDefinitions[category] || []) {
+      const key = field.label.toLowerCase().replace(/[ /]+/g, '_')
+      if (field.kind === 'skill-category') continue
+      fields[key] = field.kind === 'list' ? [] : field.kind === 'select' ? field.options?.[0] || '' : ''
+    }
+    setNewRecord({ fields, category: category === 'skills' ? canonical.skills?.[0]?.category || '' : undefined })
+    setAddSection(category)
+  }
+  const cancelAdd = () => {
+    setAddSection(null)
+    setNewRecord({})
+  }
+  const updateNewField = (field: string, value: string | string[]) => setNewRecord((current: AppRecord) => ({
+    ...current,
+    fields: { ...current.fields, [field]: value },
+  }))
+  const profileAdditions = () => {
+    if (!addSection) return {}
+    const fields = { ...(newRecord.fields || {}) }
+    const entry = addSection === 'skills'
+      ? { category: newRecord.category, fields }
+      : { fields }
+    return { [addSection]: [entry] }
+  }
   const beginEditing = () => {
     setDraft(JSON.parse(JSON.stringify(canonical)))
     setPlan(null)
+    cancelAdd()
     setEditing(true)
   }
   const cancelEditing = () => {
     setDraft(JSON.parse(JSON.stringify(canonical)))
     setPlan(null)
+    cancelAdd()
     setEditing(false)
   }
   const makePlan = async () => {
     setSaving(true)
     try {
-      const result = await api<AppRecord>('/api/profile/edit/plan', { method: 'POST', body: JSON.stringify({ updates: profileUpdates() }) })
+      const result = await api<AppRecord>('/api/profile/edit/plan', { method: 'POST', body: JSON.stringify({ updates: profileUpdates(), additions: profileAdditions() }) })
       if (result.decision === 'no_change_duplicate') {
         setNotice('No profile changes to save.', 'success')
         return
@@ -800,6 +860,7 @@ function Profile({ profile, refresh, setNotice }: { profile: AppRecord; refresh:
       setCanonical(updated)
       setDraft(JSON.parse(JSON.stringify(updated)))
       setPlan(null)
+      cancelAdd()
       setEditing(false)
       void refresh()
       setNotice('Canonical profile updated. Existing application plans and documents were not changed.', 'success')
@@ -810,13 +871,31 @@ function Profile({ profile, refresh, setNotice }: { profile: AppRecord; refresh:
     }
   }
   const scalarInput = (label: string, value: unknown, onChange: (value: string) => void, multiline = false) => <label className="profile-edit-field">{label}{multiline
-    ? <textarea value={typeof value === 'string' ? value : ''} onChange={(event) => onChange(event.target.value)} rows={3} />
-    : <input value={typeof value === 'string' ? value : ''} onChange={(event) => onChange(event.target.value)} />}</label>
+    ? <textarea value={typeof value === 'string' ? value : ''} onChange={(event) => onChange(event.target.value)} rows={3} disabled={Boolean(plan) || saving} />
+    : <input value={typeof value === 'string' ? value : ''} onChange={(event) => onChange(event.target.value)} disabled={Boolean(plan) || saving} />}</label>
   const listInput = (label: string, values: unknown, onChange: (value: string[]) => void) => scalarInput(label, Array.isArray(values) ? values.join('\n') : '', (value) => onChange(value.split('\n').map((item) => item.trim()).filter(Boolean)), true)
   const recordFields = (record: AppRecord, index: number, collection: string, scalar: string[], lists: string[]) => <div className="profile-edit-fields">
     {scalar.map((field) => scalarInput(field.replace(/_/g, ' '), record[field], (value) => updateRecord(collection, index, field, value), ['purpose', 'credential_id', 'verification_url'].includes(field)))}
     {lists.map((field) => listInput(field.replace(/_/g, ' '), record[field], (value) => updateRecord(collection, index, field, value)))}
   </div>
+  const renderAddForm = (category: string) => {
+    if (!editing || addSection !== category) return null
+    const skillCategories: string[] = Array.from(new Set<string>((canonical.skills || []).map((skill: AppRecord) => String(skill.category || '')).filter(Boolean)))
+    return <div className="profile-add-form">
+      <span className="card-label">NEW {category.replace(/_/g, ' ')}</span>
+      <div className="profile-edit-fields">
+        {(addFieldDefinitions[category] || []).map((field) => {
+          const key = field.label.toLowerCase().replace(/[ /]+/g, '_')
+          if (field.kind === 'skill-category') return <label className="profile-edit-field" key={field.label}>{field.label}<select value={newRecord.category || ''} onChange={(event) => setNewRecord((current: AppRecord) => ({ ...current, category: event.target.value }))} disabled={Boolean(plan) || saving}>{skillCategories.map((value) => <option key={value} value={value}>{value.replace(/_/g, ' ')}</option>)}</select></label>
+          if (field.kind === 'select') return <label className="profile-edit-field" key={field.label}>{field.label}<select value={newRecord.fields?.[key] || ''} onChange={(event) => updateNewField(key, event.target.value)} disabled={Boolean(plan) || saving}>{(field.options || []).map((value) => <option key={value} value={value}>{value.replace(/_/g, ' ')}</option>)}</select></label>
+          if (field.kind === 'list') return <div key={field.label}>{listInput(field.label, newRecord.fields?.[key], (value) => updateNewField(key, value))}</div>
+          return <div key={field.label}>{scalarInput(field.label, newRecord.fields?.[key], (value) => updateNewField(key, value), field.kind === 'multiline')}</div>
+        })}
+      </div>
+      {!plan && <div className="profile-add-actions"><button className="button quiet" onClick={cancelAdd} disabled={saving}>CANCEL</button><button className="button primary" onClick={makePlan} disabled={saving}>{saving ? 'PREPARING…' : 'REVIEW CHANGES'}</button></div>}
+    </div>
+  }
+  const addButton = (category: string, label: string) => editing && !plan && <button className="profile-add-button" onClick={() => beginAdd(category)} disabled={saving}>ADD {label}</button>
   const projectRow = (project: AppRecord, index: number) => {
     const projectDetails = <><b>{project.name}</b><small>{project.project_status || 'unknown'} · {project.github_availability || 'source recorded'}</small></>
     const hasRepository = typeof project.github_url === 'string' && project.github_url.trim().length > 0
@@ -831,7 +910,7 @@ function Profile({ profile, refresh, setNotice }: { profile: AppRecord; refresh:
 
   return <Workspace title="KNOW YOUR EVIDENCE" eyebrow="07 / PROFILE" intro="The canonical profile stays authoritative. This surface makes its clusters, projects, and proof readable.">
     <div className="profile-edit-toolbar">
-      {editing ? <><span>{plan ? 'Review the exact canonical changes before confirming.' : 'Edits are staged locally until you review and confirm them.'}</span>{!plan && <button className="button quiet" onClick={cancelEditing} disabled={saving}>CANCEL</button>}{!plan && <button className="button primary" onClick={makePlan} disabled={saving}>{saving ? 'PREPARING…' : 'SAVE CHANGES'}</button>}</>
+      {editing ? <><span>{plan ? 'Review the exact canonical changes before confirming.' : 'Edits are staged locally until you review and confirm them.'}</span>{!plan && <button className="button quiet" onClick={cancelEditing} disabled={saving}>CANCEL</button>}{!plan && <button className="button primary" onClick={makePlan} disabled={saving}>{saving ? 'PREPARING…' : 'REVIEW CHANGES'}</button>}</>
         : <><span>Changes require review and confirmation before they reach canonical evidence.</span><button className="button outline" onClick={beginEditing}>EDIT PROFILE</button></>}
     </div>
     <div className="profile-grid">
@@ -841,19 +920,24 @@ function Profile({ profile, refresh, setNotice }: { profile: AppRecord; refresh:
           : <><h3>{canonical.name || 'Profile'}</h3><p>{canonical.headline || 'Evidence-backed career profile'}</p><span>{canonical.location || 'Local profile store'}</span></>}
       </div>
       <div className="profile-block">
-        <span className="card-label">SKILLS</span>
+        <div className="profile-section-heading"><span className="card-label">SKILLS</span>{addButton('skills', 'SKILL')}</div>
         {editing ? <div className="profile-record-list">{(draft.skills || []).map((skill: AppRecord, index: number) => <div className="profile-skill-edit" key={`${skill.category}:${skill.name}`}>
           <small>{skill.category?.replaceAll('_', ' ') || 'Skill'}</small>{scalarInput('Name', skill.name, (value) => updateRecord('skills', index, 'name', value))}<small>{skill.status || 'unverified'} · evidence retained</small>
         </div>)}</div> : <div className="tag-cloud">{(canonical.skills || []).slice(0, 18).map((skill: AppRecord) => <span key={`${skill.category}:${skill.name}`}>{skill.name}</span>)}</div>}
+        {renderAddForm('skills')}
       </div>
-      <div className="profile-block"><span className="card-label">PROJECTS</span>{(editing ? draft.projects : canonical.projects || []).map(projectRow)}</div>
-      <div className="profile-block"><span className="card-label">EXPERIENCE</span>{(editing ? draft.experience : canonical.experience || []).map((item: AppRecord, index: number) => <details className="profile-record" key={item.record_id}><summary><span><b>{item.title}</b><small>{item.organization} · {item.start_date || 'dates not listed'}–{item.end_date || 'present'}</small></span></summary>{editing && recordFields(item, index, 'experience', ['organization', 'title', 'experience_type', 'work_mode', 'start_date', 'end_date'], ['description', 'responsibilities', 'technologies', 'outcomes', 'learning_outcomes'])}{!editing && <p>{(item.responsibilities || []).join(' ')}</p>}</details>)}</div>
-      <div className="profile-block"><span className="card-label">EDUCATION</span>{(editing ? draft.education : canonical.education || []).map((item: AppRecord, index: number) => <details className="profile-record" key={item.record_id}><summary><span><b>{item.degree} · {item.institution}</b><small>{item.field_of_study} · {item.start_date}–{item.end_date}</small></span></summary>{editing && recordFields(item, index, 'education', ['institution', 'degree', 'field_of_study', 'start_date', 'end_date', 'location', 'grade'], ['coursework'])}{!editing && <p>{item.grade}</p>}</details>)}</div>
-      <div className="profile-block"><span className="card-label">CERTIFICATIONS</span>{(editing ? draft.certifications : canonical.certifications || []).map((item: AppRecord, index: number) => <details className="profile-record" key={item.record_id}><summary><span><b>{item.name}</b><small>{item.issuer} · {item.issue_date || 'date not listed'}</small></span></summary>{editing && recordFields(item, index, 'certifications', ['name', 'issuer', 'credential_type', 'issue_date', 'expiration_date', 'credential_id', 'verification_url'], [])}{!editing && <p>{item.credential_type}</p>}</details>)}</div>
+      <div className="profile-block"><div className="profile-section-heading"><span className="card-label">PROJECTS</span>{addButton('projects', 'PROJECT')}</div>{(editing ? draft.projects : canonical.projects || []).map(projectRow)}{renderAddForm('projects')}</div>
+      <div className="profile-block"><div className="profile-section-heading"><span className="card-label">EXPERIENCE</span>{addButton('experience', 'EXPERIENCE')}</div>{(editing ? draft.experience : canonical.experience || []).map((item: AppRecord, index: number) => <details className="profile-record" key={item.record_id}><summary><span><b>{item.title}</b><small>{item.organization} · {item.start_date || 'dates not listed'}–{item.end_date || 'present'}</small></span></summary>{editing && recordFields(item, index, 'experience', ['organization', 'title', 'experience_type', 'work_mode', 'start_date', 'end_date'], ['description', 'responsibilities', 'technologies', 'outcomes', 'learning_outcomes'])}{!editing && <p>{(item.responsibilities || []).join(' ')}</p>}</details>)}{renderAddForm('experience')}</div>
+      <div className="profile-block"><div className="profile-section-heading"><span className="card-label">EDUCATION</span>{addButton('education', 'EDUCATION')}</div>{(editing ? draft.education : canonical.education || []).map((item: AppRecord, index: number) => <details className="profile-record" key={item.record_id}><summary><span><b>{item.degree} · {item.institution}</b><small>{item.field_of_study} · {item.start_date}–{item.end_date}</small></span></summary>{editing && recordFields(item, index, 'education', ['institution', 'degree', 'field_of_study', 'start_date', 'end_date', 'location', 'grade'], ['coursework'])}{!editing && <p>{item.grade}</p>}</details>)}{renderAddForm('education')}</div>
+      <div className="profile-block"><div className="profile-section-heading"><span className="card-label">CERTIFICATIONS</span>{addButton('certifications', 'CERTIFICATION')}</div>{(editing ? draft.certifications : canonical.certifications || []).map((item: AppRecord, index: number) => <details className="profile-record" key={item.record_id}><summary><span><b>{item.name}</b><small>{item.issuer} · {item.issue_date || 'date not listed'}</small></span></summary>{editing && recordFields(item, index, 'certifications', ['name', 'issuer', 'credential_type', 'issue_date', 'expiration_date', 'credential_id', 'verification_url'], [])}{!editing && <p>{item.credential_type}</p>}</details>)}{renderAddForm('certifications')}</div>
+      <div className="profile-block"><div className="profile-section-heading"><span className="card-label">ACHIEVEMENTS</span>{addButton('achievements', 'ACHIEVEMENT')}</div>{(canonical.achievements || []).map((item: AppRecord) => <div className="proof-row" key={item.record_id}><b>{item.name}</b><small>{item.date || 'date not listed'} · {item.issuer || 'source recorded'}</small></div>)}{renderAddForm('achievements')}</div>
     </div>
     {editing && plan && <section className="profile-edit-review" aria-live="polite">
-      <div><span className="card-label">CHANGE REVIEW</span><p>{plan.actions.length} canonical record{plan.actions.length === 1 ? '' : 's'} will be updated. Existing evidence is retained; changed verified records will be marked candidate-provided.</p></div>
-      <ul>{plan.actions.map((action: AppRecord, index: number) => <li key={`${action.category}:${index}`}><b>{action.category.replaceAll('_', ' ')}</b><pre>{JSON.stringify(action.fields, null, 2)}</pre></li>)}</ul>
+      <div><span className="card-label">CHANGE REVIEW</span><p>{plan.actions.length} canonical change{plan.actions.length === 1 ? '' : 's'} will be applied. New records are added as candidate-provided; existing evidence is retained.</p></div>
+      <ul>{plan.actions.map((action: AppRecord, index: number) => {
+        const adding = action.action === 'add_profile_record'
+        return <li key={`${action.category}:${index}`}><b>{adding ? 'ADD' : 'EDIT'} · {action.category.replace(/_/g, ' ')}{action.skill_category ? ` · ${action.skill_category.replace(/_/g, ' ')}` : ''}</b><pre>{JSON.stringify(adding ? action.record : action.fields, null, 2)}</pre></li>
+      })}</ul>
       <div className="profile-edit-review-actions"><button className="button quiet" onClick={cancelEditing} disabled={saving}>CANCEL</button><button className="button primary" onClick={confirmSave} disabled={saving}>{saving ? 'SAVING…' : 'CONFIRM & SAVE'}</button></div>
     </section>}
   </Workspace>

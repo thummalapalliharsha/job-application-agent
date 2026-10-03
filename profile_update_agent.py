@@ -33,9 +33,28 @@ PROFILE_EDIT_FIELDS={
  'education':{'institution','degree','field_of_study','start_date','end_date','location','grade','coursework'},
  'certifications':{'name','issuer','credential_type','issue_date','expiration_date','credential_id','verification_url'},
 }
+PROFILE_ADD_FIELDS={
+ 'skills':{'name'},
+ 'projects':{'name','project_type','project_status','purpose','functionality','technologies','technical_details','measurable_results','demonstrated_skills','supported_role_categories','github_url'},
+ 'experience':{'organization','title','experience_type','work_mode','start_date','end_date','description','responsibilities','technologies','outcomes','learning_outcomes'},
+ 'education':{'institution','degree','field_of_study','start_date','end_date','location','grade','coursework'},
+ 'certifications':{'name','issuer','credential_type','issue_date','expiration_date','credential_id','verification_url','related_experience_id'},
+ 'achievements':{'name','description','date','issuer'},
+}
 PROFILE_EDIT_COLLECTIONS={'projects':'projects','experience':'experiences','education':'education','certifications':'certifications'}
+PROFILE_ADD_COLLECTIONS={'projects':'projects','experience':'experiences','education':'education','certifications':'certifications','achievements':'achievements'}
 PROFILE_EDIT_LIST_FIELDS={'functionality','technical_details','technologies','description','responsibilities','outcomes','learning_outcomes','coursework'}
 PROFILE_EDIT_REQUIRED_FIELDS={'name','organization','title','institution','degree'}
+PROFILE_ADD_LIST_FIELDS=PROFILE_EDIT_LIST_FIELDS|{'measurable_results','demonstrated_skills','supported_role_categories'}
+PROFILE_ADD_LIST_FIELDS_BY_CATEGORY={
+ 'skills':set(),
+ 'projects':{'functionality','technical_details','technologies','measurable_results','demonstrated_skills','supported_role_categories'},
+ 'experience':{'description','responsibilities','technologies','outcomes','learning_outcomes'},
+ 'education':{'coursework'},
+ 'certifications':set(),
+ 'achievements':set(),
+}
+PROFILE_ADD_REQUIRED_FIELDS={'skills':{'name'},'projects':{'name'},'experience':{'organization','title','experience_type'},'education':{'institution','degree'},'certifications':{'name'},'achievements':{'name'}}
 
 def load(name,root=None): return json.loads((storage_root(root)/'data'/f'{name}.json').read_text(encoding='utf-8'))
 def dump(name,obj,root=None): (storage_root(root)/'data'/f'{name}.json').write_text(json.dumps(obj,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
@@ -204,8 +223,8 @@ def _profile_revision(data):
     encoded=json.dumps(data,sort_keys=True,ensure_ascii=False,separators=(',',':')).encode('utf-8')
     return hashlib.sha256(encoded).hexdigest()
 
-def _profile_edit_value(field,value):
-    if field in PROFILE_EDIT_LIST_FIELDS:
+def _profile_edit_value(field,value,list_fields=None):
+    if field in (PROFILE_ADD_LIST_FIELDS if list_fields is None else list_fields):
         if not isinstance(value,list) or len(value)>100 or any(not isinstance(item,str) or len(item)>1000 or '\x00' in item for item in value):
             raise ValueError(f'{field} must be a list of up to 100 text values.')
         return [item.strip() for item in value if item.strip()]
@@ -216,14 +235,94 @@ def _profile_edit_value(field,value):
         raise ValueError(f'{field} cannot be blank.')
     return value
 
-def plan_profile_edit(updates,root=None):
+def _profile_add_evidence(fields):
+    claims=[f'{field}: {", ".join(value) if isinstance(value,list) else value}' for field,value in fields.items()]
+    evidence=source(); evidence.update({'evidence_type':'explicit_user_statement','evidence_location':'Career OS Profile / Evidence editor','claims_supported':claims})
+    provenance=prov(); provenance.update({'evidence_location':'Career OS Profile / Evidence editor','claims_supported':claims})
+    return evidence,provenance
+
+def _profile_add_record(category,fields,data,skill_category=None):
+    required=PROFILE_ADD_REQUIRED_FIELDS[category]
+    if not required.issubset(fields) or any(not fields.get(field) for field in required):
+        raise ValueError(f'{category} requires: '+', '.join(sorted(required)))
+    evidence,provenance=_profile_add_evidence(fields)
+    status='candidate_provided'
+    if category=='skills':
+        group=next((item for item in skill_groups(data) if item.get('category')==skill_category),None)
+        if not group: raise ValueError('Choose an existing canonical skill category.')
+        if any(norm(item.get('name',''))==norm(fields['name']) for item in group.get('skills',[])):
+            raise ValueError('A skill with that name already exists in the selected category.')
+        return {'category':'skills','skill_category':skill_category,'record':{'name':fields['name'],'status':status,'evidence':[evidence],'review_flags':[]}}
+    if category=='projects':
+        project_id='project_'+slug(fields['name'])
+        if not project_id.removeprefix('project_') or any(item.get('record_id')==project_id or norm(item.get('name',''))==norm(fields['name']) for item in project_records(data)):
+            raise ValueError('A project with that identity already exists or its name cannot form a record ID.')
+        github_url=fields.get('github_url')
+        if github_url and not re.fullmatch(r'https://github\.com/[^/\s]+/[^/\s]+/?',github_url,re.I):
+            raise ValueError('GitHub URL must identify a repository under https://github.com/<owner>/<repo>.')
+        project_status=fields.get('project_status','unknown')
+        if project_status not in STATUSES: raise ValueError('Choose a valid project lifecycle status.')
+        technologies=fields.get('technologies',[])
+        return {'category':category,'record':{
+            'record_id':project_id,'status':status,'sources':[evidence],
+            'review_flags':['User-provided project details have not been independently verified.'],'conflicts':[],
+            'name':fields['name'],'project_type':fields.get('project_type','project'),'github_url':github_url,
+            'classification_invariant':'project','source_status':status,'documentation_level':'user_provided',
+            'purpose':fields.get('purpose'),'functionality':fields.get('functionality',[]),
+            'technologies':technologies,'frameworks_libraries_tools':copy.deepcopy(technologies),
+            'technical_details':fields.get('technical_details',[]),'measurable_results':fields.get('measurable_results',[]),
+            'demonstrated_skills':fields.get('demonstrated_skills',[]),'supported_role_categories':fields.get('supported_role_categories',[]),
+            'source_evidence':{},'provenance':[provenance],'duplicate_group_id':None,
+            'selection_metadata':{'available_for_resume':project_status=='completed','requires_review_before_claim':True,'lifecycle_selection_rule':'only_completed_or_explicitly_allowed_in_progress','completed_status_required_for_standard_resume':True,'idea_or_planned_excluded_from_final_resume':True,'in_progress_requires_explicit_permission':True},
+            'project_status':project_status,'github_availability':'github_pending' if github_url else 'github_not_uploaded',
+            'lifecycle_review_required':project_status=='unknown','lifecycle_notes':[]}}
+    if category=='experience':
+        record_id='experience_'+slug(fields['organization']+'_'+fields['title'])
+        records=data['experience'].get('experiences',[])
+        if not record_id.removeprefix('experience_') or any(item.get('record_id')==record_id or (norm(item.get('organization',''))==norm(fields['organization']) and norm(item.get('title',''))==norm(fields['title'])) for item in records):
+            raise ValueError('An experience record with that organization and title already exists or cannot form a record ID.')
+        return {'category':category,'record':{'record_id':record_id,'status':status,'sources':[evidence],'review_flags':['User-provided experience details have not been independently verified.'],'conflicts':[],'organization':fields['organization'],'title':fields['title'],'experience_type':fields['experience_type'],'work_mode':fields.get('work_mode'),'start_date':fields.get('start_date'),'end_date':fields.get('end_date'),'description':fields.get('description',[]),'responsibilities':fields.get('responsibilities',[]),'technologies':fields.get('technologies',[]),'outcomes':fields.get('outcomes',[]),'learning_outcomes':fields.get('learning_outcomes',[]),'credential_details':{}}}
+    if category=='education':
+        record_id='education_'+slug(fields['institution']+'_'+fields['degree'])
+        records=data['education'].get('education',[])
+        if not record_id.removeprefix('education_') or any(item.get('record_id')==record_id or (norm(item.get('institution',''))==norm(fields['institution']) and norm(item.get('degree',''))==norm(fields['degree'])) for item in records):
+            raise ValueError('An education record with that institution and degree already exists or cannot form a record ID.')
+        return {'category':category,'record':{'record_id':record_id,'status':status,'sources':[evidence],'review_flags':[],'conflicts':[],'institution':fields['institution'],'degree':fields['degree'],'field_of_study':fields.get('field_of_study'),'start_date':fields.get('start_date'),'end_date':fields.get('end_date'),'location':fields.get('location'),'grade':fields.get('grade'),'coursework':fields.get('coursework',[])}}
+    if category=='certifications':
+        record_id='credential_'+slug(fields['name'])
+        records=data['certifications'].get('certifications',[])
+        if not record_id.removeprefix('credential_') or any(item.get('record_id')==record_id or norm(item.get('name',''))==norm(fields['name']) for item in records):
+            raise ValueError('A certification with that name already exists or cannot form a record ID.')
+        related=fields.get('related_experience_id')
+        if related and related not in {item.get('record_id') for item in data['experience'].get('experiences',[])}:
+            raise ValueError('Related experience must identify an existing experience record.')
+        verification_url=fields.get('verification_url')
+        if verification_url and not re.match(r'^https?://',verification_url,re.I):
+            raise ValueError('Verification URL must use HTTP or HTTPS.')
+        return {'category':category,'record':{'record_id':record_id,'status':status,'sources':[evidence],'review_flags':['Credential details remain candidate-provided until verified.'],'conflicts':[],'name':fields['name'],'issuer':fields.get('issuer'),'credential_type':fields.get('credential_type','certificate'),'issue_date':fields.get('issue_date'),'expiration_date':fields.get('expiration_date'),'credential_id':fields.get('credential_id'),'verification_url':verification_url,'related_experience_id':related}}
+    if category=='achievements':
+        record_id='achievement_'+slug(fields['name'])
+        records=data['achievements'].get('achievements',[])
+        if not record_id.removeprefix('achievement_') or any(item.get('record_id')==record_id or norm(item.get('name',''))==norm(fields['name']) for item in records):
+            raise ValueError('An achievement with that name already exists or cannot form a record ID.')
+        return {'category':category,'record':{'record_id':record_id,'status':status,'sources':[evidence],'review_flags':[],'conflicts':[],'name':fields['name'],'description':fields.get('description'),'date':fields.get('date'),'issuer':fields.get('issuer'),'provenance':[provenance]}}
+    raise ValueError(f'Unsupported profile addition category: {category}.')
+
+def plan_profile_edit(updates=None,root=None,additions=None):
     data=all_data(root)
-    if not isinstance(updates,dict) or not updates:
-        return result('Edit canonical profile','invalid','profile',[],[],['Provide at least one profile field to update.'])
+    updates={} if updates is None else updates
+    additions={} if additions is None else additions
+    if not isinstance(updates,dict) or not isinstance(additions,dict):
+        return result('Edit canonical profile','invalid','profile',[],[],['Profile edits and additions must be JSON objects.'])
+    if not updates and not additions:
+        return result('Edit canonical profile','invalid','profile',[],[],['Provide at least one profile field or new record.'])
     unknown_categories=set(updates)-set(PROFILE_EDIT_FIELDS)
     if unknown_categories:
         return result('Edit canonical profile','invalid','profile',[],[],['Unsupported profile category: '+', '.join(sorted(unknown_categories))])
-    actions=[]; seen=set()
+    unknown_additions=set(additions)-set(PROFILE_ADD_FIELDS)
+    if unknown_additions:
+        return result('Edit canonical profile','invalid','profile',[],[],['Unsupported profile addition category: '+', '.join(sorted(unknown_additions))])
+    actions=[]; seen=set(); added=set()
     try:
         for category,entries in updates.items():
             if category=='master_profile':
@@ -266,17 +365,39 @@ def plan_profile_edit(updates,root=None):
                     raise ValueError('A skill with that name already exists in the selected category.')
                 fields={field:value for field,value in fields.items() if record.get(field) != value}
                 if fields: actions.append({'action':'update_profile_fields','category':category,'selector':selector,'fields':fields})
+        for category,entries in additions.items():
+            if not isinstance(entries,list): raise ValueError(f'{category} additions must be a list.')
+            for entry in entries:
+                if not isinstance(entry,dict) or set(entry)-{'category','fields'} or not isinstance(entry.get('fields'),dict):
+                    raise ValueError(f'Each new {category} record must contain only its category selector and fields.')
+                fields_in=entry['fields']
+                if not fields_in or set(fields_in)-PROFILE_ADD_FIELDS[category]:
+                    raise ValueError(f'Unsupported or empty field addition for {category}.')
+                fields={}
+                for field,value in fields_in.items():
+                    if value is None or (isinstance(value,str) and not value.strip()):
+                        if field in PROFILE_ADD_REQUIRED_FIELDS[category]: raise ValueError(f'{field} cannot be blank.')
+                        continue
+                    fields[field]=_profile_edit_value(field,value,PROFILE_ADD_LIST_FIELDS_BY_CATEGORY[category])
+                skill_category=str(entry.get('category') or '').strip() if category=='skills' else None
+                addition=_profile_add_record(category,fields,data,skill_category)
+                record=addition['record']
+                identity=(category,skill_category,norm(record['name'])) if category=='skills' else (category,record['record_id'])
+                if identity in added: raise ValueError(f'Duplicate {category} additions are not allowed.')
+                added.add(identity)
+                actions.append({'action':'add_profile_record',**addition})
     except (TypeError,ValueError) as exc:
         return result('Edit canonical profile','invalid','profile',[],[],[str(exc)])
     plan=result('Edit canonical profile','planned' if actions else 'no_change_duplicate','profile',actions,[],[])
     plan['base_revision']=_profile_revision(data)
     plan['updates']=copy.deepcopy(updates)
+    plan['additions']=copy.deepcopy(additions)
     return plan
 
 def apply_plan(plan,root=None,confirm=False,confirm_delete=False):
     if not confirm: raise PermissionError('Persistent profile writes require explicit --confirm.')
     if plan.get('decision')!='planned' or not plan.get('actions'): raise ValueError('Only a non-ambiguous planned update can be applied.')
-    supported={'add_skill','update_project_github','update_project_status','add_project_technologies','create_project','create_certification','create_achievement','update_profile_fields'}
+    supported={'add_skill','update_project_github','update_project_status','add_project_technologies','create_project','create_certification','create_achievement','update_profile_fields','add_profile_record'}
     unsupported=[a.get('action') for a in plan['actions'] if a.get('action') not in supported]
     if unsupported: raise ValueError('Unsupported profile update action(s): '+', '.join(str(x) for x in unsupported))
     data=all_data(root); changed=[]
@@ -324,6 +445,14 @@ def apply_plan(plan,root=None,confirm=False,confirm_delete=False):
                 record.setdefault('provenance',[]).append(provenance)
             if record.get('status')=='verified': record['status']='candidate_provided'
             changed.append(category+'.json')
+        elif action=='add_profile_record':
+            category=a['category']; record=copy.deepcopy(a['record'])
+            if category=='skills':
+                group=next(group for group in skill_groups(data) if group.get('category')==a['skill_category'])
+                group.setdefault('skills',[]).append(record)
+            else:
+                data[category].setdefault(PROFILE_ADD_COLLECTIONS[category],[]).append(record)
+            changed.append(category+'.json')
     sync_master(data)
     for n in sorted(set(changed)):
         key=n[:-5] if n.endswith('.json') else n
@@ -346,7 +475,7 @@ def apply_profile_edit_plan(plan,root=None,confirm=False):
     if not confirm: raise PermissionError('Persistent profile writes require explicit confirmation.')
     if not isinstance(plan,dict) or plan.get('decision')!='planned':
         return {'decision':'invalid','message':'Only a planned profile update can be applied.'}
-    current=plan_profile_edit(plan.get('updates'),root)
+    current=plan_profile_edit(plan.get('updates'),root,additions=plan.get('additions'))
     if current.get('decision')!='planned': return {'decision':'invalid','message':'The profile update is no longer valid.'}
     if plan.get('base_revision')!=current.get('base_revision'):
         return {'decision':'stale_profile','message':'The canonical profile changed after this edit was planned. Reload and review the current profile.'}

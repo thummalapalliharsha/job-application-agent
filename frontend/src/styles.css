@@ -59,7 +59,16 @@
 .profile-edit-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
 .profile-edit-field{display:grid;align-content:start;gap:6px;min-width:0;color:var(--muted);font:9px 'DM Mono';letter-spacing:.04em;text-transform:capitalize}
 .profile-edit-field input,.profile-edit-field textarea{width:100%;min-width:0;padding:10px 11px;border:1px solid var(--line);border-radius:2px;background:rgba(8,7,7,.62);color:var(--ink);font:12px 'Space Grotesk',sans-serif;letter-spacing:0;text-transform:none;resize:vertical}
+.profile-edit-field select{width:100%;min-width:0;padding:10px 11px;border:1px solid var(--line);border-radius:2px;background:#161211;color:var(--ink);font:11px 'DM Mono';color-scheme:dark}
 .profile-edit-field input:focus-visible,.profile-edit-field textarea:focus-visible{outline:2px solid var(--warm);outline-offset:1px}
+.profile-edit-field select:focus-visible{outline:2px solid var(--warm);outline-offset:1px}
+.profile-edit-field :disabled{opacity:.58;cursor:not-allowed}
+.profile-section-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.profile-add-button{border:1px solid rgba(141,230,210,.3);background:transparent;color:var(--cyan);padding:7px 9px;font:9px 'DM Mono';letter-spacing:.06em}
+.profile-add-button:hover:not(:disabled){border-color:var(--cyan);background:rgba(141,230,210,.06)}
+.profile-add-button:disabled{opacity:.45;cursor:not-allowed}
+.profile-add-form{margin:14px 0 8px;padding:14px;border:1px solid rgba(141,230,210,.22);background:rgba(8,16,15,.3)}
+.profile-add-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:14px}
 .profile-skill-edit{display:grid;grid-template-columns:minmax(90px,.45fr) minmax(150px,1fr);align-items:end;gap:6px 12px;padding:12px 0;border-bottom:1px solid var(--line)}
 .profile-skill-edit>small{grid-column:1;color:var(--dim);font:9px 'DM Mono';text-transform:capitalize}
 .profile-skill-edit .profile-edit-field{grid-column:2;grid-row:1 / span 2}
@@ -76,5 +85,5 @@
 .profile-edit-review li{border-top:1px solid var(--line);padding-top:10px;color:var(--warm);font:10px 'DM Mono';text-transform:uppercase}
 .profile-edit-review pre{max-height:260px;overflow:auto;margin:8px 0 0;padding:11px;background:rgba(0,0,0,.25);color:var(--ink);font:11px 'DM Mono';line-height:1.5;text-transform:none;white-space:pre-wrap;overflow-wrap:anywhere}
 .profile-edit-review-actions{display:flex;justify-content:flex-end;gap:10px;padding-top:14px;border-top:1px solid var(--line)}
-@media(max-width:720px){.profile-edit-toolbar{align-items:flex-start;flex-direction:column}.profile-edit-fields{grid-template-columns:1fr}.profile-edit-review-actions{flex-direction:column}.profile-edit-review-actions .button{width:100%}}
+@media(max-width:720px){.profile-edit-toolbar{align-items:flex-start;flex-direction:column}.profile-edit-fields{grid-template-columns:1fr}.profile-add-actions,.profile-edit-review-actions{flex-direction:column}.profile-add-actions .button,.profile-edit-review-actions .button{width:100%}}
 
