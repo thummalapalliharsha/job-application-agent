@@ -14,10 +14,13 @@ export default async function handler(req: any, res: any) {
   );
 
   const apiPath = incomingUrl.pathname.replace(/^\/api\/?/, "");
+  const forwardedQuery = new URLSearchParams(incomingUrl.searchParams);
+  forwardedQuery.delete("path");
+  const queryString = forwardedQuery.toString();
 
   const targetUrl =
     `${renderUrl.replace(/\/$/, "")}/api/${apiPath}` +
-    incomingUrl.search;
+    (queryString ? `?${queryString}` : "");
 
   const headers: Record<string, string> = {
     Authorization: `Bearer ${token}`,
