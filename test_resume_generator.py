@@ -136,9 +136,12 @@ class ResumeGeneratorSelectionTests(unittest.TestCase):
         self.assertIn("Junior Data Analyst", summary)
         self.assertIn("Python", summary)
         self.assertIn("SQL", summary)
-        self.assertIn("data cleaning", summary.lower())
-        self.assertIn("dashboard", summary.lower())
-        self.assertNotIn("This work reflects an analytical focus on exploratory analysis and clear business reporting.", summary)
+        selected_projects = rg.effective_selection(plan, profile)
+        for project in selected_projects[:2]:
+            self.assertIn(project["name"], summary)
+            self.assertTrue(any(evidence.casefold() in summary.casefold() for evidence in project.get("demonstrated_skills", [])))
+        self.assertNotIn("Selected project work includes", summary)
+        self.assertNotIn("The work emphasizes", summary)
 
     def test_summary_uses_ml_model_evidence_instead_of_generic_phrase(self):
         profile = copy.deepcopy(self.profile)
@@ -147,9 +150,9 @@ class ResumeGeneratorSelectionTests(unittest.TestCase):
         summary = " ".join(rg.summary_lines(plan, profile))
         self.assertIn("Junior Machine Learning Engineer", summary)
         self.assertIn("scikit-learn", summary.lower())
-        self.assertIn("model training", summary.lower())
-        self.assertIn("evaluation", summary.lower())
-        self.assertNotIn("This work reflects an analytical focus on exploratory analysis and clear business reporting.", summary)
+        self.assertIn("model evaluation", summary.lower())
+        self.assertIn("binary classification", summary.lower())
+        self.assertNotIn("The work emphasizes", summary)
 
     def test_project_bullets_come_from_canonical_functionality(self):
         project = next(item for item in self.profile["projects"]["projects"]
@@ -259,11 +262,13 @@ class ResumeGeneratorSelectionTests(unittest.TestCase):
                 self.assertEqual(actual_bullets, expected_bullets, case["role"])
 
                 if case["id"] == "05_rag_engineer":
-                    self.assertEqual(rg.summary_lines(plan, self.profile), [
-                        "Computer Science fresher targeting a Junior Generative AI / RAG Engineer role, applying Python to RAG, embeddings, and ChromaDB vector retrieval in the Student Performance RAG Chatbot.",
-                        "The RAG workflow preprocesses student data into searchable profiles, retrieves relevant context, and uses local Ollama generation through Streamlit.",
-                        "A supporting Text-to-SQL project uses the Gemini REST API to generate SQLite queries from natural-language questions.",
-                    ])
+                    summary = " ".join(rg.summary_lines(plan, self.profile))
+                    self.assertIn("Junior Generative AI / RAG Engineer", summary)
+                    self.assertIn("Python", summary)
+                    self.assertIn("RAG", summary)
+                    for project in rg.effective_selection(plan, self.profile)[:2]:
+                        self.assertIn(project["name"], summary)
+                        self.assertTrue(any(evidence.casefold() in summary.casefold() for evidence in project.get("demonstrated_skills", [])))
 
     def test_insightedge_business_analyst_content_and_document_validation(self):
         application = next(item for item in aa.load_store()["applications"]
@@ -326,9 +331,9 @@ class ResumeGeneratorSelectionTests(unittest.TestCase):
         self.assertLess(len(summary), 400)
         self.assertIn("Computer Science fresher", summary)
         self.assertIn("Junior Business Data Analyst", summary)
-        self.assertIn("Python, SQL, Pandas, and NumPy", summary)
+        self.assertIn("Python, SQL, and Pandas", summary)
         self.assertIn("data cleaning", summary)
-        self.assertIn("business reporting", summary)
+        self.assertIn("customer segmentation", summary)
         self.assertNotIn("Text-to-SQL", summary)
         self.assertTrue(all(bullet not in summary for bullets in expected_bullets.values() for bullet in bullets))
 
@@ -358,30 +363,30 @@ class ResumeGeneratorSelectionTests(unittest.TestCase):
 
         paragraph_by_text = {paragraph.text: paragraph for paragraph in paragraphs}
         for heading in ("PROFESSIONAL SUMMARY", "SKILLS", "PROJECTS", "EDUCATION", "CERTIFICATIONS"):
-            self.assertEqual(paragraph_by_text[heading].paragraph_format.space_before.pt, 5)
+            self.assertEqual(paragraph_by_text[heading].paragraph_format.space_before.pt, 4)
         project_titles = [paragraph_by_text[project["name"]] for project in projects]
-        self.assertEqual(project_titles[0].paragraph_format.space_before.pt, 1.5)
-        self.assertEqual(project_titles[0].paragraph_format.space_after.pt, 1.5)
-        self.assertEqual([title.paragraph_format.space_before.pt for title in project_titles[1:]], [5.5, 5.5])
+        self.assertEqual(project_titles[0].paragraph_format.space_before.pt, 1)
+        self.assertEqual(project_titles[0].paragraph_format.space_after.pt, .5)
+        self.assertEqual([title.paragraph_format.space_before.pt for title in project_titles[1:]], [3.5, 3.5])
         for project in projects:
             project_bullets = [paragraph for paragraph in paragraphs if paragraph.text.startswith("• ") and paragraph.text[2:] in expected_bullets[project["record_id"]]]
             self.assertEqual(len(project_bullets), len(expected_bullets[project["record_id"]]))
-            self.assertTrue(all(bullet.paragraph_format.space_after.pt == 1.5 for bullet in project_bullets))
+            self.assertTrue(all(bullet.paragraph_format.space_after.pt == .5 for bullet in project_bullets))
             title_index = paragraphs.index(paragraph_by_text[project["name"]])
             following = paragraphs[title_index + 1:]
             tech_stack = next(paragraph for paragraph in following if paragraph.text.startswith("Tech Stack:"))
             project_link = next(paragraph for paragraph in following if paragraph.text.startswith("Project Link:"))
-            self.assertEqual(tech_stack.paragraph_format.space_before.pt, 1.5)
-            self.assertEqual(tech_stack.paragraph_format.space_after.pt, 1.5)
-            self.assertEqual(project_link.paragraph_format.space_before.pt, 1.5)
-            self.assertEqual(project_link.paragraph_format.space_after.pt, 1.5)
+            self.assertEqual(tech_stack.paragraph_format.space_before.pt, .5)
+            self.assertEqual(tech_stack.paragraph_format.space_after.pt, .5)
+            self.assertEqual(project_link.paragraph_format.space_before.pt, .5)
+            self.assertEqual(project_link.paragraph_format.space_after.pt, .5)
         education_lines = [paragraph for paragraph in paragraphs if "Class XII" in paragraph.text or "Class X —" in paragraph.text]
         self.assertEqual(len(education_lines), 2)
         self.assertTrue(all(paragraph.paragraph_format.space_before.pt == 2.5 for paragraph in education_lines))
         certification_start = next(index for index, paragraph in enumerate(paragraphs) if paragraph.text == "CERTIFICATIONS")
         certification_bullets = [paragraph for paragraph in paragraphs[certification_start + 1:] if paragraph.text.startswith("• ")]
         self.assertEqual(len(certification_bullets), 4)
-        self.assertTrue(all(paragraph.paragraph_format.space_after.pt == 2.5 for paragraph in certification_bullets))
+        self.assertTrue(all(paragraph.paragraph_format.space_after.pt == .5 for paragraph in certification_bullets))
 
     def test_plain_jd_skill_lists_are_classified_by_section(self):
         jd = """Junior Engineer
@@ -450,10 +455,12 @@ Bachelor's degree in Computer Science.
         summary = " ".join(rg.summary_lines(plan, self.profile))
         self.assertIn("Computer Science fresher", summary)
         self.assertIn("Junior Generative AI / RAG Engineer", summary)
-        for term in ("Python", "RAG", "embeddings", "ChromaDB", "Ollama", "Streamlit", "Text-to-SQL", "Gemini REST API"):
-            self.assertIn(term, summary)
-        self.assertIn("preprocesses student data into searchable profiles", summary)
-        self.assertNotIn("verified skills in Python", summary)
+        for term in ("Python", "Generative AI", "RAG"):
+            self.assertIn(term.casefold(), summary.casefold())
+        for project in rg.effective_selection(plan, self.profile)[:2]:
+            self.assertIn(project["name"], summary)
+            self.assertTrue(any(evidence.casefold() in summary.casefold() for evidence in project.get("demonstrated_skills", [])))
+        self.assertNotIn("Gemini REST API", summary)
         self.assertNotIn("reflectsan", summary)
         self.assertNotIn("This work reflects an", summary)
 

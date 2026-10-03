@@ -45,7 +45,7 @@ def add_labeled_line(doc,label,value,size=11,label_size=12,before=0,after=0):
     return p
 
 def section(doc,title):
-    p=doc.add_paragraph(); p.paragraph_format.space_before=Pt(5); p.paragraph_format.space_after=Pt(1); p.paragraph_format.line_spacing=1.0
+    p=doc.add_paragraph(); p.paragraph_format.space_before=Pt(4); p.paragraph_format.space_after=Pt(1); p.paragraph_format.line_spacing=1.0
     r=p.add_run(title.upper()); set_run(r,13,True)
     borders=OxmlElement('w:pBdr'); bottom=OxmlElement('w:bottom'); bottom.set(qn('w:val'),'single'); bottom.set(qn('w:sz'),'5'); bottom.set(qn('w:space'),'1'); bottom.set(qn('w:color'),'808080'); borders.append(bottom); p._p.get_or_add_pPr().append(borders)
 
@@ -262,19 +262,11 @@ def effective_skill_names(plan,prof,projects):
 def summary_lines(plan,prof):
     role=target_role(plan)
     projects=effective_selection(plan,prof)
-    project_ids={project.get('record_id') for project in projects}
-    if 'project_student_performance_rag' in project_ids and 'project_text_to_sql_project' in project_ids:
-        return [
-            f'Computer Science fresher targeting a {role} role, applying Python to RAG, embeddings, and ChromaDB vector retrieval in the Student Performance RAG Chatbot.',
-            'The RAG workflow preprocesses student data into searchable profiles, retrieves relevant context, and uses local Ollama generation through Streamlit.',
-            'A supporting Text-to-SQL project uses the Gemini REST API to generate SQLite queries from natural-language questions.',
-        ]
-
-    role_lower=role.casefold()
-    skills=effective_skill_names(plan,prof,projects)
-    skill_names=[name for name in skills if isinstance(name,str)]
-    normalized={name.casefold():name for name in skill_names}
-    project_names=[project.get('name') for project in projects if project.get('name')]
+    skills=[name for name in effective_skill_names(plan,prof,projects) if isinstance(name,str)]
+    skills=sorted(enumerate(skills),key=lambda item:(0 if item[1].casefold()=='python' else 1 if item[1].casefold()=='sql' else 2,item[0]))
+    skills=[name for _,name in skills]
+    jd_text=str(plan.get('source_jd_text','')).casefold()
+    jd_terms=re.findall(r'[a-z0-9]+',jd_text)
 
     def join_names(names):
         names=[name for name in names if name]
@@ -283,63 +275,51 @@ def summary_lines(plan,prof):
         if len(names)==2: return f'{names[0]} and {names[1]}'
         return ', '.join(names[:-1])+f', and {names[-1]}'
 
-    def primary_project_name():
-        return project_names[0] if project_names else ''
+    def project_evidence(project):
+        evidence=[value.strip() for value in project.get('demonstrated_skills',[]) if isinstance(value,str) and value.strip()]
+        def relevance(value):
+            phrase=' '.join(re.findall(r'[a-z0-9]+',value.casefold()))
+            tokens=re.findall(r'[a-z0-9]+',value.casefold())
+            score=5 if phrase and phrase in jd_text else 0
+            score+=sum(1 for token in tokens if len(token)>2 and any(
+                token==jd_term or token.startswith(jd_term[:4]) or jd_term.startswith(token[:4])
+                for jd_term in jd_terms if len(jd_term)>2
+            ))
+            return score
+        ranked=sorted(enumerate(evidence),key=lambda item:(-relevance(item[1]),item[0]))
+        relevant=[value for _,value in ranked if relevance(value)>0]
+        selected=relevant[:2]
+        if len(selected)<2:
+            selected.extend(value for value in evidence if value not in selected and len(selected)<2)
+        return selected
 
-    def base_lead(role_label, skill_names_to_use):
-        skill_phrase=join_names(skill_names_to_use)
-        lead=f'Computer Science fresher targeting a {role_label} role'
-        if skill_phrase:
-            lead+=f', with verified skills in {skill_phrase}'
-        return lead + '.'
+    lead=f'I am a Computer Science fresher targeting the {role} role'
+    if skills:
+        lead+=f', with verified skills in {join_names(skills[:3])}'
+    lines=[lead+'.']
 
-    if any(term in role_lower for term in ('data analyst','business analyst','business data analyst')):
-        primary=primary_project_name()
-        return [
-            base_lead(role, [normalized.get(name.casefold(), name) for name in ('Python','SQL','Pandas','NumPy') if name.casefold() in normalized]),
-            f'Selected project work includes {primary or "an analytics project"}, combining data cleaning, EDA, and dashboard reporting.',
-            'The work emphasizes structured analysis and clear business reporting.',
-        ]
+    for index,project in enumerate(projects[:2]):
+        evidence=project_evidence(project)
+        if evidence:
+            name=project.get('name')
+            if index==0:
+                lines.append(f'My completed {name} demonstrates {join_names(evidence[:2])}.')
+            else:
+                lines.append(f'The completed {name} adds evidence in {join_names(evidence[:2])}.')
 
-    if any(term in role_lower for term in ('machine learning engineer','data scientist','ai/ml engineer','ai/ml')):
-        ml_skills=[normalized.get(name.casefold(), name) for name in ('Python','Pandas','NumPy','Scikit-learn','XGBoost') if name.casefold() in normalized]
-        primary=primary_project_name()
-        return [
-            base_lead(role, ml_skills[:4]),
-            f'Relevant project work includes {primary or "an ML project"}, applying Python and scikit-learn to model training and evaluation.',
-            'The work emphasizes reproducible experiments and evidence-based assessment.',
-        ]
-
-    if 'python developer' in role_lower:
-        primary=primary_project_name()
-        return [
-            base_lead(role, [normalized.get(name.casefold(), name) for name in ('Python','SQL','Pandas','NumPy') if name.casefold() in normalized]),
-            f'Selected project work includes {primary or "a data project"}, applying Python to data preparation and repeatable analysis.',
-            'The work emphasizes readable Python code and practical data workflow execution.',
-        ]
-
-    if any(term in role_lower for term in ('data engineer','data engineering')):
-        primary=primary_project_name()
-        return [
-            base_lead(role, [normalized.get(name.casefold(), name) for name in ('Python','SQL','Pandas','PySpark') if name.casefold() in normalized]),
-            f'Selected project work includes {primary or "a pipeline project"}, applying Python and SQL to data preparation and processing.',
-            'The work emphasizes repeatable processing and dependable data output handling.',
-        ]
-
-    if 'bi' in role_lower or 'visualization' in role_lower or 'business intelligence' in role_lower:
-        primary=primary_project_name()
-        return [
-            base_lead(role, [normalized.get(name.casefold(), name) for name in ('Python','Pandas','NumPy','Streamlit','Matplotlib','Seaborn','Plotly') if name.casefold() in normalized]),
-            f'Selected project work includes {primary or "a dashboard project"}, combining data exploration with visual summaries.',
-            'The work emphasizes clear charts and stakeholder-friendly reporting.',
-        ]
-
-    primary=primary_project_name()
-    return [
-        base_lead(role, [normalized.get(name.casefold(), name) for name in ('Python','SQL','Pandas','NumPy','Scikit-learn') if name.casefold() in normalized]),
-        f'Relevant project work includes {primary or "a technical project"}, applying the selected stack to practical problem solving.',
-        'The work emphasizes practical implementation and clear technical communication.',
-    ]
+    if len(lines)<3 and projects:
+        evidence=[value.strip() for value in projects[0].get('demonstrated_skills',[]) if isinstance(value,str) and value.strip()]
+        additional=[value for value in evidence if value not in project_evidence(projects[0])][:2]
+        if additional:
+            lines.append(f'That project also demonstrates {join_names(additional)}.')
+    if len(lines)<3:
+        for experience in effective_experience(plan,prof,projects):
+            organization=experience.get('organization')
+            title=experience.get('title')
+            if organization and title:
+                lines.append(f'My selected experience as {title} at {organization} complements this role.')
+                break
+    return lines
 
 def effective_certs(plan,prof):
     import jd_resume_planner as planner
@@ -406,20 +386,20 @@ def _generate(plan,prof,output):
     included=effective_selection(plan,prof); names=effective_skill_names(plan,prof,included)
     section(doc,'Skills')
     for label,supported in effective_skill_groups(plan,prof,included):
-        add_labeled_line(doc,f'{label}: ',', '.join(supported),11,12,before=1.5,after=1.5)
-    add_labeled_line(doc,'Languages: ','English, Telugu, Hindi, Tamil',11,12,before=1.5,after=1.5)
+        add_labeled_line(doc,f'{label}: ',', '.join(supported),11,12,before=.5,after=.5)
+    add_labeled_line(doc,'Languages: ','English, Telugu, Hindi, Tamil',11,12,before=.5,after=.5)
     section(doc,'Projects')
     for index,pjt in enumerate(included):
-        add_line(doc,pjt['name'],12,True,before=1.5 if index==0 else 5.5,after=1.5)
-        for b in project_bullets(pjt,plan)[:3]: add_bullet(doc,b,11,after=1.5)
+        add_line(doc,pjt['name'],12,True,before=1 if index==0 else 3.5,after=.5)
+        for b in project_bullets(pjt,plan)[:3]: add_bullet(doc,b,11,after=.5)
         technologies=pjt.get('technologies') or pjt.get('frameworks_libraries_tools') or []
         stack=[]
         for technology in technologies:
             if technology not in stack: stack.append(technology)
-        add_labeled_line(doc,'Tech Stack: ',', '.join(stack[:8]),11,12,before=1.5,after=1.5)
+        add_labeled_line(doc,'Tech Stack: ',', '.join(stack[:8]),11,12,before=.5,after=.5)
         github_url=pjt.get('github_url')
         if isinstance(github_url,str) and github_url.startswith('https://github.com/'):
-            link_paragraph=doc.add_paragraph(); link_paragraph.paragraph_format.space_before=Pt(1.5); link_paragraph.paragraph_format.space_after=Pt(1.5); link_paragraph.paragraph_format.line_spacing=1.0
+            link_paragraph=doc.add_paragraph(); link_paragraph.paragraph_format.space_before=Pt(.5); link_paragraph.paragraph_format.space_after=Pt(.5); link_paragraph.paragraph_format.line_spacing=1.0
             label_run=link_paragraph.add_run('Project Link: '); set_run(label_run,12,True); add_hyperlink(link_paragraph,github_url,github_url,11)
     exps=effective_experience(plan,prof,included)
     if exps:
@@ -436,7 +416,7 @@ def _generate(plan,prof,output):
         else: line=f"{e['institution']} — Class X — CBSE ({e['end_date']}); {e['grade']}"
         if e['record_id']!='education_biher_btech': add_line(doc,line,11,before=2.5)
     certs=effective_certs(plan,prof); section(doc,'Certifications')
-    for c in certs: add_bullet(doc,f"{c['name']} — {c['issuer']} ({display_date(c.get('issue_date'))})",11,after=2.5)
+    for c in certs: add_bullet(doc,f"{c['name']} — {c['issuer']} ({display_date(c.get('issue_date'))})",11,after=.5)
     for para in doc.paragraphs:
         for run in para.runs:
             if run.font.name is None: set_run(run,11)
