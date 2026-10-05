@@ -15,6 +15,8 @@ def main():
   aid=x['application']['application_id']; app=x['application']; ck('2 JD stored',Path(r/app['job_description_reference']).exists()); ck('3 Phase 8 integration',bool(app['supported_requirements'] or app['unsupported_requirements']) and app['phase8_plan_reference'])
   d=a.create_application('Other','Other Role','https://example.com/jobs/123','different'); ck('4 duplicate URL detected',d['decision']=='duplicate_requires_clarification')
   d=a.create_application('Example AI','Junior RAG Engineer','https://example.com/jobs/456',jd); ck('5 same company and role different URL warns',d['decision']=='duplicate_requires_clarification')
+  d=a.create_application('IQLR','Junior RAG Engineer','https://example.com/jobs/789','Junior RAG Engineer\nRequired Skills:\n- Python\nResponsibilities:\n- Build a separate retrieval application.'); ck('same title with different company and JD is created',d['decision']=='created')
+  d=a.create_application('Example AI','Another RAG Role','https://example.com/jobs/999',jd); ck('same company and JD with different title warns',d['decision']=='duplicate_requires_clarification')
   ck('6 approval false before approval',app['resume_generation_allowed'] is False)
   ap=a.approve_resume(aid); stored=next(item for item in a.load_store()['applications'] if item['application_id']==aid); ck('7 explicit approval enables Phase 6 handoff',ap['resume_generation_allowed'] is True and stored['current_status']=='resume_ready')
   cl=a.generate_cover_letter(aid); txt=(r/cl['cover_letter_reference']).read_text(); ck('8 cover letter generated without internal notes','Note for internal preparation:' not in txt and 'unsupported requirements' not in txt); ck('9 cover letter associated',bool(cl['cover_letter_reference']))

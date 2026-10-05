@@ -60,7 +60,6 @@ def duplicate_candidates(store,company,title,url,jd_text):
   score=0
   if nurl and norm(a.get('job_url'))==nurl: score+=5
   if nc and nc==norm(a.get('company_name')): score+=2
-  if nt and nt==norm(a.get('job_title')): score+=2
   if nj and nj==norm(a.get('job_description_text'))[:500]: score+=2
   if score>=2: found.append({'application_id':a['application_id'],'company_name':a.get('company_name'),'job_title':a.get('job_title'),'job_url':a.get('job_url'),'current_status':a.get('current_status'),'similarity_score':score})
  return found
