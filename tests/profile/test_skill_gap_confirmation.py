@@ -15,7 +15,7 @@ import career_os_api as api
 import jd_resume_planner as planner
 import profile_security as psecurity
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[2]
 
 
 class SkillGapConfirmationTests(unittest.TestCase):

@@ -15,7 +15,7 @@ import application_assistant as aa
 import career_os_api as api
 import jd_resume_planner as planner
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[2]
 APPLICATION_ID = "app_b70a2228a165"
 
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import hashlib, json, shutil, subprocess, tempfile, sys
 from pathlib import Path
-ROOT=Path(__file__).resolve().parent; sys.path.insert(0,str(ROOT))
+ROOT=Path(__file__).resolve().parents[2]; sys.path.insert(0,str(ROOT))
 import application_assistant as aa
 
 def main():

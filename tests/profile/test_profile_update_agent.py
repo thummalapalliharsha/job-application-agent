@@ -2,11 +2,13 @@
 import json, shutil, tempfile
 import secrets
 import os
+import sys
 from pathlib import Path
+
+ROOT=Path(__file__).resolve().parents[2]
+sys.path.insert(0,str(ROOT))
 import profile_update_agent as agent
 import profile_security
-
-ROOT=Path(__file__).resolve().parent
 
 def sandbox():
     td=tempfile.TemporaryDirectory(); root=Path(td.name); (root/'data').mkdir()

@@ -11,7 +11,7 @@ import application_assistant as aa
 import jd_resume_planner as planner
 import resume_generator as rg
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[2]
 INSIGHTEDGE_ID = "app_d003a3f71d8c"
 
 

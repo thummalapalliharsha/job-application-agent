@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 import json, copy, sys
 from pathlib import Path
-sys.path.insert(0,str(Path(__file__).resolve().parent))
+ROOT=Path(__file__).resolve().parents[2]
+sys.path.insert(0,str(ROOT))
 import jd_resume_planner as p
 
-ROOT=Path(__file__).resolve().parent
 PROFILE=p.load_profile()
 
 def plan(text): return p.plan_resume(text,copy.deepcopy(PROFILE))

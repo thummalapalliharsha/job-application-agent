@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import copy, json, sys, tempfile
 from pathlib import Path
-ROOT=Path(__file__).resolve().parent; sys.path.insert(0,str(ROOT))
+ROOT=Path(__file__).resolve().parents[2]; sys.path.insert(0,str(ROOT))
 import app as ui
 import jd_resume_planner as planner
 import application_assistant as aa

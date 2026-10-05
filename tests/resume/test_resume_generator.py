@@ -218,7 +218,7 @@ class ResumeGeneratorSelectionTests(unittest.TestCase):
             "project_fuel_regression_crispmlq": ["Linear Regression", "Ridge", "Lasso", "ElasticNet", "CRISP-ML(Q)", "MAE", "MSE", "RMSE", "MAPE", "R2", "Streamlit"],
             "project_genai_pyspark_pipeline": ["Faker", "Parquet", "Spark", "PySpark"],
         }
-        cases_path = Path(__file__).resolve().parent / "tests" / "jd_regression_suite" / "expected_profiles.json"
+        cases_path = Path(__file__).resolve().parents[2] / "tests" / "jd_regression_suite" / "expected_profiles.json"
         cases = json.loads(cases_path.read_text(encoding="utf-8"))["cases"]
         sentence_action = re.compile(
             r"\b(?:analyzed|applied|built|compared|created|displayed|evaluated|exported|generated|"

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import json, shutil, tempfile, hashlib, sys
 from pathlib import Path
-ROOT=Path(__file__).resolve().parent; sys.path.insert(0,str(ROOT)); import application_assistant as a
+ROOT=Path(__file__).resolve().parents[2]; sys.path.insert(0,str(ROOT)); import application_assistant as a
 
 def main():
  td=tempfile.TemporaryDirectory(); r=Path(td.name); (r/'data').mkdir(); (r/'job_descriptions').mkdir(); (r/'output/reports').mkdir(parents=True); (r/'output/cover_letters').mkdir(parents=True); (r/'output/resumes').mkdir(parents=True)

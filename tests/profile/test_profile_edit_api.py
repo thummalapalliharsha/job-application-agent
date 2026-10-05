@@ -18,7 +18,7 @@ import career_os_api as api
 import profile_update_agent as pua
 import profile_security as psecurity
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[2]
 
 
 class ProfileEditApiTests(unittest.TestCase):
