@@ -3,10 +3,13 @@
 from __future__ import annotations
 
 import copy
+import http.client
 import json
 import shutil
+import threading
 import tempfile
 import unittest
+from http.server import ThreadingHTTPServer
 from pathlib import Path
 from unittest.mock import patch
 
@@ -266,6 +269,53 @@ class ReviewedPlanLifecycleTests(unittest.TestCase):
             [item["record_id"] for item in captured["plan"]["resume_plan"]["projects_to_include"]],
             selected_ids,
         )
+
+    def test_resume_editor_route_recovers_when_unapproved_plan_reference_is_missing(self):
+        self.assertEqual(self.app["current_status"], "awaiting_resume_approval")
+        store = aa.load_store()
+        target = next(item for item in store["applications"] if item["application_id"] == self.aid)
+        target["phase8_plan_reference"] = "output/reports/missing_unapproved_plan.json"
+        aa.save_store(store)
+
+        server = ThreadingHTTPServer(("127.0.0.1", 0), api.Handler)
+        host = f"127.0.0.1:{server.server_port}"
+        original_hosts = set(api._ALLOWED_HOSTS)
+        api._ALLOWED_HOSTS.add(host)
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        try:
+            headers = {"Authorization": f"Bearer {api._API_TOKEN}"} if api._API_TOKEN else {}
+            connection = http.client.HTTPConnection("127.0.0.1", server.server_port, timeout=5)
+            connection.request("GET", f"/api/applications/{self.aid}/resume-editor", headers=headers)
+            response = connection.getresponse()
+            payload = json.loads(response.read().decode("utf-8"))
+            connection.close()
+        finally:
+            server.shutdown()
+            server.server_close()
+            thread.join(timeout=5)
+            api._ALLOWED_HOSTS.clear()
+            api._ALLOWED_HOSTS.update(original_hosts)
+
+        self.assertEqual(response.status, 200)
+        self.assertEqual(payload["decision"], "ready", payload)
+        self.assertEqual(payload["max_projects"], 3)
+        self.assertTrue(payload["projects"])
+        self.assertTrue(all(item["status"] == "completed" for item in payload["projects"]))
+        canonical_eligible_ids = {
+            item["record_id"] for item in self.profile["projects"]["projects"]
+            if item.get("status") == "verified" and item.get("project_status") == "completed"
+        }
+        self.assertTrue({item["record_id"] for item in payload["projects"]}.issubset(canonical_eligible_ids))
+
+        selected_ids = [item["record_id"] for item in payload["projects"][:2]]
+        saved = api.save_resume_edit(self.aid, {"mode": "manual", "record_ids": selected_ids})
+        self.assertEqual(saved["decision"], "saved", saved)
+        self.assertFalse(aa.get_app(self.aid)[0]["resume_generation_allowed"])
+        evidence_map = api.analyze_resume_plan({"application_id": self.aid, "job_description": self.jd})
+        self.assertEqual(evidence_map["resume_plan"]["project_selection_record_ids"], selected_ids)
+        approval = aa.approve_resume(self.aid, evidence_map)
+        self.assertEqual(approval["decision"], "approved", approval)
 
 
 if __name__ == "__main__":

@@ -1128,18 +1128,32 @@ def eligible_completed_projects():
     return result
 
 
+def project_edit_plan(app):
+    plan_path = resolve_ref(app.get("phase8_plan_reference"))
+    if plan_path and plan_path.is_file():
+        return json.loads(plan_path.read_text(encoding="utf-8"))
+    jd = str(app.get("job_description_text") or "").strip()
+    if not jd:
+        return None
+    plan = planner.plan_resume(jd, planner.load_profile())
+    resume_plan = plan.setdefault("resume_plan", {})
+    resume_plan["automatic_projects_to_include"] = copy.deepcopy(resume_plan.get("projects_to_include", []))
+    return plan
+
+
 def resume_editor_payload(aid):
     app = get_application(aid)
     if not app:
         return {"decision": "not_found"}
-    plan_path = resolve_ref(app.get("phase8_plan_reference"))
-    if not plan_path.exists():
-        return {"decision": "error", "message": "The approved Resume Plan could not be found."}
-    plan = json.loads(plan_path.read_text(encoding="utf-8"))
+    plan = project_edit_plan(app) or {}
     resume_plan = plan.get("resume_plan", {})
+    mode = app.get("project_selection_mode") or resume_plan.get("project_selection_source") or "automatic"
     selected_ids = list(app.get("project_selection_record_ids") or [item.get("record_id") for item in resume_plan.get("projects_to_include", [])])
     automatic = resume_plan.get("automatic_projects_to_include") or resume_plan.get("projects_to_include", [])
-    return {"decision": "ready", "application_id": aid, "mode": app.get("project_selection_mode") or resume_plan.get("project_selection_source") or "automatic", "selected_record_ids": selected_ids, "automatic_record_ids": [item.get("record_id") for item in automatic], "max_projects": PROJECT_LIMIT, "projects": [{"record_id": item.get("record_id"), "name": item.get("name"), "status": item.get("project_status"), "technologies": item.get("technologies") or item.get("frameworks_libraries_tools") or []} for item in eligible_completed_projects()], "limitations": ["Only canonical completed projects are editable.", "Project selection changes invalidate the current Working Resume and require plan approval before regeneration.", "Final Resume artifacts remain unchanged and protected."]}
+    automatic_ids = [item.get("record_id") for item in automatic]
+    if not automatic_ids and mode == "automatic":
+        automatic_ids = list(app.get("project_selection_record_ids") or [])
+    return {"decision": "ready", "application_id": aid, "mode": mode, "selected_record_ids": selected_ids, "automatic_record_ids": automatic_ids, "max_projects": PROJECT_LIMIT, "projects": [{"record_id": item.get("record_id"), "name": item.get("name"), "status": item.get("project_status"), "technologies": item.get("technologies") or item.get("frameworks_libraries_tools") or []} for item in eligible_completed_projects()], "limitations": ["Only canonical completed projects are editable.", "Project selection changes invalidate the current Working Resume and require plan approval before regeneration.", "Final Resume artifacts remain unchanged and protected."]}
 
 
 def save_resume_edit(aid, payload):
@@ -1154,10 +1168,9 @@ def save_resume_edit(aid, payload):
         return {"decision": "invalid", "message": "Duplicate projects are not allowed."}
     if len(record_ids) > PROJECT_LIMIT:
         return {"decision": "invalid", "message": f"At most {PROJECT_LIMIT} completed projects can be selected."}
-    plan_path = resolve_ref(app.get("phase8_plan_reference"))
-    if not plan_path.exists():
-        return {"decision": "error", "message": "The Resume Plan could not be found."}
-    plan = json.loads(plan_path.read_text(encoding="utf-8"))
+    plan = project_edit_plan(app)
+    if plan is None:
+        return {"decision": "error", "message": "The Resume Plan could not be reconstructed because the saved job description is unavailable."}
     resume_plan = plan.setdefault("resume_plan", {})
     eligible = {item.get("record_id"): item for item in eligible_completed_projects()}
     if not resume_plan.get("automatic_projects_to_include"):
