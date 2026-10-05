@@ -3,14 +3,20 @@
 from __future__ import annotations
 
 import copy
+import http.client
 import json
+import os
+import secrets
 import shutil
 import tempfile
+import threading
 import unittest
+from http.server import ThreadingHTTPServer
 from pathlib import Path
 
 import career_os_api as api
 import profile_update_agent as pua
+import profile_security as psecurity
 
 ROOT = Path(__file__).resolve().parent
 
@@ -27,6 +33,11 @@ class ProfileEditApiTests(unittest.TestCase):
             shutil.copy2(source, self.data / source.name)
         self.original_root = api.ROOT
         api.ROOT = self.root
+        self.original_pin_hash = os.environ.get("CAREER_OS_PROFILE_PIN_HASH")
+        self.pin = f"{secrets.randbelow(1_000_000):06d}"
+        self.wrong_pin = f"{(int(self.pin) + 1) % 1_000_000:06d}"
+        self.replacement_pin = f"{(int(self.pin) + 2) % 1_000_000:06d}"
+        os.environ["CAREER_OS_PROFILE_PIN_HASH"] = psecurity.hash_profile_pin(self.pin)
         (self.output / "resumes" / "existing.docx").write_bytes(b"existing resume")
         (self.output / "cover_letters" / "existing.pdf").write_bytes(b"existing letter")
         self.artifact_bytes = {
@@ -40,6 +51,10 @@ class ProfileEditApiTests(unittest.TestCase):
 
     def tearDown(self):
         api.ROOT = self.original_root
+        if self.original_pin_hash is None:
+            os.environ.pop("CAREER_OS_PROFILE_PIN_HASH", None)
+        else:
+            os.environ["CAREER_OS_PROFILE_PIN_HASH"] = self.original_pin_hash
         self.temporary.cleanup()
 
     def _updates(self):
@@ -61,6 +76,30 @@ class ProfileEditApiTests(unittest.TestCase):
 
     def _plan(self, updates=None):
         return api.plan_profile_edit({"updates": updates or self._updates()})
+
+    def _post(self, path, payload):
+        server = ThreadingHTTPServer(("127.0.0.1", 0), api.Handler)
+        host = f"127.0.0.1:{server.server_port}"
+        original_hosts = set(api._ALLOWED_HOSTS)
+        api._ALLOWED_HOSTS.add(host)
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        try:
+            headers = {"Content-Type": "application/json"}
+            if api._API_TOKEN:
+                headers["Authorization"] = f"Bearer {api._API_TOKEN}"
+            connection = http.client.HTTPConnection("127.0.0.1", server.server_port, timeout=5)
+            connection.request("POST", path, body=json.dumps(payload), headers=headers)
+            response = connection.getresponse()
+            result = json.loads(response.read().decode("utf-8"))
+            connection.close()
+            return response.status, result
+        finally:
+            server.shutdown()
+            server.server_close()
+            thread.join(timeout=5)
+            api._ALLOWED_HOSTS.clear()
+            api._ALLOWED_HOSTS.update(original_hosts)
 
     def _additions(self):
         return {
@@ -107,7 +146,7 @@ class ProfileEditApiTests(unittest.TestCase):
         self.assertEqual(plan["decision"], "planned", plan)
         add_actions = [action for action in plan["actions"] if action["action"] == "add_profile_record"]
         self.assertEqual({action["category"] for action in add_actions}, {"skills", "projects", "experience", "education", "certifications", "achievements"})
-        result = api.apply_profile_edit({"plan": plan, "confirmed": True})
+        result = api.apply_profile_edit({"plan": plan, "confirmed": True, "pin": self.pin})
         self.assertEqual(result["decision"], "profile_updated", result)
 
         after = pua.all_data(self.root)
@@ -162,9 +201,9 @@ class ProfileEditApiTests(unittest.TestCase):
 
         data = pua.all_data(self.root)
         data["master_profile"]["profile"]["location"] = "Changed during review"
-        pua.dump("master_profile", data["master_profile"], self.root)
+        pua.dump("master_profile", data["master_profile"], self.root, pin=self.pin)
         stale_snapshot = {path: path.read_bytes() for path in self.data.glob("*.json")}
-        result = api.apply_profile_edit({"plan": plan, "confirmed": True})
+        result = api.apply_profile_edit({"plan": plan, "confirmed": True, "pin": self.pin})
         self.assertEqual(result["decision"], "stale_profile")
         self.assertEqual({path: path.read_bytes() for path in self.data.glob("*.json")}, stale_snapshot)
 
@@ -174,7 +213,7 @@ class ProfileEditApiTests(unittest.TestCase):
         original = {path: path.read_bytes() for path in self.data.glob("*.json")}
 
         plan = api.plan_profile_edit({"updates": {}, "additions": additions})
-        result = api.apply_profile_edit({"plan": plan, "confirmed": True})
+        result = api.apply_profile_edit({"plan": plan, "confirmed": True, "pin": self.pin})
 
         self.assertEqual(plan["decision"], "invalid")
         self.assertEqual(result["decision"], "invalid")
@@ -191,7 +230,7 @@ class ProfileEditApiTests(unittest.TestCase):
         )
         plan = self._plan()
         self.assertEqual(plan["decision"], "planned", plan)
-        result = api.apply_profile_edit({"plan": plan, "confirmed": True})
+        result = api.apply_profile_edit({"plan": plan, "confirmed": True, "pin": self.pin})
 
         self.assertEqual(result["decision"], "profile_updated", result)
         self.assertEqual(result["profile"]["name"], "Updated Candidate")
@@ -232,6 +271,60 @@ class ProfileEditApiTests(unittest.TestCase):
         self.assertEqual(result["decision"], "confirmation_required")
         self.assertEqual({path: path.read_bytes() for path in self.data.glob("*.json")}, original)
 
+    def test_missing_wrong_and_invalid_pin_reject_without_changing_profile(self):
+        plan = self._plan()
+        profile_files = [self.data / f"{name}.json" for name in pua.CATEGORIES]
+        original = {path: path.read_bytes() for path in profile_files}
+        for pin in (None, self.wrong_pin, "12x456", "12345", "1234567"):
+            payload = {"plan": plan, "confirmed": True}
+            if pin is not None:
+                payload["pin"] = pin
+            result = api.apply_profile_edit(payload)
+            self.assertEqual(result["decision"], "pin_verification_required", result)
+            self.assertNotIn(self.pin, json.dumps(result))
+            self.assertEqual({path: path.read_bytes() for path in profile_files}, original)
+
+    def test_direct_http_write_without_pin_is_unauthorized_and_read_only_access_works(self):
+        plan = self._plan()
+        profile_files = [self.data / f"{name}.json" for name in pua.CATEGORIES]
+        original = {path: path.read_bytes() for path in profile_files}
+        status, result = self._post("/api/profile/edit/apply", {"plan": plan, "confirmed": True})
+
+        self.assertEqual(status, 401)
+        self.assertEqual(result["decision"], "pin_verification_required")
+        self.assertNotIn(self.pin, json.dumps(result))
+        self.assertEqual({path: path.read_bytes() for path in profile_files}, original)
+        self.assertEqual(api.profile_summary()["name"], pua.all_data(self.root)["master_profile"]["profile"]["name"])
+        self.assertEqual(api.profile_security_status(), {"pin_configured": True})
+
+    def test_pin_hash_is_separate_from_profile_and_never_returned(self):
+        pin_hash = os.environ["CAREER_OS_PROFILE_PIN_HASH"]
+        profile_json = "\n".join(path.read_text(encoding="utf-8") for path in self.data.glob("*.json"))
+        self.assertNotIn(self.pin, profile_json)
+        self.assertNotIn(pin_hash, profile_json)
+        self.assertFalse((self.data / "profile_security.json").exists())
+        self.assertNotIn(self.pin, json.dumps(api.profile_security_status()))
+        self.assertNotIn(pin_hash, json.dumps(api.profile_security_status()))
+
+    def test_missing_environment_hash_fails_closed_without_writing(self):
+        plan = self._plan()
+        original = {path: path.read_bytes() for path in self.data.glob("*.json")}
+        os.environ.pop("CAREER_OS_PROFILE_PIN_HASH", None)
+
+        result = api.apply_profile_edit({"plan": plan, "confirmed": True, "pin": self.pin})
+
+        self.assertEqual(result["decision"], "pin_verification_required")
+        self.assertFalse(api.profile_security_status()["pin_configured"])
+        self.assertEqual({path: path.read_bytes() for path in self.data.glob("*.json")}, original)
+        self.assertFalse((self.data / "profile_security.json").exists())
+
+    def test_common_profile_file_writer_rejects_direct_calls_without_pin(self):
+        original = {path: path.read_bytes() for path in self.data.glob("*.json") if path.name != "profile_security.json"}
+        for category in pua.CATEGORIES:
+            with self.subTest(category=category), self.assertRaises(psecurity.ProfilePinVerificationError):
+                pua.dump(category, pua.all_data(self.root)[category], self.root)
+        self.assertEqual({path: path.read_bytes() for path in original}, original)
+
     def test_invalid_mixed_update_is_rejected_without_partial_writes(self):
         updates = {
             "master_profile": {"name": "Must Not Persist"},
@@ -240,7 +333,7 @@ class ProfileEditApiTests(unittest.TestCase):
         original = {path: path.read_bytes() for path in self.data.glob("*.json")}
 
         plan = self._plan(updates)
-        result = api.apply_profile_edit({"plan": plan, "confirmed": True})
+        result = api.apply_profile_edit({"plan": plan, "confirmed": True, "pin": self.pin})
 
         self.assertEqual(plan["decision"], "invalid")
         self.assertEqual(result["decision"], "invalid")
@@ -250,10 +343,10 @@ class ProfileEditApiTests(unittest.TestCase):
         plan = self._plan()
         data = pua.all_data(self.root)
         data["master_profile"]["profile"]["location"] = "Changed after review"
-        pua.dump("master_profile", data["master_profile"], self.root)
+        pua.dump("master_profile", data["master_profile"], self.root, pin=self.pin)
         original = {path: path.read_bytes() for path in self.data.glob("*.json")}
 
-        result = api.apply_profile_edit({"plan": plan, "confirmed": True})
+        result = api.apply_profile_edit({"plan": plan, "confirmed": True, "pin": self.pin})
 
         self.assertEqual(result["decision"], "stale_profile")
         self.assertEqual({path: path.read_bytes() for path in self.data.glob("*.json")}, original)

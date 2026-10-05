@@ -10,6 +10,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 from career_os_config import CODE_ROOT, DATA_DIR, OUTPUT_DIR, STORAGE_ROOT, storage_root
+from profile_security import ProfilePinVerificationError, verify_profile_pin
 
 ROOT=CODE_ROOT
 DATA=DATA_DIR; REPORTS=OUTPUT_DIR/'reports'
@@ -57,7 +58,9 @@ PROFILE_ADD_LIST_FIELDS_BY_CATEGORY={
 PROFILE_ADD_REQUIRED_FIELDS={'skills':{'name'},'projects':{'name'},'experience':{'organization','title','experience_type'},'education':{'institution','degree'},'certifications':{'name'},'achievements':{'name'}}
 
 def load(name,root=None): return json.loads((storage_root(root)/'data'/f'{name}.json').read_text(encoding='utf-8'))
-def dump(name,obj,root=None): (storage_root(root)/'data'/f'{name}.json').write_text(json.dumps(obj,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
+def dump(name,obj,root=None,pin=None):
+    verify_profile_pin(pin)
+    (storage_root(root)/'data'/f'{name}.json').write_text(json.dumps(obj,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
 def now(): return datetime.now(timezone.utc).isoformat()
 def norm(s): return re.sub(r'[^a-z0-9]+',' ',str(s).lower()).strip()
 def slug(s): return re.sub(r'[^a-z0-9]+','_',str(s).lower()).strip('_')
@@ -394,8 +397,9 @@ def plan_profile_edit(updates=None,root=None,additions=None):
     plan['additions']=copy.deepcopy(additions)
     return plan
 
-def apply_plan(plan,root=None,confirm=False,confirm_delete=False):
+def apply_plan(plan,root=None,confirm=False,confirm_delete=False,pin=None):
     if not confirm: raise PermissionError('Persistent profile writes require explicit --confirm.')
+    verify_profile_pin(pin)
     if plan.get('decision')!='planned' or not plan.get('actions'): raise ValueError('Only a non-ambiguous planned update can be applied.')
     supported={'add_skill','update_project_github','update_project_status','add_project_technologies','create_project','create_certification','create_achievement','update_profile_fields','add_profile_record'}
     unsupported=[a.get('action') for a in plan['actions'] if a.get('action') not in supported]
@@ -456,8 +460,8 @@ def apply_plan(plan,root=None,confirm=False,confirm_delete=False):
     sync_master(data)
     for n in sorted(set(changed)):
         key=n[:-5] if n.endswith('.json') else n
-        dump(key,data[key],root)
-    dump('master_profile',data['master_profile'],root)
+        dump(key,data[key],root,pin=pin)
+    dump('master_profile',data['master_profile'],root,pin=pin)
     return sorted(set(changed))
 
 def sync_master(data):
@@ -471,8 +475,9 @@ def sync_master(data):
     idx['project_lifecycle_statuses']={p['record_id']:p.get('project_status','unknown') for p in project_records(data)}
     idx['project_github_availability']={p['record_id']:p.get('github_availability','github_unverified') for p in project_records(data)}
 
-def apply_profile_edit_plan(plan,root=None,confirm=False):
+def apply_profile_edit_plan(plan,root=None,confirm=False,pin=None):
     if not confirm: raise PermissionError('Persistent profile writes require explicit confirmation.')
+    verify_profile_pin(pin)
     if not isinstance(plan,dict) or plan.get('decision')!='planned':
         return {'decision':'invalid','message':'Only a planned profile update can be applied.'}
     current=plan_profile_edit(plan.get('updates'),root,additions=plan.get('additions'))
@@ -485,10 +490,12 @@ def apply_profile_edit_plan(plan,root=None,confirm=False):
     paths={name:storage_root(root)/'data'/f'{name}.json' for name in names}
     originals={path:path.read_bytes() for path in paths.values()}
     try:
-        changed=apply_plan(current,root,confirm=True)
+        changed=apply_plan(current,root,confirm=True,pin=pin)
         validation=validate_data(root)
         if not validation.get('valid'):
             raise ValueError('Profile validation failed: '+', '.join(validation.get('errors',[])))
+    except ProfilePinVerificationError:
+        raise
     except Exception:
         for path,content in originals.items(): path.write_bytes(content)
         raise
@@ -509,7 +516,10 @@ def validate_data(root=None):
 def main():
     ap=argparse.ArgumentParser(); ap.add_argument('--request',required=True); ap.add_argument('--apply',action='store_true'); ap.add_argument('--confirm',action='store_true'); ap.add_argument('--confirm-delete',action='store_true'); ap.add_argument('--root',default=str(STORAGE_ROOT)); args=ap.parse_args(); root=Path(args.root)
     plan=plan_request(args.request,root)
-    if args.apply: changed=apply_plan(plan,root,args.confirm,args.confirm_delete); plan['changed_files']=changed; plan['applied_at']=now(); plan['persistent_write_allowed']=True
+    if args.apply:
+        import getpass
+        pin=getpass.getpass('Profile security PIN: ')
+        changed=apply_plan(plan,root,args.confirm,args.confirm_delete,pin=pin); plan['changed_files']=changed; plan['applied_at']=now(); plan['persistent_write_allowed']=True
     else: plan['changed_files']=[]
     plan['validation_after_update']=validate_data(root)
     REPORTS.mkdir(parents=True,exist_ok=True); report=REPORTS/('profile_update_'+datetime.now().strftime('%Y%m%dT%H%M%SZ')+'.json'); report.write_text(json.dumps(plan,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')

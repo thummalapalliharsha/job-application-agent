@@ -22,6 +22,7 @@ for p in [REPORTS,RESUMES,LETTERS]: p.mkdir(parents=True,exist_ok=True)
 import application_assistant as aa
 import jd_resume_planner as planner
 import profile_update_agent as pua
+import profile_security as psecurity
 import resume_generator as rg
 import career_os_api as career_api
 
@@ -711,9 +712,34 @@ def history_page():
   if b2.button('Resume Workspace',key=f'history_resume_{aid}'): st.session_state['selected_app']=aid; st.session_state['dashboard_destination']='Resume Workspace'; st.rerun()
   if b3.button('Application Package',key=f'history_package_{aid}'): st.session_state['selected_app']=aid; st.session_state['dashboard_destination']='Application Package'; st.rerun()
 
+@st.dialog('VERIFY PROFILE CHANGE',dismissible=False)
+def profile_update_pin_dialog():
+ st.write('Enter your 6-digit security PIN')
+ st.text_input('6-digit security PIN',type='password',max_chars=6,key='profile_update_pin_input',label_visibility='collapsed')
+ error=st.session_state.get('profile_update_pin_error')
+ if error: st.error(error)
+ cancel,verify=st.columns(2)
+ if cancel.button('CANCEL',key='profile_update_pin_cancel'):
+  st.session_state['profile_update_pin_dialog_open']=False; st.session_state['profile_update_pin_clear']=True; st.session_state.pop('profile_update_pin_error',None); st.rerun()
+ if verify.button('VERIFY & SAVE',type='primary',key='profile_update_pin_verify'):
+  pin=st.session_state.get('profile_update_pin_input','')
+  try:
+   result=pua.apply_plan(st.session_state['profile_plan'],confirm=True,pin=pin)
+   st.session_state['profile_update_result']=f'Profile updated: {result}'; st.session_state['profile_plan']=None; st.session_state['profile_update_pin_dialog_open']=False; st.session_state.pop('profile_update_pin_error',None)
+  except psecurity.ProfilePinVerificationError:
+   st.session_state['profile_update_pin_error']='A valid six-digit security PIN is required. No profile changes were saved.'
+  except Exception:
+   st.session_state['profile_update_pin_error']='The profile update could not be saved. No PIN was included in the error.'
+  st.session_state['profile_update_pin_clear']=True; st.rerun()
+
+
 def profile_page():
+ if st.session_state.pop('profile_update_pin_clear',False): st.session_state.pop('profile_update_pin_input',None)
  header('PROFILE','Profile','Manage the verified information used by your application workflow.')
  prof=planner.load_profile(); st.caption('Canonical profile data is displayed read-only. Proposed changes use the existing Phase 7 review → confirm → apply flow.')
+ with st.expander('Profile Security'):
+  st.write('Profile Security: ' + ('PIN configured' if psecurity.pin_is_configured() else 'PIN not configured'))
+  if not psecurity.pin_is_configured(): st.warning('Profile writes are disabled until CAREER_OS_PROFILE_PIN_HASH is configured on the server.')
  if st.button('Edit Profile',type='primary',key='edit_profile_entry'): st.session_state['profile_edit_mode']=True
  tabs=st.tabs(['Contact','Education','Skills','Projects','Experience','Certifications','Achievements','Edit Profile'])
  contact=prof.get('master_profile',{}).get('profile',{})
@@ -742,7 +768,11 @@ def profile_page():
   if st.session_state.get('profile_plan'):
    st.markdown('<div class="workspace-card"><div class="label">REVIEW CHANGES</div></div>',unsafe_allow_html=True); st.json(st.session_state['profile_plan'])
    if st.button('Confirm and Apply Profile Update',key='profile_confirm_apply'):
-    result=pua.apply_plan(st.session_state['profile_plan'],confirm=True); st.success(f'Profile updated: {result}'); st.session_state.pop('profile_plan',None); st.rerun()
+    st.session_state['profile_update_pin_dialog_open']=True
+  if st.session_state.get('profile_update_result'):
+   st.success(st.session_state.pop('profile_update_result'))
+  if st.session_state.get('profile_update_pin_dialog_open'):
+   profile_update_pin_dialog()
 
 def pending_page():
  header('PENDING ACTIONS','Pending Actions','Review application tasks that still need your attention.')

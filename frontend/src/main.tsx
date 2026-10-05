@@ -310,6 +310,8 @@ function Analysis({ app, setNotice, refresh, go }: { app?: AppRecord; setNotice:
 
   const [plan, setPlan] = useState<AppRecord | null>(null)
 
+  const [pinSkill, setPinSkill] = useState<string | null>(null)
+
   const [projectEditor, setProjectEditor] = useState<AppRecord | null>(null)
 
   const [busy, setBusy] = useState(false)
@@ -420,17 +422,25 @@ function Analysis({ app, setNotice, refresh, go }: { app?: AppRecord; setNotice:
 
   const confirmSkill = async (skill: string) => {
 
-    if (!app) return
+    if (!app || !skillCategories[skill]) return
 
-    const category = skillCategories[skill]
+    setPinSkill(skill)
 
-    if (!category) return
+  }
+
+  const saveSkillGap = async (pin: string) => {
+
+    if (!app || !pinSkill) return
 
     setBusy(true)
 
     try {
 
-      const result: any = await api(`/api/applications/${app.application_id}/confirm-skill-gap`, { method: 'POST', body: JSON.stringify({ skill, category, confirmed: true }) })
+      const result: any = await api(`/api/applications/${app.application_id}/confirm-skill-gap`, { method: 'POST', body: JSON.stringify({ skill: pinSkill, category: skillCategories[pinSkill], confirmed: true, pin }) })
+
+      if (result.decision !== 'skill_added_candidate_provided') throw new Error(result.message || 'The profile change could not be verified.')
+
+      setPinSkill(null)
 
       setNotice(result.message || 'Skill recorded as candidate-provided. Verify it before using it in a resume.', 'success')
 
@@ -438,7 +448,7 @@ function Analysis({ app, setNotice, refresh, go }: { app?: AppRecord; setNotice:
 
       refresh()
 
-    } catch (e: any) { setNotice(e.message) } finally { setBusy(false) }
+    } finally { setBusy(false) }
 
   }
 
@@ -484,6 +494,8 @@ function Analysis({ app, setNotice, refresh, go }: { app?: AppRecord; setNotice:
     </div>}
 
     {app && <div className="action-bar"><span>Approval gate: resume generation stays locked until you review this plan.</span>{plan && <button className="button primary" onClick={approve} disabled={busy || !!projectEditor}>APPROVE REVIEWED PLAN ↗</button>}</div>}
+
+    {pinSkill && <ProfilePinDialog busy={busy} onCancel={() => setPinSkill(null)} onVerify={saveSkillGap} />}
 
   </Workspace>
 
@@ -798,6 +810,8 @@ function Profile({ profile, refresh, setNotice }: { profile: AppRecord; refresh:
   const [editing, setEditing] = useState(false)
   const [plan, setPlan] = useState<AppRecord | null>(null)
   const [saving, setSaving] = useState(false)
+
+  const [pinDialogOpen, setPinDialogOpen] = useState(false)
   const [addSection, setAddSection] = useState<string | null>(null)
   const [newRecord, setNewRecord] = useState<AppRecord>({})
 
@@ -914,21 +928,24 @@ function Profile({ profile, refresh, setNotice }: { profile: AppRecord; refresh:
       setSaving(false)
     }
   }
-  const confirmSave = async () => {
+  const confirmSave = () => {
+    if (!plan || saving) return
+    setPinDialogOpen(true)
+  }
+  const saveWithPin = async (pin: string) => {
     if (!plan || saving) return
     setSaving(true)
     try {
-      await api('/api/profile/edit/apply', { method: 'POST', body: JSON.stringify({ plan, confirmed: true }) })
+      await api('/api/profile/edit/apply', { method: 'POST', body: JSON.stringify({ plan, confirmed: true, pin }) })
       const updated = await api<AppRecord>('/api/profile')
       setCanonical(updated)
       setDraft(JSON.parse(JSON.stringify(updated)))
       setPlan(null)
+      setPinDialogOpen(false)
       cancelAdd()
       setEditing(false)
       void refresh()
       setNotice('Canonical profile updated. Existing application plans and documents were not changed.', 'success')
-    } catch (error: any) {
-      setNotice(error.message)
     } finally {
       setSaving(false)
     }
@@ -1003,12 +1020,37 @@ function Profile({ profile, refresh, setNotice }: { profile: AppRecord; refresh:
       })}</ul>
       <div className="profile-edit-review-actions"><button className="button quiet" onClick={cancelEditing} disabled={saving}>CANCEL</button><button className="button primary" onClick={confirmSave} disabled={saving}>{saving ? 'SAVING…' : 'CONFIRM & SAVE'}</button></div>
     </section>}
+    {pinDialogOpen && <ProfilePinDialog busy={saving} onCancel={() => setPinDialogOpen(false)} onVerify={saveWithPin} />}
   </Workspace>
+}
+
+function ProfilePinDialog({ busy, onCancel, onVerify }: { busy: boolean; onCancel: () => void; onVerify: (pin: string) => Promise<void> }) {
+  const [pin, setPin] = useState('')
+  const [error, setError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const verify = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (!/^[0-9]{6}$/.test(pin)) { setError('Enter exactly six digits.'); return }
+    setSubmitting(true)
+    setError('')
+    try { await onVerify(pin); setPin('') }
+    catch (caught: any) { setPin(''); setError(caught.message || 'Verification failed. No profile changes were saved.') }
+    finally { setSubmitting(false) }
+  }
+  return <div className="guide-backdrop" role="dialog" aria-modal="true" aria-label="Verify profile change"><div className="guide-panel"><div className="guide-heading"><div><span className="card-label">PROFILE SECURITY</span><h2>VERIFY PROFILE CHANGE</h2></div><button className="guide-close" onClick={onCancel} disabled={busy || submitting} aria-label="Cancel profile change">×</button></div><form onSubmit={verify}><label className="profile-edit-field">Enter your 6-digit security PIN<input type="password" inputMode="numeric" maxLength={6} autoComplete="off" value={pin} onChange={(event) => setPin(event.target.value)} disabled={busy || submitting} /></label>{error && <p role="alert">{error}</p>}<p>Profile changes require server-side PIN configuration.</p><div className="editor-footer"><div><button className="button quiet" type="button" onClick={onCancel} disabled={busy || submitting}>CANCEL</button><button className="button primary" type="submit" disabled={busy || submitting}>{busy || submitting ? 'VERIFYING…' : 'VERIFY & SAVE'}</button></div></div></form></div></div>
 }
 
 function Search({ openApplication }: { openApplication: (id: string, r?: Route) => void }) { const [q, setQ] = useState(''); const [results, setResults] = useState<AppRecord[]>([]); useEffect(() => { if (q.length < 2) { setResults([]); return } const timer = setTimeout(() => api<{ applications: AppRecord[] }>(`/api/search?q=${encodeURIComponent(q)}`).then((x) => setResults(x.applications)), 250); return () => clearTimeout(timer) }, [q]); return <Workspace title="FIND THE SIGNAL" eyebrow="08 / SEARCH" intro="Search the local application store without losing the spatial context of the work."><input className="search-input" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search company, role, note…" /><div className="search-results">{results.map((a) => <button className="stream-row" key={a.application_id} onClick={() => openApplication(a.application_id)}><span className="stream-main"><b>{a.company_name}</b><small>{a.job_title}</small></span><span className="stream-status">{a.current_status}</span>↗</button>)}</div></Workspace> }
 
-function Settings() { return <Workspace title="KEEP THE BOUNDARY" eyebrow="09 / SETTINGS" intro="Career OS is local-first, approval-gated, and intentionally manual at the point of submission."><div className="settings-grid"><div><span className="card-label">SAFETY</span><h3>Manual submission only.</h3><p>No browser automation, portal login, CAPTCHA handling, email submission, or fabricated evidence.</p></div><div><span className="card-label">MOTION</span><h3>Purposeful by default.</h3><p>Use the browser’s reduced-motion preference to calm transitions and preserve readability.</p></div></div></Workspace> }
+function Settings() {
+  const [configured, setConfigured] = useState<boolean | null>(null)
+  const [error, setError] = useState('')
+  useEffect(() => { api<{ pin_configured: boolean }>('/api/profile/security').then((result) => setConfigured(result.pin_configured)).catch((caught: any) => setError(caught.message)) }, [])
+  return <Workspace title="KEEP THE BOUNDARY" eyebrow="09 / SETTINGS" intro="Career OS is local-first, approval-gated, and intentionally manual at the point of submission.">
+    <div className="settings-grid"><div><span className="card-label">SAFETY</span><h3>Manual submission only.</h3><p>No browser automation, portal login, CAPTCHA handling, email submission, or fabricated evidence.</p></div><div><span className="card-label">MOTION</span><h3>Purposeful by default.</h3><p>Use the browser’s reduced-motion preference to calm transitions and preserve readability.</p></div></div>
+    <section className="analysis-card full"><span className="card-label">PROFILE SECURITY</span><h3>{configured === null ? 'Checking security status…' : configured ? 'PIN configured' : 'PIN not configured'}</h3><p>{configured ? 'Profile writes require server-side six-digit PIN verification.' : 'Profile writes are disabled until CAREER_OS_PROFILE_PIN_HASH is configured on the server.'}</p>{error && <p role="alert">{error}</p>}</section>
+  </Workspace>
+}
 
 const workflowSteps: { key: Route; label: string }[] = [{ key: 'new', label: 'NEW APPLICATION' }, { key: 'analysis', label: 'JD INTELLIGENCE' }, { key: 'resume', label: 'RESUME WORKSPACE' }, { key: 'letter', label: 'COVER LETTER' }, { key: 'package', label: 'PACKAGE ASSEMBLY' }, { key: 'history', label: 'APPLICATION HISTORY' }]
 

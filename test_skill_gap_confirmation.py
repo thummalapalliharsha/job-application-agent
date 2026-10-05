@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import json
+import os
+import secrets
 import shutil
 import tempfile
 import unittest
@@ -11,6 +13,7 @@ from pathlib import Path
 import application_assistant as aa
 import career_os_api as api
 import jd_resume_planner as planner
+import profile_security as psecurity
 
 ROOT = Path(__file__).resolve().parent
 
@@ -33,11 +36,15 @@ class SkillGapConfirmationTests(unittest.TestCase):
             "aa": (aa.ROOT, aa.DATA, aa.JOBS, aa.OUT, aa.REPORTS, aa.LETTERS, aa.RESUMES),
             "api_root": api.ROOT,
             "planner_data": planner.DATA,
+            "profile_pin_hash": os.environ.get("CAREER_OS_PROFILE_PIN_HASH"),
         }
         aa.ROOT, aa.DATA, aa.JOBS = self.root, self.data, self.jobs
         aa.OUT, aa.REPORTS, aa.LETTERS, aa.RESUMES = self.root / "output", self.reports, self.letters, self.resumes
         api.ROOT = self.root
         planner.DATA = self.data
+        self.pin = f"{secrets.randbelow(1_000_000):06d}"
+        self.wrong_pin = f"{(int(self.pin) + 1) % 1_000_000:06d}"
+        os.environ["CAREER_OS_PROFILE_PIN_HASH"] = psecurity.hash_profile_pin(self.pin)
         created = aa.create_application(
             "Gap Test Company", "Junior RAG Engineer", "https://example.test/gap",
             "Junior RAG Engineer\nRequired Skills:\n- Python\n- RAG\n- LangChain",
@@ -54,18 +61,22 @@ class SkillGapConfirmationTests(unittest.TestCase):
         aa.ROOT, aa.DATA, aa.JOBS, aa.OUT, aa.REPORTS, aa.LETTERS, aa.RESUMES = self.originals["aa"]
         api.ROOT = self.originals["api_root"]
         planner.DATA = self.originals["planner_data"]
+        if self.originals["profile_pin_hash"] is None:
+            os.environ.pop("CAREER_OS_PROFILE_PIN_HASH", None)
+        else:
+            os.environ["CAREER_OS_PROFILE_PIN_HASH"] = self.originals["profile_pin_hash"]
         self.temporary.cleanup()
 
     def test_requires_confirmation_and_only_accepts_unsupported_required_skill(self):
         store_path = self.data / "applications.json"
         before = store_path.read_bytes()
         self.assertEqual(api.confirm_skill_gap(self.aid, {"skill": "LangChain", "category": "generative_ai"})["decision"], "confirmation_required")
-        self.assertEqual(api.confirm_skill_gap(self.aid, {"skill": "Python", "category": "programming_languages", "confirmed": True})["decision"], "invalid")
+        self.assertEqual(api.confirm_skill_gap(self.aid, {"skill": "Python", "category": "programming_languages", "confirmed": True, "pin": self.pin})["decision"], "invalid")
         self.assertEqual(store_path.read_bytes(), before)
 
     def test_confirmation_updates_profile_plan_and_approval_state_without_project_claim(self):
         projects_before = json.loads((self.data / "projects.json").read_text(encoding="utf-8"))["projects"]
-        result = api.confirm_skill_gap(self.aid, {"skill": "LangChain", "category": "generative_ai", "confirmed": True})
+        result = api.confirm_skill_gap(self.aid, {"skill": "LangChain", "category": "generative_ai", "confirmed": True, "pin": self.pin})
         self.assertEqual(result["decision"], "skill_added_candidate_provided", result)
         self.assertEqual(result["status"], "candidate_provided")
         self.assertIn("until verified", result["message"])
@@ -85,6 +96,20 @@ class SkillGapConfirmationTests(unittest.TestCase):
         self.assertFalse(plan["approval_checkpoint"]["resume_generation_allowed"])
         self.assertNotIn("LangChain", [item["name"] for item in plan["resume_plan"]["skills_to_include"]])
         self.assertGreaterEqual(len(aa.load_store()["applications"]), 1)
+
+    def test_skill_gap_write_requires_pin_and_preserves_all_data_on_failure(self):
+        app = next(item for item in aa.load_store()["applications"] if item["application_id"] == self.aid)
+        plan_path = self.root / app["phase8_plan_reference"]
+        paths = [self.data / "skills.json", self.data / "master_profile.json", self.data / "applications.json", plan_path]
+        original = {path: path.read_bytes() for path in paths}
+        for pin in (None, "wrong!", self.wrong_pin):
+            payload = {"skill": "LangChain", "category": "generative_ai", "confirmed": True}
+            if pin is not None:
+                payload["pin"] = pin
+            result = api.confirm_skill_gap(self.aid, payload)
+            self.assertEqual(result["decision"], "pin_verification_required", result)
+            self.assertNotIn(self.pin, json.dumps(result))
+            self.assertEqual({path: path.read_bytes() for path in paths}, original)
 
 
 if __name__ == "__main__":

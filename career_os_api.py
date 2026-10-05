@@ -18,6 +18,7 @@ from urllib.parse import parse_qs, unquote_to_bytes, urlparse
 import application_assistant as aa
 import jd_resume_planner as planner
 import profile_update_agent as pua
+import profile_security as profile_security
 from career_os_config import (
     DATA_DIR,
     FRONTEND_DIST_DIR,
@@ -169,6 +170,10 @@ def profile_summary():
     return {"name": master.get("name"), "headline": master.get("headline") or master.get("summary"), "location": master.get("location"), "projects": projects, "skills": skills, "education": profile.get("education", {}).get("education", []), "experience": profile.get("experience", {}).get("experiences", []), "certifications": profile.get("certifications", {}).get("certifications", []), "achievements": profile.get("achievements", {}).get("achievements", [])}
 
 
+def profile_security_status():
+    return {"pin_configured": profile_security.pin_is_configured()}
+
+
 def plan_profile_edit(payload):
     if not isinstance(payload, dict):
         return {"decision": "invalid", "message": "Profile edits must be sent as a JSON object."}
@@ -182,7 +187,10 @@ def apply_profile_edit(payload):
     if not isinstance(payload, dict) or payload.get("confirmed") is not True:
         return {"decision": "confirmation_required", "message": "Review the planned profile changes and explicitly confirm before saving."}
     with _RESUME_DOCUMENT_LOCK:
-        result = pua.apply_profile_edit_plan(payload.get("plan"), root=ROOT, confirm=True)
+        try:
+            result = pua.apply_profile_edit_plan(payload.get("plan"), root=ROOT, confirm=True, pin=payload.get("pin"))
+        except profile_security.ProfilePinVerificationError:
+            return {"decision": "pin_verification_required", "message": "A valid six-digit security PIN is required. No profile changes were saved."}
         if result.get("decision") == "profile_updated":
             return {**result, "profile": profile_summary()}
         return result
@@ -198,6 +206,10 @@ def confirm_skill_gap(aid, payload):
         return {"decision": "invalid", "message": "A valid skill name is required."}
 
     with _RESUME_DOCUMENT_LOCK:
+        try:
+            profile_security.verify_profile_pin(payload.get("pin"))
+        except profile_security.ProfilePinVerificationError:
+            return {"decision": "pin_verification_required", "message": "A valid six-digit security PIN is required. No profile changes were saved."}
         app = get_application(aid)
         if not app:
             return {"decision": "not_found"}
@@ -219,7 +231,7 @@ def confirm_skill_gap(aid, payload):
             update_plan = pua.plan_skill_gap_addition(skill_name, category, root=ROOT, application_id=aid)
             if update_plan.get("decision") != "planned":
                 return {"decision": update_plan.get("decision", "invalid"), "message": "The skill could not be planned for profile update.", "details": update_plan}
-            pua.apply_plan(update_plan, root=ROOT, confirm=True)
+            pua.apply_plan(update_plan, root=ROOT, confirm=True, pin=payload.get("pin"))
             profile = pua.all_data(ROOT)
             updated_plan = planner.plan_resume(app.get("job_description_text", ""), profile)
             automatic = copy.deepcopy(updated_plan["resume_plan"].get("projects_to_include", []))
@@ -263,6 +275,8 @@ def confirm_skill_gap(aid, payload):
             })
             _write_application_store_atomically(original_store, store)
             return {"decision": "skill_added_candidate_provided", "message": "Added as candidate-provided evidence. It will not appear in a resume until verified. The refreshed Resume Plan requires approval before regeneration.", "skill": skill_name, "status": "candidate_provided", "application": target, "plan": updated_plan}
+        except profile_security.ProfilePinVerificationError:
+            return {"decision": "pin_verification_required", "message": "A valid six-digit security PIN is required. No profile changes were saved."}
         except Exception as exc:
             for path, content in original_profile.items() if 'original_profile' in locals() else []:
                 path.write_bytes(content)
@@ -1357,6 +1371,8 @@ class Handler(BaseHTTPRequestHandler):
                 return self.send_json({"ok": True, "service": "career-os-api"})
             if path == "/api/bootstrap":
                 return self.send_json({"profile": profile_summary(), **application_payload()})
+            if path == "/api/profile/security":
+                return self.send_json(profile_security_status())
             if path == "/api/profile":
                 return self.send_json(profile_summary())
             if path == "/api/applications":
@@ -1415,7 +1431,7 @@ class Handler(BaseHTTPRequestHandler):
                 return self.send_json(result, status)
             if path == "/api/profile/edit/apply":
                 result = apply_profile_edit(payload)
-                status = 200 if result.get("decision") == "profile_updated" else 404 if result.get("decision") == "not_found" else 409 if result.get("decision") in {"confirmation_required", "stale_profile"} else 400 if result.get("decision") == "invalid" else 500
+                status = 200 if result.get("decision") == "profile_updated" else 401 if result.get("decision") == "pin_verification_required" else 404 if result.get("decision") == "not_found" else 409 if result.get("decision") in {"confirmation_required", "stale_profile"} else 400 if result.get("decision") == "invalid" else 500
                 return self.send_json(result, status)
             if path == "/api/analyze":
                 result = analyze_resume_plan(payload)
@@ -1447,7 +1463,7 @@ class Handler(BaseHTTPRequestHandler):
                 return self.send_json(result, status)
             if action == "confirm-skill-gap":
                 result = confirm_skill_gap(aid, payload)
-                status = 200 if result.get("decision") == "skill_added_candidate_provided" else 404 if result.get("decision") == "not_found" else 400 if result.get("decision") in {"invalid", "confirmation_required", "no_change_duplicate", "ask_clarification"} else 500 if result.get("decision") == "error" else 200
+                status = 200 if result.get("decision") == "skill_added_candidate_provided" else 401 if result.get("decision") == "pin_verification_required" else 404 if result.get("decision") == "not_found" else 400 if result.get("decision") in {"invalid", "confirmation_required", "no_change_duplicate", "ask_clarification"} else 500 if result.get("decision") == "error" else 200
                 return self.send_json(result, status)
             if action == "resume-edit":
                 result = save_resume_edit(aid, payload)
