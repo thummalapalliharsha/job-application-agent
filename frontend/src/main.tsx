@@ -310,6 +310,8 @@ function Analysis({ app, setNotice, refresh, go }: { app?: AppRecord; setNotice:
 
   const [plan, setPlan] = useState<AppRecord | null>(null)
 
+  const [projectEditor, setProjectEditor] = useState<AppRecord | null>(null)
+
   const [busy, setBusy] = useState(false)
 
   const [skillCategories, setSkillCategories] = useState<Record<string, string>>({})
@@ -326,11 +328,69 @@ function Analysis({ app, setNotice, refresh, go }: { app?: AppRecord; setNotice:
 
     try {
 
-      const result: any = await api('/api/analyze', { method: 'POST', body: JSON.stringify({ job_description: app.job_description_text }) })
+      const result: any = await api('/api/analyze', { method: 'POST', body: JSON.stringify({ job_description: app.job_description_text, application_id: app.application_id }) })
 
       setPlan(result)
 
       confirmation.show('ANALYSIS COMPLETE')
+
+    } catch (e: any) { setNotice(e.message) } finally { setBusy(false) }
+
+  }
+
+  const openProjectEditor = async () => {
+
+    if (!app) return
+
+    setBusy(true)
+
+    try {
+
+      const result: any = await api(`/api/applications/${app.application_id}/resume-editor`)
+
+      if (result.decision !== 'ready') throw new Error(result.message || 'Eligible projects could not be loaded.')
+
+      setProjectEditor(result)
+
+    } catch (e: any) { setNotice(e.message) } finally { setBusy(false) }
+
+  }
+
+  const toggleProject = (recordId: string) => {
+
+    if (!projectEditor) return
+
+    const selected = projectEditor.selected_record_ids.includes(recordId)
+
+    if (!selected && projectEditor.selected_record_ids.length >= projectEditor.max_projects) return
+
+    setProjectEditor({ ...projectEditor, selected_record_ids: selected ? projectEditor.selected_record_ids.filter((id: string) => id !== recordId) : [...projectEditor.selected_record_ids, recordId] })
+
+  }
+
+  const confirmProjectSelection = async () => {
+
+    if (!app || !projectEditor) return
+
+    setBusy(true)
+
+    try {
+
+      const saved: any = await api(`/api/applications/${app.application_id}/resume-edit`, { method: 'POST', body: JSON.stringify({ mode: 'manual', record_ids: projectEditor.selected_record_ids }) })
+
+      if (saved.decision !== 'saved') throw new Error(saved.message || 'The project selection could not be saved.')
+
+      setProjectEditor(null)
+
+      setPlan(null)
+
+      const updatedPlan: any = await api('/api/analyze', { method: 'POST', body: JSON.stringify({ job_description: app.job_description_text, application_id: app.application_id }) })
+
+      setPlan(updatedPlan)
+
+      confirmation.show('PROJECTS CONFIRMED')
+
+      refresh()
 
     } catch (e: any) { setNotice(e.message) } finally { setBusy(false) }
 
@@ -396,7 +456,10 @@ function Analysis({ app, setNotice, refresh, go }: { app?: AppRecord; setNotice:
 
       <div className="analysis-card large"><span className="card-label">ALIGNMENT READOUT</span><div className="alignment-meter"><span style={{ width: `${Math.min(92, 35 + (plan.evidence_summary?.supported_requirements?.length || 0) * 12)}%` }} /></div><p>{`${plan.evidence_summary?.supported_requirements?.length || 0} supported · ${plan.evidence_summary?.partial_requirements?.length || 0} partial · ${plan.evidence_summary?.unsupported_requirements?.length || 0} gaps`}</p></div>
 
-      <div className="analysis-card full"><span className="card-label">PROJECT STRATEGY</span><div className="project-row">{(plan.resume_plan?.projects_to_include || []).map((item: any) => <span className="project-chip" key={item.record_id}>{item.name}</span>)}</div></div>
+      <div className="analysis-card full"><div className="editor-heading"><div><span className="card-label">PROJECT STRATEGY</span><p>{plan.resume_plan?.project_selection_source === 'manual' || plan.project_selection_source === 'manual' ? 'CONFIRMED MANUAL SELECTION' : 'AUTOMATIC RECOMMENDATION'}</p></div><button className="button quiet" onClick={openProjectEditor} disabled={busy}>EDIT PROJECTS</button></div><div className="project-row">{(plan.resume_plan?.projects_to_include || []).map((item: any) => <span className="project-chip" key={item.record_id}>{item.name}</span>)}</div>
+
+        {projectEditor && <div className="project-selection-inline"><div className="editor-heading"><div><span className="card-label">CHOOSE PROJECTS</span><p>Select up to {projectEditor.max_projects} eligible projects. Selection order is preserved.</p></div><span className="pill">{projectEditor.selected_record_ids.length} / {projectEditor.max_projects}</span></div><div className="editor-projects">{projectEditor.projects.map((project: any) => { const selected = projectEditor.selected_record_ids.includes(project.record_id); return <label key={project.record_id}><input type="checkbox" checked={selected} disabled={!selected && projectEditor.selected_record_ids.length >= projectEditor.max_projects} onChange={() => toggleProject(project.record_id)} /><span><b>{project.name}</b><small>{project.technologies.join(' · ') || 'Canonical completed project'}</small></span></label> })}</div><div className="editor-footer"><span>Only verified, completed profile projects are available.</span><div><button className="button quiet" onClick={() => setProjectEditor(null)} disabled={busy}>CANCEL</button><button className="button primary" onClick={confirmProjectSelection} disabled={busy || !projectEditor.selected_record_ids.length}>{busy ? <LoadingStatus label="SAVING PROJECTS…" /> : 'CONFIRM PROJECTS'}</button></div></div></div>}
+      </div>
 
       {requiredGaps.map((gap: any) => <div className="analysis-card full" key={gap.requirement}>
 
@@ -420,7 +483,7 @@ function Analysis({ app, setNotice, refresh, go }: { app?: AppRecord; setNotice:
 
     </div>}
 
-    {app && <div className="action-bar"><span>Approval gate: resume generation stays locked until you review this plan.</span>{plan && <button className="button primary" onClick={approve}>APPROVE REVIEWED PLAN ↗</button>}</div>}
+    {app && <div className="action-bar"><span>Approval gate: resume generation stays locked until you review this plan.</span>{plan && <button className="button primary" onClick={approve} disabled={busy || !!projectEditor}>APPROVE REVIEWED PLAN ↗</button>}</div>}
 
   </Workspace>
 
