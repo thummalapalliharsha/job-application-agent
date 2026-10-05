@@ -184,6 +184,89 @@ class ReviewedPlanLifecycleTests(unittest.TestCase):
         self.assertEqual(self.old_final_docx.read_bytes(), b"historical-final-docx")
         self.assertEqual(self.old_final_pdf.read_bytes(), b"historical-final-pdf")
 
+    def test_manual_project_edit_evidence_map_approval_and_generation_use_confirmed_order(self):
+        self.jd = (
+            "Junior Business Data Analyst\n"
+            "Required Skills:\n- Python\n- SQL\n- Data Analysis\n- Data Cleaning\n"
+            "- Data Preprocessing\n- Data Visualization\n- Reporting\n- Customer Segmentation\n"
+            "- Clustering Evaluation\nResponsibilities:\n- Analyze data and prepare reports."
+        )
+        created = aa.create_application(
+            "Manual Selection Test", "Junior Business Data Analyst",
+            "https://example.test/manual-project-selection", self.jd,
+        )
+        self.assertEqual(created["decision"], "created", created)
+        self.aid = created["application"]["application_id"]
+        automatic_plan = self.reviewed_plan()
+        automatic_ids = [item["record_id"] for item in automatic_plan["resume_plan"]["projects_to_include"]]
+        initial_approval = aa.approve_resume(self.aid, automatic_plan)
+        self.assertEqual(initial_approval["decision"], "approved", initial_approval)
+        approved_app = aa.get_app(self.aid)[0]
+        automatic_reference = approved_app["phase8_plan_reference"]
+        automatic_plan_bytes = (self.root / automatic_reference).read_bytes()
+
+        scored, _ = planner.project_matches(
+            automatic_plan["jd_analysis"], self.profile, automatic_plan["candidate_matching"]
+        )
+        alternatives = [item["record_id"] for item in scored if item["record_id"] not in automatic_ids]
+        self.assertGreaterEqual(len(alternatives), 2)
+        selected_ids = [alternatives[1], alternatives[0]]
+        edit = api.save_resume_edit(self.aid, {"mode": "manual", "record_ids": selected_ids})
+        self.assertEqual(edit["decision"], "saved", edit)
+
+        edited_app = aa.get_app(self.aid)[0]
+        self.assertNotEqual(edited_app["phase8_plan_reference"], automatic_reference)
+        self.assertEqual((self.root / automatic_reference).read_bytes(), automatic_plan_bytes)
+        saved_edit = json.loads((self.root / edited_app["phase8_plan_reference"]).read_text(encoding="utf-8"))
+        self.assertEqual(saved_edit["resume_plan"]["project_selection_record_ids"], selected_ids)
+        self.assertEqual(
+            [item["record_id"] for item in saved_edit["resume_plan"]["automatic_projects_to_include"]],
+            automatic_ids,
+        )
+        editor_state = api.resume_editor_payload(self.aid)
+        self.assertEqual(editor_state["selected_record_ids"], selected_ids)
+        self.assertEqual(editor_state["automatic_record_ids"], automatic_ids)
+
+        evidence_map = api.analyze_resume_plan({
+            "application_id": self.aid,
+            "job_description": self.jd,
+        })
+        self.assertEqual(evidence_map["project_selection_source"], "manual")
+        self.assertEqual(evidence_map["resume_plan"]["project_selection_record_ids"], selected_ids)
+        self.assertEqual(
+            [item["record_id"] for item in evidence_map["resume_plan"]["projects_to_include"]],
+            selected_ids,
+        )
+
+        approval = aa.approve_resume(self.aid, evidence_map)
+        self.assertEqual(approval["decision"], "approved", approval)
+        approved_app = aa.get_app(self.aid)[0]
+        approved_plan = json.loads((self.root / approved_app["phase8_plan_reference"]).read_text(encoding="utf-8"))
+        self.assertEqual(approved_plan["resume_plan"]["project_selection_record_ids"], selected_ids)
+
+        captured = {}
+
+        def fake_generate(passed_plan, _profile, output):
+            captured["plan"] = copy.deepcopy(passed_plan)
+            Path(output).write_bytes(b"working-resume-from-manual-project-selection")
+
+        def fake_convert(docx):
+            pdf = Path(docx).with_suffix(".pdf")
+            pdf.write_bytes(b"pdf-for-" + Path(docx).read_bytes())
+            return pdf
+
+        with patch.object(rg, "profile", return_value=self.profile), \
+             patch.object(rg, "generate", side_effect=fake_generate), \
+             patch.object(rg, "validate", return_value={"page_count": 1, "final_status": "PASS"}), \
+             patch.object(api, "convert_pdf", side_effect=fake_convert):
+            generated = api.generate_working_resume(self.aid)
+
+        self.assertEqual(generated["decision"], "created", generated)
+        self.assertEqual(
+            [item["record_id"] for item in captured["plan"]["resume_plan"]["projects_to_include"]],
+            selected_ids,
+        )
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

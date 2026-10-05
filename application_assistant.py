@@ -18,7 +18,6 @@ from career_os_config import (
   resolve_storage_reference,
   storage_reference,
 )
-
 ROOT=CODE_ROOT
 DATA=DATA_DIR; JOBS=JOB_DESCRIPTIONS_DIR; OUT=OUTPUT_DIR; REPORTS=OUT/'reports'; LETTERS=OUT/'cover_letters'; RESUMES=OUT/'resumes'
 STATUSES={'saved','analyzing','awaiting_resume_approval','resume_ready','ready_to_apply','applied','assessment','interview','offer','rejected','withdrawn','closed'}
@@ -239,6 +238,41 @@ def edit_cover_letter(aid, content):
  for item in store['applications']:
   if item.get('application_id')==aid: item['last_updated']=now(); item['cover_letter_edited_at']=item['last_updated']
  save_store(store); return {'decision':'saved','cover_letter_reference':reference,'content':content+'\n'}
+
+def apply_persisted_project_selection(plan,app,profile):
+ selection_source=app.get('project_selection_mode') or app.get('project_selection_source') or 'automatic'
+ if selection_source!='manual': return plan
+ plan_ref=app.get('phase8_plan_reference')
+ plan_path=resolve_storage_reference(str(plan_ref),root=ROOT) if plan_ref else None
+ if not plan_path or not plan_path.is_file(): raise ValueError('The confirmed manual project selection could not be resolved.')
+ saved=json.loads(plan_path.read_text(encoding='utf-8')); saved_resume=saved.get('resume_plan',{})
+ app_ids=list(app.get('project_selection_record_ids') or [])
+ saved_ids=list(saved_resume.get('project_selection_record_ids') or [])
+ saved_project_ids=[item.get('record_id') for item in saved_resume.get('projects_to_include',[])]
+ if (saved_resume.get('project_selection_source')!='manual' or not app_ids or len(app_ids)>3
+         or len(app_ids)!=len(set(app_ids)) or saved_ids!=app_ids or saved_project_ids!=app_ids):
+  raise ValueError('The application project selection does not match its stored Reviewed Resume Plan.')
+ from jd_resume_planner import project_matches
+ scored,_=project_matches(plan.get('jd_analysis',{}),profile,plan.get('candidate_matching',[]))
+ scored_by_id={item.get('record_id'):item for item in scored}
+ canonical={item.get('record_id'):item for item in profile.get('projects',{}).get('projects',[])
+            if item.get('project_status')=='completed' and item.get('status')=='verified'}
+ if any(record_id not in canonical for record_id in app_ids):
+  raise ValueError('The confirmed selection includes a project that is no longer eligible.')
+ projects=[]
+ for record_id in app_ids:
+  if record_id in scored_by_id:
+   projects.append(scored_by_id[record_id])
+  else:
+   projects.append({**canonical[record_id],'matched_requirements':[]})
+ result=copy.deepcopy(plan); resume_plan=result.setdefault('resume_plan',{})
+ resume_plan['automatic_projects_to_include']=copy.deepcopy(resume_plan.get('projects_to_include',[]))
+ resume_plan['projects_to_include']=projects
+ resume_plan['project_selection_source']='manual'
+ resume_plan['project_selection_record_ids']=app_ids
+ result['project_selection_source']='manual'
+ return result
+
 def approve_resume(aid,reviewed_plan=None):
   store=load_store(); app=next((x for x in store['applications'] if x['application_id']==aid),None)
   if not app:return {'decision':'not_found'}
@@ -252,13 +286,34 @@ def approve_resume(aid,reviewed_plan=None):
     import jd_resume_planner as planner
     profile=load_profile()
     expected=planner.plan_resume(jd_text,profile)
-    allowed_keys=set(expected)|{'candidate_skill_categories'}
-    if set(reviewed_plan)-allowed_keys or any(reviewed_plan.get(key)!=value for key,value in expected.items()):
-      return {'decision':'plan_evidence_mismatch','message':'The reviewed plan differs from the current deterministic plan or canonical profile evidence.'}
     categories=[group.get('category') for group in profile.get('skills',{}).get('skill_groups',[]) if group.get('category')]
     if reviewed_plan.get('candidate_skill_categories',categories)!=categories:
       return {'decision':'plan_evidence_mismatch','message':'The reviewed plan contains a non-canonical skill category list.'}
-    approved_plan=copy.deepcopy(reviewed_plan)
+    manual_selection=(app.get('project_selection_mode') or app.get('project_selection_source'))=='manual'
+    if manual_selection:
+      try: expected=apply_persisted_project_selection(expected,app,profile)
+      except (OSError,ValueError,json.JSONDecodeError) as exc:
+        return {'decision':'plan_evidence_mismatch','message':str(exc)}
+    reviewed=copy.deepcopy(reviewed_plan)
+    if manual_selection:
+      reviewed_resume=reviewed.get('resume_plan',{})
+      selected_ids=list(app.get('project_selection_record_ids') or [])
+      reviewed_ids=[item.get('record_id') for item in reviewed_resume.get('projects_to_include',[])]
+      if (reviewed_resume.get('project_selection_source')!='manual'
+              or list(reviewed_resume.get('project_selection_record_ids') or [])!=selected_ids
+              or reviewed_ids!=selected_ids
+              or reviewed.get('project_selection_source') not in {None,'manual'}):
+        return {'decision':'plan_evidence_mismatch','message':'The reviewed projects do not match the confirmed manual project selection.'}
+      expected_resume=expected['resume_plan']
+      reviewed_resume['projects_to_include']=copy.deepcopy(expected_resume['projects_to_include'])
+      reviewed_resume['automatic_projects_to_include']=copy.deepcopy(expected_resume['automatic_projects_to_include'])
+      reviewed_resume['project_selection_source']='manual'
+      reviewed_resume['project_selection_record_ids']=selected_ids
+      reviewed['project_selection_source']='manual'
+    allowed_keys=set(expected)|{'candidate_skill_categories'}
+    if set(reviewed)-allowed_keys or any(reviewed.get(key)!=value for key,value in expected.items()):
+      return {'decision':'plan_evidence_mismatch','message':'The reviewed plan differs from the current deterministic plan or canonical profile evidence.'}
+    approved_plan=reviewed
     approved_plan.setdefault('approval_checkpoint',{})['resume_generation_allowed']=True
     plan_payload=json.dumps(approved_plan,indent=2,ensure_ascii=False)+'\n'
     plan_digest=hashlib.sha256(plan_payload.encode('utf-8')).hexdigest()[:16]

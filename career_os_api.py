@@ -1160,6 +1160,8 @@ def save_resume_edit(aid, payload):
     plan = json.loads(plan_path.read_text(encoding="utf-8"))
     resume_plan = plan.setdefault("resume_plan", {})
     eligible = {item.get("record_id"): item for item in eligible_completed_projects()}
+    if not resume_plan.get("automatic_projects_to_include"):
+        resume_plan["automatic_projects_to_include"] = copy.deepcopy(resume_plan.get("projects_to_include", []))
     if mode == "automatic":
         automatic = resume_plan.get("automatic_projects_to_include") or resume_plan.get("projects_to_include", [])
         record_ids = [item.get("record_id") for item in automatic if item.get("record_id") in eligible]
@@ -1176,13 +1178,44 @@ def save_resume_edit(aid, payload):
     resume_plan["project_selection_record_ids"] = list(record_ids)
     plan["project_selection_source"] = mode
     plan.setdefault("approval_checkpoint", {})["resume_generation_allowed"] = False
-    plan_path.write_text(json.dumps(plan, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    plan_payload = json.dumps(plan, indent=2, ensure_ascii=False) + "\n"
+    plan_digest = hashlib.sha256(plan_payload.encode("utf-8")).hexdigest()[:16]
+    updated_plan_path = aa.REPORTS / f"{aid}_phase8_plan_{plan_digest}.json"
+    updated_plan_path.parent.mkdir(parents=True, exist_ok=True)
+    if updated_plan_path.exists():
+        if json.loads(updated_plan_path.read_text(encoding="utf-8")) != plan:
+            return {"decision": "plan_reference_conflict", "message": "The edited Resume Plan reference already contains different content."}
+    else:
+        updated_plan_path.write_text(plan_payload, encoding="utf-8")
+    updated_plan_reference = aa.storage_reference(updated_plan_path, root=aa.ROOT)
     store = aa.load_store()
     target = next(item for item in store["applications"] if item.get("application_id") == aid)
     updated = aa.now()
-    target.update({"selected_projects": [item.get("name") for item in selected], "project_selection_mode": mode, "project_selection_source": mode, "project_selection_record_ids": list(record_ids), "resume_generation_allowed": False, "resume_working_artifact_stale": True, "current_status": "awaiting_resume_approval", "last_updated": updated})
+    target.update({"phase8_plan_reference": updated_plan_reference, "selected_projects": [item.get("name") for item in selected], "project_selection_mode": mode, "project_selection_source": mode, "project_selection_record_ids": list(record_ids), "resume_generation_allowed": False, "resume_working_artifact_stale": True, "current_status": "awaiting_resume_approval", "last_updated": updated})
+    target.setdefault("provenance", {})["phase8_source"] = updated_plan_reference
     aa.save_store(store)
     return {"decision": "saved", "message": "Project selection saved. Approve the updated Resume Plan in JD Intelligence, then regenerate the Working Resume. Final artifacts were not changed.", "application": target, "selected_record_ids": record_ids, "final_preserved": True}
+
+
+def analyze_resume_plan(payload):
+    jd = str(payload.get("job_description", "")).strip()
+    if not jd:
+        return {"decision": "invalid", "message": "job_description is required"}
+    profile = planner.load_profile()
+    plan = planner.plan_resume(jd, profile)
+    application_id = str(payload.get("application_id") or "").strip()
+    if application_id:
+        app = get_application(application_id)
+        if not app:
+            return {"decision": "not_found", "message": "Application was not found."}
+        if str(app.get("job_description_text") or "").strip() != jd:
+            return {"decision": "jd_mismatch", "message": "The Evidence Map job description does not match the selected application."}
+        try:
+            plan = aa.apply_persisted_project_selection(plan, app, profile)
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            return {"decision": "invalid_project_selection", "message": str(exc)}
+    plan["candidate_skill_categories"] = [group.get("category") for group in profile.get("skills", {}).get("skill_groups", []) if group.get("category")]
+    return plan
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -1372,13 +1405,9 @@ class Handler(BaseHTTPRequestHandler):
                 status = 200 if result.get("decision") == "profile_updated" else 404 if result.get("decision") == "not_found" else 409 if result.get("decision") in {"confirmation_required", "stale_profile"} else 400 if result.get("decision") == "invalid" else 500
                 return self.send_json(result, status)
             if path == "/api/analyze":
-                jd = str(payload.get("job_description", "")).strip()
-                if not jd:
-                    return self.send_json({"error": "job_description is required"}, 400)
-                profile = planner.load_profile()
-                plan = planner.plan_resume(jd, profile)
-                plan["candidate_skill_categories"] = [group.get("category") for group in profile.get("skills", {}).get("skill_groups", []) if group.get("category")]
-                return self.send_json(plan)
+                result = analyze_resume_plan(payload)
+                status = 200 if result.get("mode") == "job_application_planning" else 404 if result.get("decision") == "not_found" else 409 if result.get("decision") in {"jd_mismatch", "invalid_project_selection"} else 400
+                return self.send_json(result, status)
             if path == "/api/applications":
                 jd = str(payload.get("job_description", "")).strip()
                 if not jd:
