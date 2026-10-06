@@ -1136,7 +1136,7 @@ def eligible_completed_projects():
     result = []
     for project in projects:
         record_id = project.get("record_id")
-        if record_id and record_id not in seen and project.get("project_status") == "completed" and project.get("status") == "verified":
+        if record_id and record_id not in seen and project.get("project_status") == "completed" and project.get("status") in {"verified", "candidate_provided"}:
             result.append(project)
             seen.add(record_id)
     return result
@@ -1549,3 +1549,4 @@ if __name__ == "__main__":
     if _RUNTIME_ENV in {"production", "prod"} and len(_API_TOKEN) < 32:
         raise SystemExit("CAREER_OS_API_TOKEN must be configured with at least 32 characters in production")
     ThreadingHTTPServer(_api_server_address(), Handler).serve_forever()
+
