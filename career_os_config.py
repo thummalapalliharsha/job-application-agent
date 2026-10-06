@@ -5,6 +5,8 @@ import os
 import re
 from pathlib import Path, PurePosixPath
 
+from postgres_config import PostgresConfig, load_postgres_config, validate_postgres_config
+
 CODE_ROOT = Path(__file__).resolve().parent
 _CONFIGURED_STORAGE_ROOT = os.environ.get("CAREER_OS_STORAGE_ROOT", "").strip()
 STORAGE_ROOT = Path(_CONFIGURED_STORAGE_ROOT or CODE_ROOT).expanduser().resolve()
@@ -16,6 +18,7 @@ OUTPUT_DIR = STORAGE_ROOT / "output"
 FRONTEND_DIST_DIR = Path(
     os.environ.get("CAREER_OS_FRONTEND_DIR", CODE_ROOT / "frontend" / "dist")
 ).expanduser().resolve()
+POSTGRES_CONFIG: PostgresConfig = load_postgres_config()
 
 
 def storage_root(root: str | Path | None = None) -> Path:
@@ -26,6 +29,33 @@ def storage_root(root: str | Path | None = None) -> Path:
 
 def production_storage_is_configured() -> bool:
     return _RUNTIME_ENV not in {"production", "prod"} or PRODUCTION_STORAGE_CONFIGURED
+
+
+def postgres_storage_ready(config: PostgresConfig | None = None) -> bool:
+    """Return True only when the PostgreSQL backend is enabled with a valid config.
+
+    This is intentionally a configuration-only readiness check. The adapter is not yet
+    connected to any database, and no persistence work is executed here.
+    """
+    backend = os.environ.get("CAREER_OS_STORAGE_BACKEND", "file").strip().lower() or "file"
+    if backend != "postgres" and (config is None or config.backend.casefold() != "postgres"):
+        return False
+    resolved = config or load_postgres_config()
+    ready, _ = validate_postgres_config(resolved)
+    return ready
+
+
+def database_readiness_summary() -> dict[str, object]:
+    backend = os.environ.get("CAREER_OS_STORAGE_BACKEND", "file").strip().lower() or "file"
+    config = load_postgres_config()
+    ready, missing = validate_postgres_config(config)
+    return {
+        "backend": backend,
+        "configured": backend == "postgres" and config.is_configured,
+        "ready": backend == "postgres" and ready,
+        "missing_fields": missing,
+        "database_url_present": bool(config.url),
+    }
 
 
 def storage_reference(path: str | Path, root: str | Path | None = None) -> str:
