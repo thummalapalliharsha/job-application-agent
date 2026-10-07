@@ -121,8 +121,8 @@ def _storage_root():
     return storage_root(ROOT)
 
 
-def _resolve_storage_reference(reference):
-    return resolve_storage_reference(reference, ROOT)
+def _resolve_storage_reference(reference, root=None):
+    return resolve_storage_reference(reference, ROOT if root is None else root)
 
 
 def _storage_reference(path):
@@ -194,6 +194,113 @@ def apply_profile_edit(payload):
         if result.get("decision") == "profile_updated":
             return {**result, "profile": profile_summary()}
         return result
+
+
+def _profile_action_category(action):
+    category = action.get("category")
+    if category:
+        return category
+    return {
+        "add_skill": "skills",
+        "update_project_github": "projects",
+        "update_project_status": "projects",
+        "add_project_technologies": "projects",
+        "create_project": "projects",
+        "create_certification": "certifications",
+        "create_achievement": "achievements",
+    }.get(action.get("action"))
+
+
+def _profile_action_changes_resume_input(action):
+    category = _profile_action_category(action)
+    action_type = action.get("action")
+    fields = set((action.get("fields") or {}).keys())
+    if action_type == "update_project_github":
+        fields = {"github_url", "github_availability"}
+    elif action_type == "update_project_status":
+        fields = {"project_status"}
+    elif action_type == "add_project_technologies":
+        fields = {"technologies"}
+    elif action_type == "add_skill":
+        fields = {"name"}
+    elif action_type in {"create_project", "create_certification", "create_achievement", "add_profile_record"}:
+        fields = set((action.get("record") or action).keys())
+
+    relevant_fields = {
+        "master_profile": {"name", "location"},
+        "skills": {"name"},
+        "projects": {"name", "purpose", "functionality", "technical_details", "technologies", "frameworks_libraries_tools", "github_url", "github_availability", "project_status"},
+        "experience": {"organization", "title", "experience_type", "work_mode", "start_date", "end_date", "description", "responsibilities", "technologies", "outcomes", "learning_outcomes"},
+        "education": {"institution", "degree", "field_of_study", "start_date", "end_date", "location", "grade"},
+        "certifications": {"name", "issuer", "credential_type", "issue_date", "expiration_date", "credential_id", "verification_url"},
+    }
+    return category in relevant_fields and bool(fields & relevant_fields[category])
+
+
+def _profile_action_affects_application(action, app, plan):
+    if not _profile_action_changes_resume_input(action):
+        return False
+    category = _profile_action_category(action)
+    if category in {"master_profile", "education"}:
+        return True
+
+    resume_plan = plan.get("resume_plan", {})
+    selector = action.get("selector", {})
+    record_id = selector.get("record_id") or action.get("record_id")
+    if category == "projects":
+        selected_ids = set(app.get("project_selection_record_ids") or [])
+        selected_ids.update(resume_plan.get("project_selection_record_ids") or [])
+        selected_ids.update(item.get("record_id") for item in resume_plan.get("projects_to_include", []) if isinstance(item, dict))
+        return bool(record_id and record_id in selected_ids)
+    if category == "skills":
+        selected_names = {planner.norm(name) for name in app.get("selected_skills", []) if name}
+        selected_names.update(planner.norm(item.get("name")) for item in resume_plan.get("skills_to_include", []) if isinstance(item, dict) and item.get("name"))
+        selected_name = selector.get("name") or action.get("name")
+        return bool(selected_name and planner.norm(selected_name) in selected_names)
+    if category == "experience":
+        selected_ids = {item.get("record_id") for item in resume_plan.get("experience_to_include", []) if isinstance(item, dict)}
+        selected_ids.update(item.get("record_id") for item in resume_plan.get("experience_decisions", []) if isinstance(item, dict))
+        selected_ids.update(app.get("selected_experience") or [])
+        return bool(record_id and record_id in selected_ids)
+    if category == "certifications":
+        selected_ids = {item.get("record_id") for item in resume_plan.get("certifications_to_include", []) if isinstance(item, dict)}
+        selected_ids.update(app.get("selected_certification_ids") or [])
+        selected_names = {planner.norm(name) for name in app.get("selected_certifications", []) if name}
+        selected_names.update(planner.norm(item.get("name")) for item in resume_plan.get("certifications_to_include", []) if isinstance(item, dict) and item.get("name"))
+        return bool(record_id and record_id in selected_ids) or bool(
+            selector.get("record_id") and selector.get("record_id") in selected_ids
+        ) or bool(selector.get("name") and planner.norm(selector["name"]) in selected_names)
+    return False
+
+
+def invalidate_approved_applications_for_profile_actions(actions, *, root=None):
+    store_path = storage_root(ROOT if root is None else root) / "data" / "applications.json"
+    if not store_path.is_file():
+        return []
+    with _RESUME_DOCUMENT_LOCK:
+        store = json.loads(store_path.read_text(encoding="utf-8"))
+        applications = store.get("applications", []) if isinstance(store, dict) else []
+        invalidated = []
+        for app in applications:
+            if not isinstance(app, dict) or app.get("resume_generation_allowed") is not True:
+                continue
+            plan_path = resolve_ref(app.get("phase8_plan_reference"), root=root)
+            try:
+                plan = json.loads(plan_path.read_text(encoding="utf-8")) if plan_path and plan_path.is_file() else {}
+            except (OSError, json.JSONDecodeError):
+                plan = {}
+            if not any(_profile_action_affects_application(action, app, plan) for action in actions if isinstance(action, dict)):
+                continue
+            app.update({
+                "resume_generation_allowed": False,
+                "resume_working_artifact_stale": True,
+                "current_status": "awaiting_resume_approval",
+                "last_updated": aa.now(),
+            })
+            invalidated.append(app.get("application_id"))
+        if invalidated:
+            _atomic_write_json(store_path, store)
+        return invalidated
 
 
 def confirm_skill_gap(aid, payload):
@@ -298,8 +405,8 @@ def application_payload():
             ("working_resume", "working_resume_docx_path", "working_resume_pdf_path"),
             ("final_resume", "resume_docx_path", "resume_pdf_path"),
         ):
-            doc = resolve_ref(record.get(doc_key) or record.get("working_resume_reference" if prefix == "working_resume" else "resume_reference")) if (record.get(doc_key) or record.get("working_resume_reference" if prefix == "working_resume" else "resume_reference")) else None
-            pdf = resolve_ref(record.get(pdf_key) or record.get("working_resume_pdf_reference" if prefix == "working_resume" else "resume_pdf_reference")) if (record.get(pdf_key) or record.get("working_resume_pdf_reference" if prefix == "working_resume" else "resume_pdf_reference")) else None
+            doc = resolve_ref(record.get(doc_key) or record.get("working_resume_reference" if prefix == "working_resume" else "resume_reference"), root=ROOT) if (record.get(doc_key) or record.get("working_resume_reference" if prefix == "working_resume" else "resume_reference")) else None
+            pdf = resolve_ref(record.get(pdf_key) or record.get("working_resume_pdf_reference" if prefix == "working_resume" else "resume_pdf_reference"), root=ROOT) if (record.get(pdf_key) or record.get("working_resume_pdf_reference" if prefix == "working_resume" else "resume_pdf_reference")) else None
             record[f"{prefix}_docx_available"] = bool(doc and doc.is_file())
             record[f"{prefix}_pdf_available"] = bool(pdf and pdf.is_file())
         enriched.append(record)
@@ -450,7 +557,7 @@ def delete_application(aid):
 def _safe_project_path(reference):
     if not isinstance(reference, str) or not reference.strip():
         return None
-    return _resolve_storage_reference(reference)
+    return _resolve_storage_reference(reference, root=ROOT)
 
 
 def _resume_document_context(app):
@@ -574,8 +681,8 @@ def validate_resume_document_payload(aid, payload):
             "validation": report, "claim_validation": policy, "persisted": False}
 
 
-def resolve_ref(reference):
-    return _resolve_storage_reference(reference)
+def resolve_ref(reference, root=None):
+    return _resolve_storage_reference(reference, root=root)
 
 
 def file_sha256(path):
@@ -907,7 +1014,7 @@ def persist_working_cover_letter_formats(aid, result):
     markdown_ref = app.get("cover_letter_working_reference") or result.get("cover_letter_working_reference")
     if not markdown_ref:
         return {"decision": "error", "message": "The Working Cover Letter source was not saved."}
-    markdown_path = resolve_ref(markdown_ref)
+    markdown_path = resolve_ref(markdown_ref, root=ROOT)
     if not markdown_path.is_file():
         return {"decision": "error", "message": "The Working Cover Letter source could not be found."}
     docx_path = markdown_path.with_suffix(".docx")
@@ -958,7 +1065,7 @@ def generate_working_resume(aid):
     if not app.get("resume_generation_allowed"):
         return {"decision": "approval_required", "message": "Approve the Resume Plan in JD Intelligence before generating a resume."}
 
-    plan_path = resolve_ref(app.get("phase8_plan_reference"))
+    plan_path = resolve_ref(app.get("phase8_plan_reference"), root=ROOT)
     missing_plan = not plan_path or not plan_path.exists()
     if missing_plan:
         jd_text = str(app.get("job_description_text") or "").strip()
@@ -1130,8 +1237,8 @@ def finalize_resume(aid):
 PROJECT_LIMIT = 3
 
 
-def eligible_completed_projects():
-    projects = planner.load_profile().get("projects", {}).get("projects", [])
+def eligible_completed_projects(root=None):
+    projects = planner.load_profile(root=root).get("projects", {}).get("projects", [])
     seen = set()
     result = []
     for project in projects:
@@ -1142,14 +1249,14 @@ def eligible_completed_projects():
     return result
 
 
-def project_edit_plan(app):
-    plan_path = resolve_ref(app.get("phase8_plan_reference"))
+def project_edit_plan(app, root=None):
+    plan_path = resolve_ref(app.get("phase8_plan_reference"), root=root)
     if plan_path and plan_path.is_file():
         return json.loads(plan_path.read_text(encoding="utf-8"))
     jd = str(app.get("job_description_text") or "").strip()
     if not jd:
         return None
-    plan = planner.plan_resume(jd, planner.load_profile())
+    plan = planner.plan_resume(jd, planner.load_profile(root=root))
     resume_plan = plan.setdefault("resume_plan", {})
     resume_plan["automatic_projects_to_include"] = copy.deepcopy(resume_plan.get("projects_to_include", []))
     return plan
@@ -1159,7 +1266,7 @@ def resume_editor_payload(aid):
     app = get_application(aid)
     if not app:
         return {"decision": "not_found"}
-    plan = project_edit_plan(app) or {}
+    plan = project_edit_plan(app, root=ROOT) or {}
     resume_plan = plan.get("resume_plan", {})
     mode = app.get("project_selection_mode") or resume_plan.get("project_selection_source") or "automatic"
     selected_ids = list(app.get("project_selection_record_ids") or [item.get("record_id") for item in resume_plan.get("projects_to_include", [])])
@@ -1167,7 +1274,7 @@ def resume_editor_payload(aid):
     automatic_ids = [item.get("record_id") for item in automatic]
     if not automatic_ids and mode == "automatic":
         automatic_ids = list(app.get("project_selection_record_ids") or [])
-    return {"decision": "ready", "application_id": aid, "mode": mode, "selected_record_ids": selected_ids, "automatic_record_ids": automatic_ids, "max_projects": PROJECT_LIMIT, "projects": [{"record_id": item.get("record_id"), "name": item.get("name"), "status": item.get("project_status"), "technologies": item.get("technologies") or item.get("frameworks_libraries_tools") or []} for item in eligible_completed_projects()], "limitations": ["Only canonical completed projects are editable.", "Project selection changes invalidate the current Working Resume and require plan approval before regeneration.", "Final Resume artifacts remain unchanged and protected."]}
+    return {"decision": "ready", "application_id": aid, "mode": mode, "selected_record_ids": selected_ids, "automatic_record_ids": automatic_ids, "max_projects": PROJECT_LIMIT, "projects": [{"record_id": item.get("record_id"), "name": item.get("name"), "status": item.get("project_status"), "technologies": item.get("technologies") or item.get("frameworks_libraries_tools") or []} for item in eligible_completed_projects(root=ROOT)], "limitations": ["Only canonical completed projects are editable.", "Project selection changes invalidate the current Working Resume and require plan approval before regeneration.", "Final Resume artifacts remain unchanged and protected."]}
 
 
 def save_resume_edit(aid, payload):
@@ -1182,11 +1289,11 @@ def save_resume_edit(aid, payload):
         return {"decision": "invalid", "message": "Duplicate projects are not allowed."}
     if len(record_ids) > PROJECT_LIMIT:
         return {"decision": "invalid", "message": f"At most {PROJECT_LIMIT} completed projects can be selected."}
-    plan = project_edit_plan(app)
+    plan = project_edit_plan(app, root=ROOT)
     if plan is None:
         return {"decision": "error", "message": "The Resume Plan could not be reconstructed because the saved job description is unavailable."}
     resume_plan = plan.setdefault("resume_plan", {})
-    eligible = {item.get("record_id"): item for item in eligible_completed_projects()}
+    eligible = {item.get("record_id"): item for item in eligible_completed_projects(root=ROOT)}
     if not resume_plan.get("automatic_projects_to_include"):
         resume_plan["automatic_projects_to_include"] = copy.deepcopy(resume_plan.get("projects_to_include", []))
     if mode == "automatic":

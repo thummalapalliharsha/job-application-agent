@@ -505,13 +505,16 @@ function insertLayoutParagraph(view: any): boolean {
 }
 
 async function requestJson<T>(path: string, options?: RequestInit): Promise<ApiResponse<T>> {
-  const response = await fetch(apiUrl(path), { headers: { 'Content-Type': 'application/json' }, ...options })
-  const data = await response.json()
+  const headers = new Headers(options?.headers)
+  if (options?.body && !headers.has('Content-Type')) headers.set('Content-Type', 'application/json')
+  const response = await fetch(apiUrl(path), { ...options, headers })
+  const data = await response.json().catch(() => null)
   if (!response.ok) {
-    const details = [...(Array.isArray(data.errors) ? data.errors : []), ...(Array.isArray(data.claim_validation?.errors) ? data.claim_validation.errors : [])]
+    const details = [...(Array.isArray(data?.errors) ? data.errors : []), ...(Array.isArray(data?.claim_validation?.errors) ? data.claim_validation.errors : [])]
       .map((item: any) => item?.message).filter((item: any) => typeof item === 'string')
-    throw new Error([data.error || data.message || 'Request failed', ...details].join(' '))
+    throw new Error([data?.error || data?.message || `Request failed (${response.status})`, ...details].join(' '))
   }
+  if (data === null) throw new Error('The API returned an invalid JSON response.')
   return data
 }
 

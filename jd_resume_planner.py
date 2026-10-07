@@ -6,10 +6,11 @@ an external LLM or embedding API. The profile JSON remains authoritative;
 semantic relationships only identify relevance and never create evidence.
 """
 from __future__ import annotations
-import argparse, json, re
+import argparse, copy, json, os, re
 from pathlib import Path
 from typing import Any
-from career_os_config import DATA_DIR
+from career_os_config import DATA_DIR, storage_root
+from storage_adapter import FileStorageAdapter
 
 ROOT=Path(__file__).resolve().parent; DATA=DATA_DIR
 STATUSES={'idea','planned','in_progress','completed','unknown'}
@@ -57,8 +58,19 @@ JD_SECTION_BOUNDARIES={
 SOFT=['communication','teamwork','collaboration','problem-solving','analytical','leadership','adaptability']
 EDU=['bachelor','b.tech','btech','computer science','information technology','artificial intelligence','data science','degree','graduate','education']
 
-def load_profile():
- return {n:json.loads((DATA/f'{n}.json').read_text(encoding='utf-8')) for n in ['master_profile','skills','projects','experience','certifications','education','achievements']}
+def _storage_adapter(root=None):
+    root_path = storage_root(root)
+    backend = (os.environ.get('CAREER_OS_STORAGE_BACKEND', 'file') or 'file').strip().lower()
+    if backend == 'postgres':
+        from postgres_storage_adapter import PostgresStorageAdapter
+        return PostgresStorageAdapter(root=root_path)
+    return FileStorageAdapter(root=root_path)
+
+def load_profile(root=None):
+    if root is None:
+        data_dir = Path(DATA)
+        root = data_dir.parent if data_dir.name == 'data' and data_dir.exists() else ROOT
+    return copy.deepcopy(_storage_adapter(root).load_profile_documents())
 def norm(x): return re.sub(r'[^a-z0-9+#]+',' ',str(x).lower()).strip()
 def contains(text,term):
  t=norm(text); q=norm(term); return bool(q and re.search(r'(?<![a-z0-9])'+re.escape(q)+r'(?![a-z0-9])',t))

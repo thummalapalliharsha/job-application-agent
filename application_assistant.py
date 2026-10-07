@@ -6,7 +6,7 @@ in, submits applications, automates portals, sends email, or uses a browser.
 Resume generation is a separate explicit action requiring approval.
 """
 from __future__ import annotations
-import argparse, copy, hashlib, json, re, subprocess, threading, uuid
+import argparse, copy, hashlib, json, os, re, subprocess, tempfile, threading, uuid
 from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -18,6 +18,7 @@ from career_os_config import (
   resolve_storage_reference,
   storage_reference,
 )
+from storage_adapter import FileStorageAdapter
 ROOT=CODE_ROOT
 DATA=DATA_DIR; JOBS=JOB_DESCRIPTIONS_DIR; OUT=OUTPUT_DIR; REPORTS=OUT/'reports'; LETTERS=OUT/'cover_letters'; RESUMES=OUT/'resumes'
 STATUSES={'saved','analyzing','awaiting_resume_approval','resume_ready','ready_to_apply','applied','assessment','interview','offer','rejected','withdrawn','closed'}
@@ -32,15 +33,21 @@ def artifact_stem(app, kind, lifecycle, suffix=None):
  stem=f"{slug(app.get('company_name') or 'company')}_{slug(app.get('job_title') or 'role')}_{app.get('application_id')}_{label}_{lifecycle}"
  return f'{stem}_{suffix}' if suffix else stem
 def norm(s): return re.sub(r'[^a-z0-9]+',' ',str(s or '').lower()).strip()
+def _application_store_adapter(root=None):
+    return FileStorageAdapter(root=root or ROOT)
+
 def load_store():
- p=DATA/'applications.json'
- if not p.exists(): return {'applications':[]}
- return json.loads(p.read_text(encoding='utf-8'))
+    return _application_store_adapter(ROOT).load_application_store()
+
 def save_store(store):
  with APPLICATION_STORE_LOCK:
-  applications=[app for app in store.get('applications',[]) if app.get('application_id') not in DELETED_APPLICATION_IDS]
-  payload={**store,'applications':applications}
-  (DATA/'applications.json').write_text(json.dumps(payload,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
+  payload = store if isinstance(store, dict) else {'applications': []}
+  applications = payload.get('applications', []) if isinstance(payload, dict) else []
+  if not isinstance(applications, list):
+   applications = []
+  filtered = [app for app in applications if isinstance(app, dict) and app.get('application_id') not in DELETED_APPLICATION_IDS]
+  normalized = {'applications': filtered}
+  _application_store_adapter(ROOT).save_application_store(normalized)
 def load_profile(): return {n:json.loads((DATA/f'{n}.json').read_text(encoding='utf-8')) for n in ['master_profile','skills','projects','experience','certifications','education','achievements']}
 def phase8_plan(jd_text,report_path):
  import jd_resume_planner
@@ -368,6 +375,46 @@ def summary_report():
  rows=[]
  for a in load_store().get('applications',[]): rows.append({k:a.get(k) for k in ['application_id','company_name','job_title','job_url','current_status','date_applied','resume_reference','cover_letter_reference','unsupported_requirements','follow_up_date','application_notes']})
  path=REPORTS/'application_summary.json'; path.parent.mkdir(parents=True,exist_ok=True); path.write_text(json.dumps({'generated_at':now(),'applications':rows},indent=2,ensure_ascii=False)+'\n',encoding='utf-8'); return path
+
+def load_document_history():
+ path=DATA/'document_history.json'
+ if not path.exists(): return {'documents':[]}
+ try:
+  raw=path.read_text(encoding='utf-8')
+  if not raw.strip(): return {'documents':[]}
+  history=json.loads(raw)
+  if not isinstance(history,dict) or not isinstance(history.get('documents'),list): return {'documents':[]}
+  return history
+ except (OSError,UnicodeError,json.JSONDecodeError):
+  return {'documents':[]}
+
+def save_document_history(history):
+ path=DATA/'document_history.json'; path.parent.mkdir(parents=True,exist_ok=True)
+ payload=json.dumps(history,indent=2,ensure_ascii=False)+'\n'
+ temporary=None
+ try:
+  with tempfile.NamedTemporaryFile('w',encoding='utf-8',dir=path.parent,prefix=f'.{path.name}.',suffix='.tmp',delete=False) as handle:
+   temporary=Path(handle.name); handle.write(payload); handle.flush(); os.fsync(handle.fileno())
+  os.replace(str(temporary),str(path))
+ finally:
+  if temporary and temporary.exists(): temporary.unlink()
+
+def _history_path_value(value):
+    if value is None:
+        return ""
+    candidate = Path(value)
+    try:
+        relative = candidate.resolve().relative_to(ROOT)
+    except ValueError:
+        try:
+            relative = candidate.relative_to(ROOT)
+        except ValueError:
+            return str(candidate).replace('\\', '/')
+    return relative.as_posix()
+
+def save_history(app, kind, doc, pdf):
+ h=load_document_history(); h['documents'].append({'application_id':app.get('application_id'),'company':app.get('company_name'),'role':app.get('job_title'),'kind':kind,'date':now(),'docx':_history_path_value(doc),'pdf':_history_path_value(pdf),'selected_projects':app.get('selected_projects',[]),'selected_skills':app.get('selected_skills',[]),'selected_certifications':app.get('selected_certifications',[])})
+ save_document_history(h)
 
 def main():
  ap=argparse.ArgumentParser(description='Phase 9A human-in-the-loop application assistant'); sub=ap.add_subparsers(dest='command',required=True)

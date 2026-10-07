@@ -5,12 +5,13 @@ Default behavior is a read-only update plan. Persistent writes require --apply
 and --confirm. The agent never regenerates resumes.
 """
 from __future__ import annotations
-import argparse, copy, hashlib, json, re, shutil, tempfile
+import argparse, copy, hashlib, json, os, re, shutil, tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 from career_os_config import CODE_ROOT, DATA_DIR, OUTPUT_DIR, STORAGE_ROOT, storage_root
 from profile_security import ProfilePinVerificationError, verify_profile_pin
+from storage_adapter import FileStorageAdapter
 
 ROOT=CODE_ROOT
 DATA=DATA_DIR; REPORTS=OUTPUT_DIR/'reports'
@@ -57,16 +58,33 @@ PROFILE_ADD_LIST_FIELDS_BY_CATEGORY={
 }
 PROFILE_ADD_REQUIRED_FIELDS={'skills':{'name'},'projects':{'name'},'experience':{'organization','title','experience_type'},'education':{'institution','degree'},'certifications':{'name'},'achievements':{'name'}}
 
-def load(name,root=None): return json.loads((storage_root(root)/'data'/f'{name}.json').read_text(encoding='utf-8'))
+def _storage_adapter(root=None):
+    root_path = storage_root(root)
+    backend = (os.environ.get('CAREER_OS_STORAGE_BACKEND', 'file') or 'file').strip().lower()
+    if backend == 'postgres':
+        from postgres_storage_adapter import PostgresStorageAdapter
+        return PostgresStorageAdapter(root=root_path)
+    return FileStorageAdapter(root=root_path)
+
+def load(name,root=None):
+    docs = _storage_adapter(root).load_profile_documents()
+    return copy.deepcopy(docs.get(name, {}))
 def dump(name,obj,root=None,pin=None):
     verify_profile_pin(pin)
-    (storage_root(root)/'data'/f'{name}.json').write_text(json.dumps(obj,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
+    adapter = _storage_adapter(root)
+    docs = adapter.load_profile_documents()
+    docs[name] = copy.deepcopy(obj)
+    adapter.save_profile_documents(docs)
+def invalidate_approved_applications(actions,root=None):
+    from career_os_api import invalidate_approved_applications_for_profile_actions
+    return invalidate_approved_applications_for_profile_actions(actions,root=root)
 def now(): return datetime.now(timezone.utc).isoformat()
 def norm(s): return re.sub(r'[^a-z0-9]+',' ',str(s).lower()).strip()
 def slug(s): return re.sub(r'[^a-z0-9]+','_',str(s).lower()).strip('_')
 def source(): return {'source_id':'user_provided','evidence_type':'explicit_user_statement','evidence_location':'Phase 7 profile update request'}
 def prov(): return {'source_id':'user_provided','evidence_type':'explicit_user_statement','evidence_location':'Phase 7 profile update request','claims_supported':['user-provided update']}
-def all_data(root=None): return {n:load(n,root) for n in CATEGORIES}
+def all_data(root=None):
+    return _storage_adapter(root).load_profile_documents()
 
 def project_records(data): return data['projects'].get('projects',[])
 def skill_groups(data): return data['skills'].get('skill_groups',[])
@@ -397,7 +415,7 @@ def plan_profile_edit(updates=None,root=None,additions=None):
     plan['additions']=copy.deepcopy(additions)
     return plan
 
-def apply_plan(plan,root=None,confirm=False,confirm_delete=False,pin=None):
+def apply_plan(plan,root=None,confirm=False,confirm_delete=False,pin=None,invalidate_applications=True):
     if not confirm: raise PermissionError('Persistent profile writes require explicit --confirm.')
     verify_profile_pin(pin)
     if plan.get('decision')!='planned' or not plan.get('actions'): raise ValueError('Only a non-ambiguous planned update can be applied.')
@@ -462,6 +480,8 @@ def apply_plan(plan,root=None,confirm=False,confirm_delete=False,pin=None):
         key=n[:-5] if n.endswith('.json') else n
         dump(key,data[key],root,pin=pin)
     dump('master_profile',data['master_profile'],root,pin=pin)
+    if invalidate_applications:
+        invalidate_approved_applications(plan['actions'],root)
     return sorted(set(changed))
 
 def sync_master(data):
@@ -490,10 +510,11 @@ def apply_profile_edit_plan(plan,root=None,confirm=False,pin=None):
     paths={name:storage_root(root)/'data'/f'{name}.json' for name in names}
     originals={path:path.read_bytes() for path in paths.values()}
     try:
-        changed=apply_plan(current,root,confirm=True,pin=pin)
+        changed=apply_plan(current,root,confirm=True,pin=pin,invalidate_applications=False)
         validation=validate_data(root)
         if not validation.get('valid'):
             raise ValueError('Profile validation failed: '+', '.join(validation.get('errors',[])))
+        invalidate_approved_applications(current['actions'],root)
     except ProfilePinVerificationError:
         raise
     except Exception:

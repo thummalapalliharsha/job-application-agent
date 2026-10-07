@@ -516,5 +516,87 @@ Bachelor's degree in Computer Science.
             self.assertNotIn(unsupported, skill_section)
 
 
+class ManualProjectRelevanceValidationTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.profile = rg.profile()
+        cls.project_ids = [
+            "project_student_performance_rag",
+            "project_text_to_sql_project",
+            "project_smartfraud_classifier",
+        ]
+        cls.jd = (
+            "Junior Generative AI RAG Engineer\n"
+            "Required Skills:\n- Python\n- RAG\n- SQL\n- Text-to-SQL\n"
+            "Responsibilities:\n- Build retrieval and natural language query systems."
+        )
+
+    def manual_plan(self, project_ids=None):
+        project_ids=project_ids or self.project_ids
+        plan=planner.plan_resume(self.jd,copy.deepcopy(self.profile))
+        scored,_=planner.project_matches(plan["jd_analysis"],self.profile,plan["candidate_matching"])
+        scored_by_id={item["record_id"]:item for item in scored}
+        canonical={item["record_id"]:item for item in self.profile["projects"]["projects"]}
+        selected=[scored_by_id.get(record_id,{**canonical[record_id],"matched_requirements":[]})
+                  for record_id in project_ids]
+        resume_plan=plan["resume_plan"]
+        resume_plan["projects_to_include"]=selected
+        resume_plan["project_selection_source"]="manual"
+        resume_plan["project_selection_record_ids"]=list(project_ids)
+        plan["project_selection_source"]="manual"
+        plan["approval_checkpoint"]["resume_generation_allowed"]=True
+        return plan
+
+    def test_automatic_jd_relevant_projects_still_require_and_pass_relevance(self):
+        plan=planner.plan_resume(self.jd,copy.deepcopy(self.profile))
+        selected=rg.effective_selection(plan,self.profile)
+        relevance=rg.validate_project_relevance(plan,self.profile,selected)
+
+        self.assertFalse(relevance["manual_selection_confirmed"])
+        self.assertTrue(relevance["passed"],relevance)
+        self.assertEqual(relevance["unmatched_selected_record_ids"],[])
+
+    def test_confirmed_manual_eligible_unmatched_project_does_not_fail_relevance(self):
+        plan=self.manual_plan()
+        selected=rg.effective_selection(plan,self.profile)
+        relevance=rg.validate_project_relevance(plan,self.profile,selected)
+
+        self.assertTrue(relevance["manual_selection_confirmed"],relevance)
+        self.assertTrue(relevance["passed"],relevance)
+        self.assertEqual(relevance["unmatched_selected_record_ids"],["project_smartfraud_classifier"])
+
+    def test_generation_preserves_exact_confirmed_manual_project_order(self):
+        plan=self.manual_plan()
+        expected_names=[item["name"] for item in plan["resume_plan"]["projects_to_include"]]
+        with tempfile.TemporaryDirectory(prefix="manual-project-order-") as temporary:
+            output=Path(temporary)/"working.docx"
+            included,_,_,_=rg.generate(plan,self.profile,output)
+            paragraphs=[paragraph.text.strip() for paragraph in Document(output).paragraphs]
+            project_start=paragraphs.index("PROJECTS")
+            project_end=next(index for index in range(project_start+1,len(paragraphs))
+                             if paragraphs[index] in {"RELEVANT EXPERIENCE","EDUCATION"})
+            rendered_names=[name for name in paragraphs[project_start+1:project_end] if name in expected_names]
+            report=rg.validate(output,plan,self.profile,Path(temporary)/"validation.json")
+
+        self.assertEqual([item["record_id"] for item in included],self.project_ids)
+        self.assertEqual(rendered_names,expected_names)
+        self.assertTrue(report["project_order_validation"]["passed"],report["project_order_validation"])
+        self.assertTrue(report["project_relevance_validation"]["passed"],report["project_relevance_validation"])
+        self.assertEqual(report["project_relevance_validation"]["unmatched_selected_record_ids"],
+                         ["project_smartfraud_classifier"])
+
+    def test_manual_flag_does_not_allow_noneligible_project(self):
+        ineligible=next(item for item in self.profile["projects"]["projects"]
+                        if item.get("status")!="verified" or item.get("project_status")!="completed")
+        project_ids=[self.project_ids[0],self.project_ids[1],ineligible["record_id"]]
+        plan=self.manual_plan(project_ids)
+        selected=rg.effective_selection(plan,self.profile)
+        relevance=rg.validate_project_relevance(plan,self.profile,selected)
+
+        self.assertFalse(relevance["manual_selection_confirmed"])
+        self.assertFalse(relevance["passed"],relevance)
+        self.assertIn(ineligible["record_id"],relevance["ineligible_selected_record_ids"])
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

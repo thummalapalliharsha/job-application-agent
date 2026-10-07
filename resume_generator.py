@@ -188,6 +188,53 @@ def effective_selection(plan,prof):
         if x.get('record_id') in pmap and eligible(pmap[x['record_id']]): ordered.append(pmap[x['record_id']])
     return ordered[:3]
 
+def validate_project_order(docx,selected):
+    expected=[project.get('name') for project in selected]
+    paragraphs=[paragraph.text.strip() for paragraph in Document(docx).paragraphs if paragraph.text.strip()]
+    project_start=next((index for index,line in enumerate(paragraphs) if line=='PROJECTS'),-1)
+    if project_start<0:
+        return {'passed':not expected,'expected_order':expected,'rendered_order':[],'positions':[-1 for _ in expected]}
+    section_end=next((index for index in range(project_start+1,len(paragraphs))
+                      if paragraphs[index] in {'RELEVANT EXPERIENCE','EDUCATION','CERTIFICATIONS'}),len(paragraphs))
+    project_lines=paragraphs[project_start+1:section_end]
+    expected_names=set(expected)
+    rendered=[line for line in project_lines if line in expected_names]
+    positions=[next((index for index,line in enumerate(project_lines) if line==name),-1) for name in expected]
+    return {'passed':rendered==expected,'expected_order':expected,'rendered_order':rendered,'positions':positions}
+
+
+def validate_project_relevance(plan,prof,selected):
+    resume_plan=plan.get('resume_plan',{})
+    project_records=resume_plan.get('projects_to_include',[])
+    project_ids=[item.get('record_id') if isinstance(item,dict) else None for item in project_records]
+    selected_ids=[item.get('record_id') for item in selected]
+    project_by_id={item.get('record_id'):item for item in project_records if isinstance(item,dict)}
+    unmatched=[record_id for record_id in selected_ids
+               if not project_by_id.get(record_id,{}).get('matched_requirements')]
+    manual_ids=resume_plan.get('project_selection_record_ids')
+    manual_source=(plan.get('project_selection_source')=='manual'
+                   or resume_plan.get('project_selection_source')=='manual')
+    eligible_ids={item.get('record_id') for item in prof.get('projects',{}).get('projects',[])
+                  if item.get('record_id') and item.get('project_status')=='completed'
+                  and item.get('status')=='verified'}
+    valid_manual_ids=(isinstance(manual_ids,list) and bool(manual_ids)
+                      and all(isinstance(record_id,str) and record_id for record_id in manual_ids)
+                      and len(manual_ids)<=3 and len(manual_ids)==len(set(manual_ids)))
+    ineligible_manual_ids=([record_id for record_id in manual_ids if record_id not in eligible_ids]
+                           if valid_manual_ids else list(manual_ids or []))
+    manual_confirmed=(manual_source
+                      and plan.get('project_selection_source')=='manual'
+                      and resume_plan.get('project_selection_source')=='manual'
+                      and plan.get('approval_checkpoint',{}).get('resume_generation_allowed') is True
+                      and valid_manual_ids
+                      and not ineligible_manual_ids
+                      and manual_ids==project_ids==selected_ids)
+    passed=(bool(manual_confirmed) if manual_source else not unmatched)
+    return {'passed':passed,'selected_record_ids':selected_ids,
+            'unmatched_selected_record_ids':unmatched,
+            'manual_selection_confirmed':bool(manual_confirmed),
+            'ineligible_selected_record_ids':ineligible_manual_ids if manual_source else []}
+
 def effective_experience(plan,prof,projects):
     emap={e['record_id']:e for e in prof['experience']['experiences']}
     return [emap[x['record_id']] for x in plan.get('resume_plan',{}).get('experience_to_include',[]) if x.get('record_id') in emap]
@@ -495,6 +542,7 @@ def validate(docx,plan,prof,output_report):
     skill_start=next((i for i,l in enumerate(lines) if l.strip().upper()=='SKILLS'),-1); skill_end=next((i for i,l in enumerate(lines[skill_start+1:],skill_start+1) if l.strip().upper() in headings),len(lines)); skill_lines=lines[skill_start+1:skill_end] if skill_start>=0 else []
     category_count=sum(1 for line in skill_lines if re.match(r'^[A-Za-z][A-Za-z /&-]*:\s+\S',line))
     contact_text=text.lower(); missing_contacts=[x for x in required_contacts if x.lower() not in contact_text]; report={'generated_at':datetime.now(timezone.utc).isoformat(),'jd_role':plan.get('jd_analysis',{}).get('job_title'),'output_filename':docx.name,'page_count':pages,'page_count_exactly_one':pages==1,'selected_projects':pnames,'selected_skills':names,'selected_certifications':[c['name'] for c in certs],'selected_experience':[e['record_id'] for e in exps],'experience_included':bool(exps),'summary_line_count':summary_lines,'skill_category_count':category_count,'contact_validation':{'passed':not missing_contacts,'missing':missing_contacts},'hyperlink_validation':{'passed':all(x in targets_l for x in ['linkedin.com/in/thummalapalliharsha','github.com/thummalapalliharsha','mailto:','tel:']),'targets':targets},'ats_validation':{'docx_valid':zipfile.is_zipfile(docx),'text_extractable':bool(text.strip()),'standard_headings_present':all(x in upper for x in headings),'one_page':pages==1,'single_column':True,'problematic_tables_or_textboxes':False,'malformed_hyperlinks':False},'placeholder_validation':{'passed':not unresolved,'unresolved_placeholders':unresolved},'duplicate_template_validation':{'passed':all(sum(1 for l in lines if l.strip().upper()==h)<=1 for h in headings),'duplicate_signals':[h for h in headings if sum(1 for l in lines if l.strip().upper()==h)>1]},'summary_validation':{'passed':summary_lines>=4,'line_count':summary_lines},'skills_validation':{'passed':category_count>=2,'category_count':category_count},'certification_validation':{'passed':len(certs)>=4,'count':len(certs)},'education_validation':{'passed':education_records_included,'all_records_included':education_records_included},'project_order_validation':{'passed':all(x>=0 for x in positions) and positions==sorted(positions),'expected_order':expected_order,'positions':positions},'content_density':{'text_characters':len(text.strip()),'meaningful_bullet_count':sum(1 for l in lines if l.strip().startswith('•')),'warning':len(text.strip())<1800},'truth_provenance_validation':{'all_projects_completed':all(p.get('project_status')=='completed' for p in selected),'unknown_or_planned_excluded':not any(p.get('project_status') in {'unknown','idea','planned','in_progress'} for p in selected),'imdb_not_experience':not any(e.get('record_id')=='project_imdb_movie_analysis' for e in exps),'ediglobe_eduskills_separate':True,'unsupported_claims_detected':[]},'warnings_issues':[]}
+    report['project_order_validation']=validate_project_order(docx,selected)
     report['summary_validation']={'passed':3<=summary_lines<=5,'line_count':summary_lines}
     doc_paragraphs=[p.text.strip() for p in Document(docx).paragraphs if p.text.strip()]; doc_summary_start=next((i for i,l in enumerate(doc_paragraphs) if l=='PROFESSIONAL SUMMARY'),-1); doc_summary_end=next((i for i,l in enumerate(doc_paragraphs[doc_summary_start+1:],doc_summary_start+1) if l in headings[1:]),len(doc_paragraphs)); summary_paragraphs=doc_paragraphs[doc_summary_start+1:doc_summary_end] if doc_summary_start>=0 else []
     project_links=[p.get('github_url') for p in selected if isinstance(p.get('github_url'),str) and p.get('github_url').startswith('https://github.com/')]
@@ -562,10 +610,7 @@ def validate(docx,plan,prof,output_report):
     summary_has_skill=not names or any(value.casefold() in summary_text.casefold() for value in names)
     summary_has_evidence=any(project.get('name','').casefold() in summary_text.casefold() for project in selected) or any(experience.get('organization','').casefold() in summary_text.casefold() for experience in exps)
     report['summary_quality_validation']={'passed':3<=len(summary_sentences)<=5 and bool(role) and role.casefold() in summary_text.casefold() and summary_has_skill and summary_has_evidence,'sentence_count':len(summary_sentences),'role_alignment':bool(role) and role.casefold() in summary_text.casefold(),'verified_skill_alignment':summary_has_skill,'candidate_evidence_present':summary_has_evidence,'summary_text':summary_text}
-    planned_project_ids=[project.get('record_id') for project in selected]
-    project_matches_by_id={item.get('record_id'):item for item in plan.get('resume_plan',{}).get('projects_to_include',[])}
-    irrelevant_projects=[record_id for record_id in planned_project_ids if not project_matches_by_id.get(record_id,{}).get('matched_requirements')]
-    report['project_relevance_validation']={'passed':not irrelevant_projects,'selected_record_ids':planned_project_ids,'unmatched_selected_record_ids':irrelevant_projects}
+    report['project_relevance_validation']=validate_project_relevance(plan,prof,selected)
     planned_experience_ids=[item.get('record_id') for item in exps]
     relevant_experience_ids={item.get('record_id') for item in plan.get('resume_plan',{}).get('experience_decisions',[]) if item.get('decision')=='INCLUDE'}
     report['experience_relevance_validation']={'passed':set(planned_experience_ids)<=relevant_experience_ids,'selected_record_ids':planned_experience_ids,'planner_relevant_record_ids':sorted(relevant_experience_ids)}
