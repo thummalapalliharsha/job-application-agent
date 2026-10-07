@@ -1,7 +1,9 @@
 import json
+import os
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from postgres_storage_adapter import PostgresStorageAdapter
 from storage_adapter import FileStorageAdapter, StorageAdapter
@@ -84,39 +86,33 @@ class StorageAdapterContractTests(unittest.TestCase):
             adapter = FileStorageAdapter(root=tmpdir)
             self.assertEqual(adapter.load_application_store(), {"applications": []})
 
-    def test_postgres_adapter_preserves_nested_json_on_write_then_read(self):
-        with tempfile.TemporaryDirectory() as tmpdir:
+    def test_postgres_adapter_preserves_nested_json_normalization(self):
+        payload = {
+            "master_profile": {
+                "profile": {"name": "Jane Doe", "links": {"linkedin": "linkedin.com/in/jane"}},
+                "source_documents": [{"source_id": "resume", "source_name": "resume.pdf"}],
+                "record_indexes": {"project_ids": ["project_42"]},
+                "conflicts_requiring_review": [],
+            },
+            "skills": {"skill_groups": [{"category": "tools_and_platforms", "skills": [{"name": "Git"}]}]},
+            "projects": {"projects": [{"record_id": "project_42", "name": "RAG Demo", "technologies": ["Python", "OpenAI"]}]},
+            "experience": {"experiences": []},
+            "certifications": {"certifications": []},
+            "education": {"education": []},
+            "achievements": {"achievements": []},
+        }
+        loaded = PostgresStorageAdapter.normalize_profile_documents(payload)
+        self.assertEqual(loaded, payload)
+        self.assertEqual(loaded["master_profile"]["profile"]["links"]["linkedin"], "linkedin.com/in/jane")
+
+    def test_postgres_adapter_fails_closed_when_postgres_is_not_active(self):
+        with tempfile.TemporaryDirectory() as tmpdir, patch.dict(os.environ, {"CAREER_OS_STORAGE_BACKEND": "file"}, clear=False):
             adapter = PostgresStorageAdapter(root=tmpdir)
-            payload = {
-                "master_profile": {
-                    "profile": {"name": "Jane Doe", "links": {"linkedin": "linkedin.com/in/jane"}},
-                    "source_documents": [{"source_id": "resume", "source_name": "resume.pdf"}],
-                    "record_indexes": {"project_ids": ["project_42"]},
-                    "conflicts_requiring_review": [],
-                },
-                "skills": {"skill_groups": [{"category": "tools_and_platforms", "skills": [{"name": "Git"}]}]},
-                "projects": {"projects": [{"record_id": "project_42", "name": "RAG Demo", "technologies": ["Python", "OpenAI"]}]},
-                "experience": {"experiences": []},
-                "certifications": {"certifications": []},
-                "education": {"education": []},
-                "achievements": {"achievements": []},
-            }
-
-            adapter.save_profile_documents(payload)
-            loaded = adapter.load_profile_documents()
-
-            self.assertEqual(loaded, payload)
-            self.assertEqual(loaded["master_profile"]["profile"]["links"]["linkedin"], "linkedin.com/in/jane")
-
-    def test_postgres_adapter_uses_compatibility_fallback_without_inventing_data(self):
-        with tempfile.TemporaryDirectory() as tmpdir:
-            adapter = PostgresStorageAdapter(root=tmpdir)
-            missing_profile = adapter.load_profile_documents()
-            missing_store = adapter.load_application_store()
-
-            self.assertEqual(missing_profile["skills"], {"skill_groups": []})
-            self.assertEqual(missing_store, {"applications": []})
             self.assertFalse(adapter.is_ready())
+            with self.assertRaises(RuntimeError):
+                adapter.load_profile_documents()
+            with self.assertRaises(RuntimeError):
+                adapter.load_application_store()
 
 
 if __name__ == "__main__":

@@ -49,6 +49,12 @@ class PostgresClientTests(unittest.TestCase):
                 self.query = query
 
         class DummyConnection:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, exc_type, exc, tb):
+                return False
+
             def cursor(self):
                 return DummyCursor()
 

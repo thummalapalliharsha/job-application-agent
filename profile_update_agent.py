@@ -476,10 +476,7 @@ def apply_plan(plan,root=None,confirm=False,confirm_delete=False,pin=None,invali
                 data[category].setdefault(PROFILE_ADD_COLLECTIONS[category],[]).append(record)
             changed.append(category+'.json')
     sync_master(data)
-    for n in sorted(set(changed)):
-        key=n[:-5] if n.endswith('.json') else n
-        dump(key,data[key],root,pin=pin)
-    dump('master_profile',data['master_profile'],root,pin=pin)
+    _storage_adapter(root).save_profile_documents(data)
     if invalidate_applications:
         invalidate_approved_applications(plan['actions'],root)
     return sorted(set(changed))

@@ -26,6 +26,13 @@ class PostgresStorageAdapter(StorageAdapter):
     """
 
     backend_name = "postgres"
+    _NORMALIZED_PROFILE_TABLES = (
+        ("projects", "projects", "project_records", "record_id"),
+        ("skills", "skill_groups", "skill_groups", "category"),
+        ("experience", "experiences", "experience_records", "record_id"),
+        ("education", "education", "education_records", "record_id"),
+        ("certifications", "certifications", "certification_records", "record_id"),
+    )
 
     def __init__(self, root: str | Path | None = None, config: PostgresConfig | None = None):
         super().__init__(root=root)
@@ -89,22 +96,62 @@ class PostgresStorageAdapter(StorageAdapter):
             return copy.deepcopy(EMPTY_PROFILE_DOCUMENTS.get(scope, {}))
         return json.loads(row[0]) if isinstance(row[0], str) else row[0]
 
+    @staticmethod
+    def _decode_payload(payload: Any) -> dict[str, Any] | None:
+        decoded = json.loads(payload) if isinstance(payload, str) else payload
+        return decoded if isinstance(decoded, dict) else None
+
     def load_profile_documents(self) -> dict[str, Any]:
+        self._ensure_ready()
+        connection = self.client.connect()
         result: dict[str, Any] = {}
-        for category in PROFILE_DOCUMENT_CATEGORIES:
-            result[category] = self._fetch_json_rows(category)
+        with connection.transaction():
+            with connection.cursor() as cursor:
+                for scope in ("master_profile", "achievements"):
+                    cursor.execute(
+                        "SELECT payload_json FROM profile_documents WHERE scope = %s",
+                        (scope,),
+                    )
+                    row = cursor.fetchone()
+                    result[scope] = self._decode_payload(row[0]) if row else None
+
+                for category, collection, table, key_column in self._NORMALIZED_PROFILE_TABLES:
+                    cursor.execute(
+                        f"SELECT {key_column}, payload_json FROM {table} ORDER BY {key_column}"
+                    )
+                    records = []
+                    for record_key, raw_payload in cursor.fetchall():
+                        record = self._decode_payload(raw_payload)
+                        if record is None:
+                            continue
+                        record.setdefault(key_column, record_key)
+                        records.append(record)
+                    result[category] = {collection: records}
         return self.normalize_profile_documents(result)
 
     def save_profile_documents(self, documents: dict[str, Any]) -> None:
         payload = self.normalize_profile_documents(documents)
         self._ensure_ready()
-        with self.client.connect().cursor() as cursor:
-            for category in PROFILE_DOCUMENT_CATEGORIES:
-                cursor.execute(
-                    "INSERT INTO profile_documents (scope, payload_json, updated_at) VALUES (%s, %s, now()) ON CONFLICT (scope) DO UPDATE SET payload_json = EXCLUDED.payload_json, updated_at = now()",
-                    (category, json.dumps(payload[category], ensure_ascii=False, sort_keys=True)),
-                )
-        self.client.connect().commit()
+        connection = self.client.connect()
+        with connection.transaction():
+            with connection.cursor() as cursor:
+                for scope in ("master_profile", "achievements"):
+                    cursor.execute(
+                        "INSERT INTO profile_documents (scope, payload_json, updated_at) VALUES (%s, %s, now()) ON CONFLICT (scope) DO UPDATE SET payload_json = EXCLUDED.payload_json, updated_at = now()",
+                        (scope, json.dumps(payload[scope], ensure_ascii=False, sort_keys=True)),
+                    )
+
+                for category, collection, table, key_column in self._NORMALIZED_PROFILE_TABLES:
+                    for record in payload[category].get(collection, []):
+                        if not isinstance(record, dict):
+                            continue
+                        record_key = record.get(key_column)
+                        if not record_key:
+                            continue
+                        cursor.execute(
+                            f"INSERT INTO {table} ({key_column}, payload_json, updated_at) VALUES (%s, %s, now()) ON CONFLICT ({key_column}) DO UPDATE SET payload_json = EXCLUDED.payload_json, updated_at = now()",
+                            (record_key, json.dumps(record, ensure_ascii=False, sort_keys=True)),
+                        )
 
     def _fetch_application_rows(self) -> list[dict[str, Any]]:
         self._ensure_ready()
