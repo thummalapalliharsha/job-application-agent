@@ -16,7 +16,9 @@ ROOT=Path(__file__).resolve().parent
 DATA=DATA_DIR; TEMPLATE=ROOT/'templates'/'ats_resume_template.docx'
 
 def load_json(path: Path): return json.loads(path.read_text(encoding='utf-8'))
-def profile(): return {n:load_json(DATA/f'{n}.json') for n in ['master_profile','skills','projects','experience','certifications','education','achievements']}
+def profile():
+    import jd_resume_planner as planner
+    return planner.load_profile()
 
 def set_run(run,size=11,bold=False,italic=False):
     run.font.name='Times New Roman'; run._element.get_or_add_rPr().rFonts.set(qn('w:eastAsia'),'Times New Roman'); run.font.size=Pt(size); run.bold=bold; run.italic=italic
@@ -177,9 +179,12 @@ def project_bullets(project,plan=None):
 
 def effective_selection(plan,prof):
     pmap={p['record_id']:p for p in prof['projects']['projects']}
-    def eligible(record): return record.get('project_status')=='completed' and record.get('status')=='verified'
-    explicit_ids=plan.get('resume_plan',{}).get('project_selection_record_ids',[])
-    if plan.get('resume_plan',{}).get('project_selection_source')=='manual' and explicit_ids:
+    resume_plan=plan.get('resume_plan',{})
+    manual_selection=resume_plan.get('project_selection_source')=='manual'
+    eligible_statuses={'verified','candidate_provided'} if manual_selection else {'verified'}
+    def eligible(record): return record.get('project_status')=='completed' and record.get('status') in eligible_statuses
+    explicit_ids=resume_plan.get('project_selection_record_ids',[])
+    if manual_selection and explicit_ids:
         selected=[pmap[x] for x in explicit_ids if x in pmap and eligible(pmap[x])]
         if len(selected)==len(explicit_ids) and len(selected)==len(set(explicit_ids)) and len(selected)<=3:
             return selected
@@ -216,7 +221,7 @@ def validate_project_relevance(plan,prof,selected):
                    or resume_plan.get('project_selection_source')=='manual')
     eligible_ids={item.get('record_id') for item in prof.get('projects',{}).get('projects',[])
                   if item.get('record_id') and item.get('project_status')=='completed'
-                  and item.get('status')=='verified'}
+                  and item.get('status') in {'verified','candidate_provided'}}
     valid_manual_ids=(isinstance(manual_ids,list) and bool(manual_ids)
                       and all(isinstance(record_id,str) and record_id for record_id in manual_ids)
                       and len(manual_ids)<=3 and len(manual_ids)==len(set(manual_ids)))
@@ -462,9 +467,22 @@ def _generate(plan,prof,output):
         if e['record_id']=='education_biher_btech':
             add_line(doc,f"{e['institution']} — {e['degree']}",11,before=1)
             add_line(doc,f"{e['field_of_study']} ({e['start_date']}–{e['end_date']}); {e['grade']}",11)
-        elif e['record_id']=='education_harvest_higher_secondary': line=f"{e['institution']} — Class XII — CBSE ({e['end_date']}); {e['grade']}"
-        else: line=f"{e['institution']} — Class X — CBSE ({e['end_date']}); {e['grade']}"
-        if e['record_id']!='education_biher_btech': add_line(doc,line,11,before=2.5)
+        elif e['record_id']=='education_harvest_higher_secondary':
+            add_line(doc,f"{e['institution']} — Class XII — CBSE ({e['end_date']}); {e['grade']}",11,before=2.5)
+        elif e['record_id']=='education_harvest_secondary':
+            add_line(doc,f"{e['institution']} — Class X — CBSE ({e['end_date']}); {e['grade']}",11,before=2.5)
+        else:
+            heading=' — '.join(value for value in (e.get('institution'),e.get('degree')) if value)
+            if heading:
+                add_line(doc,heading,11,before=2.5)
+            details=[]
+            if e.get('field_of_study'): details.append(e['field_of_study'])
+            dates='–'.join(display_date(e.get(field)) for field in ('start_date','end_date') if e.get(field))
+            if dates: details.append(dates)
+            if e.get('location'): details.append(e['location'])
+            if e.get('grade'): details.append(e['grade'])
+            if e.get('coursework'): details.append('Coursework: '+', '.join(e['coursework']))
+            if details: add_line(doc,'; '.join(details),11)
     certs=effective_certs(plan,prof); section(doc,'Certifications')
     for c in certs: add_bullet(doc,f"{c['name']} — {c['issuer']} ({display_date(c.get('issue_date'))})",11,after=.5)
     for para in doc.paragraphs:
@@ -609,7 +627,9 @@ def validate(docx,plan,prof,output_report):
     summary_sentences=[value.strip() for value in re.split(r'(?<=[.!?])\s+',summary_text) if value.strip()]
     summary_has_skill=not names or any(value.casefold() in summary_text.casefold() for value in names)
     summary_has_evidence=any(project.get('name','').casefold() in summary_text.casefold() for project in selected) or any(experience.get('organization','').casefold() in summary_text.casefold() for experience in exps)
-    report['summary_quality_validation']={'passed':3<=len(summary_sentences)<=5 and bool(role) and role.casefold() in summary_text.casefold() and summary_has_skill and summary_has_evidence,'sentence_count':len(summary_sentences),'role_alignment':bool(role) and role.casefold() in summary_text.casefold(),'verified_skill_alignment':summary_has_skill,'candidate_evidence_present':summary_has_evidence,'summary_text':summary_text}
+    expected_role=planner.infer_target_role(str(plan.get('source_jd_text','')))
+    role_alignment=bool(expected_role) and role.casefold()==expected_role.casefold() and expected_role.casefold() in summary_text.casefold()
+    report['summary_quality_validation']={'passed':3<=len(summary_sentences)<=5 and role_alignment and summary_has_skill and summary_has_evidence,'sentence_count':len(summary_sentences),'role_alignment':role_alignment,'expected_role':expected_role,'planned_role':role,'verified_skill_alignment':summary_has_skill,'candidate_evidence_present':summary_has_evidence,'summary_text':summary_text}
     report['project_relevance_validation']=validate_project_relevance(plan,prof,selected)
     planned_experience_ids=[item.get('record_id') for item in exps]
     relevant_experience_ids={item.get('record_id') for item in plan.get('resume_plan',{}).get('experience_decisions',[]) if item.get('decision')=='INCLUDE'}

@@ -75,10 +75,9 @@ class LocalArtifactRoundtripTests(unittest.TestCase):
         created = aa.create_application("Local Artifact Co", "Junior Business Data Analyst", "https://example.com/jobs/local-artifact", jd)
         self.assertEqual(created["decision"], "created", created)
         aid = created["application"]["application_id"]
-
-        app = aa.get_app(aid)[0]
-        app["resume_generation_allowed"] = True
-        aa.save_store({"applications": [app]})
+        plan = api.analyze_resume_plan({"application_id": aid, "job_description": jd})
+        approved = aa.approve_resume(aid, plan)
+        self.assertEqual(approved["decision"], "approved", approved)
 
         working = api.generate_working_resume(aid)
         self.assertEqual(working["decision"], "created", working)
@@ -140,9 +139,9 @@ class LocalArtifactRoundtripTests(unittest.TestCase):
         )
         created = aa.create_application("Stale Artifact Co", "Junior Data Analyst", "https://example.com/jobs/stale-artifact", jd)
         aid = created["application"]["application_id"]
-        app = aa.get_app(aid)[0]
-        app["resume_generation_allowed"] = True
-        aa.save_store({"applications": [app]})
+        plan = api.analyze_resume_plan({"application_id": aid, "job_description": jd})
+        approved = aa.approve_resume(aid, plan)
+        self.assertEqual(approved["decision"], "approved", approved)
 
         working = api.generate_working_resume(aid)
         self.assertEqual(working["decision"], "created", working)

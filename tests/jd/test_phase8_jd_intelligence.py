@@ -20,6 +20,14 @@ def main():
  identity=p.extract_identity(raw); inferred=p.infer_target_role(raw); analyzed=p.analyze_jd(raw)
  expected_role='Junior Machine Learning Engineer'
  r.append(check('Job Description heading is not treated as the role',identity['job_title']==expected_role and inferred==expected_role and analyzed['job_title']==expected_role and analyzed['role_function']==expected_role,str(analyzed)))
+ raw='About the job\nJob Title: Generative AI Engineer\nRequired Skills:\nPython'
+ identity=p.extract_identity(raw); inferred=p.infer_target_role(raw); analyzed=p.analyze_jd(raw)
+ expected_role='Generative AI Engineer'
+ r.append(check('About the job heading is skipped before role extraction',identity['job_title']==expected_role and inferred==expected_role and analyzed['job_title']==expected_role and analyzed['role_function']==expected_role,str(analyzed)))
+ raw='Job Title: Generative AI Engineer\nRequired Skills:\nPython'
+ identity=p.extract_identity(raw); inferred=p.infer_target_role(raw); analyzed=p.analyze_jd(raw)
+ expected_role='Generative AI Engineer'
+ r.append(check('Explicit Job Title label is removed before role extraction',identity['job_title']==expected_role and inferred==expected_role and analyzed['job_title']==expected_role and analyzed['role_function']==expected_role,str(analyzed)))
  headline='Software Engineer – Python & SQL, TechNova Solutions, Hyderabad, fresher/0-1'
  expected_role='Software Engineer'
  r.append(check('Headline metadata is excluded from the resolved role',p.extract_identity(headline)['job_title']==expected_role and p.infer_target_role(headline)==expected_role and p.analyze_jd(headline)['job_title']==expected_role))

@@ -1066,29 +1066,11 @@ def generate_working_resume(aid):
         return {"decision": "approval_required", "message": "Approve the Resume Plan in JD Intelligence before generating a resume."}
 
     plan_path = resolve_ref(app.get("phase8_plan_reference"), root=ROOT)
-    missing_plan = not plan_path or not plan_path.exists()
-    if missing_plan:
-        jd_text = str(app.get("job_description_text") or "").strip()
-        if not jd_text:
-            return {"decision": "error", "message": "The approved Resume Plan could not be found and no durable JD text is available to reconstruct it."}
-
-        plan = planner.plan_resume(jd_text, planner.load_profile())
-    else:
-        plan = json.loads(plan_path.read_text(encoding="utf-8"))
-
-    if missing_plan or plan.get("approval_checkpoint", {}).get("resume_generation_allowed") is not True:
-        plan.setdefault("approval_checkpoint", {})["resume_generation_allowed"] = True
-        plan_payload = json.dumps(plan, indent=2, ensure_ascii=False) + "\n"
-        plan_digest = hashlib.sha256(plan_payload.encode("utf-8")).hexdigest()[:16]
-        plan_path = aa.REPORTS / f"{aid}_phase8_plan_{plan_digest}.json"
-        plan_path.parent.mkdir(parents=True, exist_ok=True)
-        if not plan_path.exists():
-            plan_path.write_text(plan_payload, encoding="utf-8")
-
-        store = aa.load_store()
-        target = next(item for item in store["applications"] if item.get("application_id") == aid)
-        target["phase8_plan_reference"] = aa.storage_reference(plan_path, root=aa.ROOT)
-        aa.save_store(store)
+    if not plan_path or not plan_path.is_file():
+        return {"decision": "approval_required", "message": "The approved Resume Plan artifact is missing. Re-analyze and approve the current plan before generating a resume."}
+    plan = json.loads(plan_path.read_text(encoding="utf-8"))
+    if plan.get("approval_checkpoint", {}).get("resume_generation_allowed") is not True:
+        return {"decision": "approval_required", "message": "The stored Resume Plan is not approved. Re-analyze and approve the current plan before generating a resume."}
 
     profile = rg.profile()
     output = aa.RESUMES / f"{aa.slug(app.get('company_name') or 'company')}_{aa.slug(app.get('job_title') or 'role')}_{aid}_Working.docx"

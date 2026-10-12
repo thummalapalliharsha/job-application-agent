@@ -263,7 +263,7 @@ def apply_persisted_project_selection(plan,app,profile):
  scored,_=project_matches(plan.get('jd_analysis',{}),profile,plan.get('candidate_matching',[]))
  scored_by_id={item.get('record_id'):item for item in scored}
  canonical={item.get('record_id'):item for item in profile.get('projects',{}).get('projects',[])
-            if item.get('project_status')=='completed' and item.get('status')=='verified'}
+            if item.get('project_status')=='completed' and item.get('status') in {'verified','candidate_provided'}}
  if any(record_id not in canonical for record_id in app_ids):
   raise ValueError('The confirmed selection includes a project that is no longer eligible.')
  projects=[]

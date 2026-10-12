@@ -210,6 +210,62 @@ class ReviewedPlanLifecycleTests(unittest.TestCase):
         self.assertEqual(self.old_final_docx.read_bytes(), b"historical-final-docx")
         self.assertEqual(self.old_final_pdf.read_bytes(), b"historical-final-pdf")
 
+    def test_generation_uses_configured_profile_source_when_local_profile_differs(self):
+        plan = self.reviewed_plan()
+        approval = aa.approve_resume(self.aid, plan)
+        self.assertEqual(approval["decision"], "approved", approval)
+
+        configured_profile = copy.deepcopy(self.profile)
+        configured_profile["projects"]["projects"][0]["purpose"] = "Configured-adapter profile value"
+        captured = {}
+
+        def fake_generate(passed_plan, passed_profile, output):
+            captured["plan"] = copy.deepcopy(passed_plan)
+            captured["profile"] = copy.deepcopy(passed_profile)
+            Path(output).write_bytes(b"generated-from-configured-profile")
+
+        def fake_convert(docx):
+            pdf = Path(docx).with_suffix(".pdf")
+            pdf.write_bytes(b"pdf-for-" + Path(docx).read_bytes())
+            return pdf
+
+        with patch.object(planner, "load_profile", return_value=configured_profile) as configured_load, \
+             patch.object(rg, "load_json", side_effect=AssertionError("resume generation must not read profile JSON files")), \
+             patch.object(rg, "generate", side_effect=fake_generate), \
+             patch.object(rg, "validate", return_value={"page_count": 1, "final_status": "PASS"}), \
+             patch.object(api, "convert_pdf", side_effect=fake_convert):
+            result = api.generate_working_resume(self.aid)
+
+        self.assertEqual(result["decision"], "created", result)
+        self.assertEqual(captured["profile"]["projects"]["projects"][0]["purpose"], "Configured-adapter profile value")
+        configured_load.assert_called_once_with()
+
+    def test_generation_fails_closed_when_approved_manual_plan_artifact_is_missing(self):
+        plan = self.reviewed_plan()
+        approval = aa.approve_resume(self.aid, plan)
+        self.assertEqual(approval["decision"], "approved", approval)
+
+        eligible_ids = [
+            item["record_id"] for item in self.profile["projects"]["projects"]
+            if item.get("project_status") == "completed" and item.get("status") == "verified"
+        ]
+        edit = api.save_resume_edit(self.aid, {"mode": "manual", "record_ids": eligible_ids[:2]})
+        self.assertEqual(edit["decision"], "saved", edit)
+        reviewed = api.analyze_resume_plan({"application_id": self.aid, "job_description": self.jd})
+        reapproved = aa.approve_resume(self.aid, reviewed)
+        self.assertEqual(reapproved["decision"], "approved", reapproved)
+
+        approved_app = aa.get_app(self.aid)[0]
+        approved_reference = approved_app["phase8_plan_reference"]
+        (self.root / approved_reference).unlink()
+        with patch.object(rg, "generate") as generate:
+            result = api.generate_working_resume(self.aid)
+
+        self.assertEqual(result["decision"], "approval_required")
+        self.assertIn("artifact is missing", result["message"])
+        self.assertEqual(aa.get_app(self.aid)[0]["phase8_plan_reference"], approved_reference)
+        generate.assert_not_called()
+
     def test_manual_project_edit_evidence_map_approval_and_generation_use_confirmed_order(self):
         self.jd = (
             "Junior Business Data Analyst\n"
@@ -217,6 +273,25 @@ class ReviewedPlanLifecycleTests(unittest.TestCase):
             "- Data Preprocessing\n- Data Visualization\n- Reporting\n- Customer Segmentation\n"
             "- Clustering Evaluation\nResponsibilities:\n- Analyze data and prepare reports."
         )
+        candidate_id = "project_completed_candidate_manual"
+        candidate_project = {
+            "record_id": candidate_id,
+            "status": "candidate_provided",
+            "project_status": "completed",
+            "github_availability": "github_pending",
+            "name": "Completed Candidate-Provided Analytics Project",
+            "purpose": "Analyze business data for reporting.",
+            "functionality": ["Preprocessed business data and generated analysis outputs."],
+            "technologies": ["Python", "Pandas"],
+            "demonstrated_skills": ["data preprocessing", "reporting"],
+            "review_flags": ["Candidate-provided completion details are not independently verified."],
+            "selection_metadata": {"requires_review_before_claim": True},
+        }
+        self.profile["projects"]["projects"].append(candidate_project)
+        projects_path = self.data / "projects.json"
+        projects_document = json.loads(projects_path.read_text(encoding="utf-8"))
+        projects_document["projects"].append(candidate_project)
+        projects_path.write_text(json.dumps(projects_document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         created = aa.create_application(
             "Manual Selection Test", "Junior Business Data Analyst",
             "https://example.test/manual-project-selection", self.jd,
@@ -236,7 +311,7 @@ class ReviewedPlanLifecycleTests(unittest.TestCase):
         )
         alternatives = [item["record_id"] for item in scored if item["record_id"] not in automatic_ids]
         self.assertGreaterEqual(len(alternatives), 2)
-        selected_ids = [alternatives[1], alternatives[0]]
+        selected_ids = [candidate_id, alternatives[1], alternatives[0]]
         edit = api.save_resume_edit(self.aid, {"mode": "manual", "record_ids": selected_ids})
         self.assertEqual(edit["decision"], "saved", edit)
 
@@ -263,17 +338,22 @@ class ReviewedPlanLifecycleTests(unittest.TestCase):
             [item["record_id"] for item in evidence_map["resume_plan"]["projects_to_include"]],
             selected_ids,
         )
+        selected_candidate = evidence_map["resume_plan"]["projects_to_include"][0]
+        self.assertEqual(selected_candidate["status"], "candidate_provided")
+        self.assertEqual(selected_candidate["project_status"], "completed")
 
         approval = aa.approve_resume(self.aid, evidence_map)
         self.assertEqual(approval["decision"], "approved", approval)
         approved_app = aa.get_app(self.aid)[0]
         approved_plan = json.loads((self.root / approved_app["phase8_plan_reference"]).read_text(encoding="utf-8"))
         self.assertEqual(approved_plan["resume_plan"]["project_selection_record_ids"], selected_ids)
+        self.assertEqual(approved_plan["resume_plan"]["projects_to_include"][0]["status"], "candidate_provided")
 
         captured = {}
 
-        def fake_generate(passed_plan, _profile, output):
+        def fake_generate(passed_plan, passed_profile, output):
             captured["plan"] = copy.deepcopy(passed_plan)
+            captured["rendered_selection"] = rg.effective_selection(passed_plan, passed_profile)
             Path(output).write_bytes(b"working-resume-from-manual-project-selection")
 
         def fake_convert(docx):
@@ -281,8 +361,7 @@ class ReviewedPlanLifecycleTests(unittest.TestCase):
             pdf.write_bytes(b"pdf-for-" + Path(docx).read_bytes())
             return pdf
 
-        with patch.object(rg, "profile", return_value=self.profile), \
-             patch.object(rg, "generate", side_effect=fake_generate), \
+        with patch.object(rg, "generate", side_effect=fake_generate), \
              patch.object(rg, "validate", return_value={"page_count": 1, "final_status": "PASS"}), \
              patch.object(api, "convert_pdf", side_effect=fake_convert):
             generated = api.generate_working_resume(self.aid)
@@ -292,6 +371,8 @@ class ReviewedPlanLifecycleTests(unittest.TestCase):
             [item["record_id"] for item in captured["plan"]["resume_plan"]["projects_to_include"]],
             selected_ids,
         )
+        self.assertEqual([item["record_id"] for item in captured["rendered_selection"]], selected_ids)
+        self.assertEqual(captured["rendered_selection"][0]["status"], "candidate_provided")
 
     def test_resume_editor_route_recovers_when_unapproved_plan_reference_is_missing(self):
         self.assertEqual(self.app["current_status"], "awaiting_resume_approval")

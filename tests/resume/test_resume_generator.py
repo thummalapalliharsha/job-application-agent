@@ -117,6 +117,44 @@ class ResumeGeneratorSelectionTests(unittest.TestCase):
         self.assertEqual([item["status"] for item in rendered], ["verified", "candidate_provided"])
         self.assertEqual(rg.effective_certs({"resume_plan": {"certifications_to_include": []}}, profile), [])
 
+    def test_generic_education_record_renders_its_fields_not_class_x(self):
+        profile = copy.deepcopy(self.profile)
+        profile["education"]["education"].append({
+            "record_id": "education_user_added_msc",
+            "institution": "Example Technical University",
+            "degree": "M.Sc.",
+            "field_of_study": "Artificial Intelligence",
+            "start_date": "2025",
+            "end_date": "2027",
+            "location": "Hyderabad",
+            "grade": "Distinction",
+            "coursework": ["Machine Learning", "Information Retrieval"],
+        })
+        plan = {
+            "approval_checkpoint": {"resume_generation_allowed": True},
+            "source_jd_text": "Generative AI Engineer",
+            "jd_analysis": {"job_title": "Generative AI Engineer", "requirements": []},
+            "resume_plan": {
+                "skills_to_include": [],
+                "projects_to_include": [],
+                "experience_to_include": [],
+                "certifications_to_include": [],
+            },
+        }
+
+        with tempfile.TemporaryDirectory(prefix="resume-generic-education-") as temporary:
+            output = Path(temporary) / "resume.docx"
+            rg.generate(plan, profile, output)
+            text = "\n".join(paragraph.text for paragraph in Document(output).paragraphs)
+
+        self.assertIn("Example Technical University — M.Sc.", text)
+        self.assertIn("Artificial Intelligence", text)
+        self.assertIn("2025–2027", text)
+        self.assertIn("Hyderabad", text)
+        self.assertIn("Distinction", text)
+        self.assertIn("Coursework: Machine Learning, Information Retrieval", text)
+        self.assertNotIn("Example Technical University — Class X", text)
+
     def test_role_label_and_summary_are_specific_and_deterministic(self):
         profile = copy.deepcopy(self.profile)
         jd = "Junior Business Data Analyst — Fresher\nRequired Skills:\n- Python\n- SQL\nResponsibilities:\n- Prepare business reports."
@@ -129,6 +167,45 @@ class ResumeGeneratorSelectionTests(unittest.TestCase):
         summary = " ".join(rg.summary_lines(first, profile))
         self.assertIn("Junior Business Data Analyst", summary)
         self.assertFalse(summary.startswith("I am"))
+
+    def test_about_the_job_heading_does_not_become_resume_role(self):
+        profile = copy.deepcopy(self.profile)
+        jd = "About the job\nJob Title: Generative AI Engineer\nRequired Skills:\n- Python\nResponsibilities:\n- Build generative AI applications."
+        plan = planner.plan_resume(jd, profile)
+        summary = " ".join(rg.summary_lines(plan, profile))
+
+        self.assertEqual(plan["jd_analysis"]["job_title"], "Generative AI Engineer")
+        self.assertEqual(plan["jd_analysis"]["target_role"], "Generative AI Engineer")
+        self.assertIn("Generative AI Engineer", summary)
+        self.assertNotIn("About the job", summary)
+
+    def test_job_title_label_does_not_become_resume_role(self):
+        profile = copy.deepcopy(self.profile)
+        jd = "Job Title: Generative AI Engineer\nRequired Skills:\n- Python\nResponsibilities:\n- Build generative AI applications."
+        plan = planner.plan_resume(jd, profile)
+        summary = " ".join(rg.summary_lines(plan, profile))
+
+        self.assertEqual(plan["jd_analysis"]["job_title"], "Generative AI Engineer")
+        self.assertEqual(plan["jd_analysis"]["target_role"], "Generative AI Engineer")
+        self.assertIn("Generative AI Engineer", summary)
+        self.assertNotIn("Job Title:", summary)
+
+    def test_summary_validation_rejects_plan_role_that_disagrees_with_source_jd(self):
+        profile = copy.deepcopy(self.profile)
+        jd = "About the job\nJob Title: Generative AI Engineer\nRequired Skills:\n- Python\nResponsibilities:\n- Build generative AI applications."
+        plan = planner.plan_resume(jd, profile)
+        plan["approval_checkpoint"]["resume_generation_allowed"] = True
+        plan["jd_analysis"]["job_title"] = "About the job"
+        plan["jd_analysis"]["target_role"] = "About the job"
+
+        with tempfile.TemporaryDirectory(prefix="resume-role-validation-") as temporary:
+            output = Path(temporary) / "wrong_role.docx"
+            report_path = Path(temporary) / "validation.json"
+            rg.generate(plan, profile, output)
+            report = rg.validate(output, plan, profile, report_path)
+
+        self.assertFalse(report["summary_quality_validation"]["passed"])
+        self.assertFalse(report["summary_quality_validation"]["role_alignment"])
 
     def test_resume_role_reparses_jd_when_plan_role_is_generic(self):
         profile = copy.deepcopy(self.profile)
