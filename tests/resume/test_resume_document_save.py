@@ -60,13 +60,15 @@ def isolated_real_rex_store(test_case):
                 target.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(source, target)
                 protected[target] = sha(target)
-        original_data_root, original_api_root = aa.DATA, api.ROOT
+        original_data_root, original_assistant_root, original_api_root = aa.DATA, aa.ROOT, api.ROOT
         try:
             aa.DATA = data_dir
+            aa.ROOT = root
             api.ROOT = root
             yield root, protected, store_bytes
         finally:
             aa.DATA = original_data_root
+            aa.ROOT = original_assistant_root
             api.ROOT = original_api_root
 
 
@@ -166,10 +168,13 @@ class ResumeDocumentSaveTests(unittest.TestCase):
             summary["formatting"].update({"space_before_pt": 1.0, "space_after_pt": 2.0})
             summary["blocks"][0]["runs"][0]["text"] = summary["blocks"][0]["runs"][0]["text"].replace("Computer Science", "computer science", 1)
 
-            catalog_entry = next(item for item in loaded.get("skill_catalog", [])
-                                 if item.get("group") == "Databases" and item.get("text") == "MySQL")
             database_group = next(block for block in sections["skills"]["blocks"]
                                   if block.get("type") == "skill_group" and block.get("label") == "Databases")
+            selected_database_ids = {item["id"] for item in database_group["items"]}
+            database_catalog = [item for item in loaded.get("skill_catalog", [])
+                                if item.get("group") == "Databases"]
+            self.assertEqual(len(database_catalog), len({item["id"] for item in database_catalog}))
+            catalog_entry = next(item for item in database_catalog if item["id"] not in selected_database_ids)
             database_group["items"].append({key: json.loads(json.dumps(value)) for key, value in catalog_entry.items() if key != "group"})
             database_group["source_refs"] = rdm._unique_refs(ref for item in database_group["items"] for ref in item["source_refs"])
 
@@ -180,7 +185,9 @@ class ResumeDocumentSaveTests(unittest.TestCase):
             project_title["runs"][0]["text"] = project_title["runs"][0]["text"].swapcase()
             project_title["formatting"].update({"space_before_pt": 2.0, "space_after_pt": 3.0})
             first_bullet = next(block for block in projects["blocks"]
-                                if block["type"] == "project_bullet" and block["project_id"] == project_title["project_id"])
+                                if block["type"] == "project_bullet"
+                                and block["project_id"] == project_title["project_id"]
+                                and "natural-language" in "".join(run["text"] for run in block.get("runs", [])))
             first_bullet["runs"][0]["text"] = first_bullet["runs"][0]["text"].replace("natural-language", "natural language", 1)
             first_bullet["formatting"]["space_after_pt"] = 1.5
 

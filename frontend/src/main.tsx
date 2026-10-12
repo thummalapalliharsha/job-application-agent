@@ -22,6 +22,16 @@ type NoticeKind = 'success' | 'error'
 
 type NoticeSetter = (message: string, kind?: NoticeKind) => void
 
+class ApiError extends Error {
+  constructor(readonly status: number, readonly body: AppRecord | null) {
+    const message = body?.decision === 'duplicate_requires_clarification'
+      ? 'A possible duplicate application was found. No new application was created.'
+      : body?.error || body?.message || `Request failed (${status})`
+    super(String(message))
+    this.name = 'ApiError'
+  }
+}
+
 
 
 function ApplicationInfo({ app, go }: { app?: AppRecord; go: (r: Route) => void }) {
@@ -90,7 +100,10 @@ async function api<T>(path: string, options?: RequestInit): Promise<T> {
 
   const data = await response.json().catch(() => null)
 
-  if (!response.ok) throw new Error(data?.error || data?.message || `Request failed (${response.status})`)
+  if (!response.ok) {
+    const body = data && typeof data === 'object' && !Array.isArray(data) ? data as AppRecord : null
+    throw new ApiError(response.status, body)
+  }
 
   if (data === null) throw new Error('The API returned an invalid JSON response.')
 
@@ -295,12 +308,31 @@ function Reveal({ className, children }: { className: string; children: ReactNod
 function NewApplication({ app, onCreated, setNotice, go }: { app?: AppRecord; onCreated: (id: string) => void; setNotice: NoticeSetter; go: (r: Route) => void }) {
 
   const [form, setForm] = useState({ company: '', title: '', url: '', source: '', location: '', employment_type: '', job_description: '' }); const [busy, setBusy] = useState(false)
+  const [duplicateClarification, setDuplicateClarification] = useState<AppRecord | null>(null)
 
-  const update = (key: string, value: string) => setForm({ ...form, [key]: value })
+  const update = (key: string, value: string) => { setForm({ ...form, [key]: value }); setDuplicateClarification(null) }
 
-  const submit = async () => { setBusy(true); try { const result: any = await api('/api/applications', { method: 'POST', body: JSON.stringify(form) }); if (result.application?.application_id) onCreated(result.application.application_id); else setNotice(result.message || 'Application created', 'success') } catch (e: any) { setNotice(e.message) } finally { setBusy(false) } }
+  const submit = async () => {
+    setBusy(true)
+    setDuplicateClarification(null)
+    try {
+      const result: any = await api('/api/applications', { method: 'POST', body: JSON.stringify(form) })
+      if (result.application?.application_id) onCreated(result.application.application_id)
+      else setNotice(result.message || 'Application created', 'success')
+    } catch (error) {
+      if (error instanceof ApiError && error.body?.decision === 'duplicate_requires_clarification') {
+        setDuplicateClarification(error.body)
+      } else {
+        setNotice(error instanceof Error ? error.message : 'The application could not be created.')
+      }
+    } finally { setBusy(false) }
+  }
 
-  return <Workspace title="START WITH THE ROLE" eyebrow="01 / INTAKE" intro="Give the system the raw material. It will extract the signal without inventing the evidence." workflow="new" go={go}><div className="form-layout"><div><label>JOB DESCRIPTION<textarea value={form.job_description} onChange={(e) => update('job_description', e.target.value)} placeholder="Paste the complete job description here…" /></label></div><div className="form-stack"><label>COMPANY<input value={form.company} onChange={(e) => update('company', e.target.value)} placeholder="Company name" /></label><label>ROLE<input value={form.title} onChange={(e) => update('title', e.target.value)} placeholder="Job title" /></label><label>JOB URL<input value={form.url} onChange={(e) => update('url', e.target.value)} placeholder="https://…" /></label><div className="form-row"><label>LOCATION<input value={form.location} onChange={(e) => update('location', e.target.value)} placeholder="Remote / city" /></label><label>SOURCE<input value={form.source} onChange={(e) => update('source', e.target.value)} placeholder="LinkedIn / referral" /></label></div><button className="button primary wide" onClick={submit} disabled={busy}>{busy ? <LoadingStatus label="ANALYZING…" /> : 'CREATE + ANALYZE ROLE ↗'}</button></div></div></Workspace>
+  const possibleExisting = Array.isArray(duplicateClarification?.possible_existing_applications)
+    ? duplicateClarification.possible_existing_applications as AppRecord[]
+    : []
+
+  return <Workspace title="START WITH THE ROLE" eyebrow="01 / INTAKE" intro="Give the system the raw material. It will extract the signal without inventing the evidence." workflow="new" go={go}><div className="form-layout"><div><label>JOB DESCRIPTION<textarea value={form.job_description} onChange={(e) => update('job_description', e.target.value)} placeholder="Paste the complete job description here…" /></label></div><div className="form-stack"><label>COMPANY<input value={form.company} onChange={(e) => update('company', e.target.value)} placeholder="Company name" /></label><label>ROLE<input value={form.title} onChange={(e) => update('title', e.target.value)} placeholder="Job title" /></label><label>JOB URL<input value={form.url} onChange={(e) => update('url', e.target.value)} placeholder="https://…" /></label><div className="form-row"><label>LOCATION<input value={form.location} onChange={(e) => update('location', e.target.value)} placeholder="Remote / city" /></label><label>SOURCE<input value={form.source} onChange={(e) => update('source', e.target.value)} placeholder="LinkedIn / referral" /></label></div><button className="button primary wide" onClick={submit} disabled={busy}>{busy ? <LoadingStatus label="ANALYZING…" /> : 'CREATE + ANALYZE ROLE ↗'}</button></div></div>{duplicateClarification && <section className="duplicate-review" role="alert"><div><b>Possible duplicate application</b><p>No new application was created. Review a matching record before continuing.</p></div>{possibleExisting.length ? possibleExisting.map((candidate) => <div className="duplicate-candidate" key={candidate.application_id}><div><b>{candidate.company_name || 'Company not listed'}</b><small>{candidate.job_title || 'Role not specified'} · {candidate.current_status || 'Status unavailable'}</small><small>Application ID: {candidate.application_id}</small></div>{candidate.application_id && <button className="button quiet" onClick={() => onCreated(candidate.application_id)}>OPEN EXISTING</button>}</div>) : <p>Existing application details are unavailable. No new application was created.</p>}</section>}</Workspace>
 
 }
 

@@ -91,7 +91,7 @@ SKILL_GROUPS = {
     "Tools / Platforms": ("Git", "GitHub"),
     "Languages": ("English", "Telugu", "Hindi", "Tamil"),
 }
-SKILL_CATALOG_GROUPS = {**SKILL_GROUPS, "Databases": (*SKILL_GROUPS["Databases"], "MySQL")}
+SKILL_CATALOG_GROUPS = SKILL_GROUPS
 SKILL_STATUS_ALLOWLIST = frozenset({"verified"})
 REQUIRED_LANGUAGE_SKILLS = frozenset({"English", "Telugu", "Hindi", "Tamil"})
 

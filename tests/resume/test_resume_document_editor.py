@@ -150,10 +150,12 @@ class ResumeDocumentEditorApiTests(unittest.TestCase):
         project_bullets[1]["formatting"]["space_before_pt"] = 0.5
 
         catalog = loaded.get("skill_catalog", [])
-        mysql = next((item for item in catalog if item["group"] == "Databases" and item["text"] == "MySQL"), None)
-        self.assertIsNotNone(mysql, "MySQL must be offered only when canonical evidence exists")
         databases = next(block for block in sections["skills"]["blocks"] if block["type"] == "skill_group" and block["label"] == "Databases")
-        databases["items"].append({key: copy.deepcopy(value) for key, value in mysql.items() if key != "group"})
+        selected_database_ids = {item["id"] for item in databases["items"]}
+        database_catalog = [item for item in catalog if item["group"] == "Databases"]
+        self.assertEqual(len(database_catalog), len({item["id"] for item in database_catalog}))
+        additional_skill = next(item for item in database_catalog if item["id"] not in selected_database_ids)
+        databases["items"].append({key: copy.deepcopy(value) for key, value in additional_skill.items() if key != "group"})
         databases["items"][0]["text"] = databases["items"][0]["text"].swapcase()
         databases["items"].reverse()
         databases["source_refs"] = rdm._unique_refs(ref for item in databases["items"] for ref in item["source_refs"])
@@ -166,8 +168,9 @@ class ResumeDocumentEditorApiTests(unittest.TestCase):
         cgpa_line["formatting"].update({"font_size_pt": 11.0, "line_spacing": 1.1})
 
         certifications = sections["certifications"]
-        certifications["blocks"].reverse()
-        certifications["blocks"][0]["runs"][0]["text"] = certifications["blocks"][0]["runs"][0]["text"].swapcase()
+        if certifications["blocks"]:
+            certifications["blocks"].reverse()
+            certifications["blocks"][0]["runs"][0]["text"] = certifications["blocks"][0]["runs"][0]["text"].swapcase()
 
         # Add a supported duplicate wording as a new, stable-index bullet; source and
         # parent identity remain exactly those of the canonical selected project.

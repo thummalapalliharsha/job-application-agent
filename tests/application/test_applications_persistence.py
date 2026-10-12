@@ -107,8 +107,12 @@ class ApplicationStorePersistenceTests(unittest.TestCase):
     def test_duplicate_detection_and_ids_are_unchanged(self):
         jd = "Junior RAG Engineer\nRequired Skills:\n- Python\n- RAG\nResponsibilities:\n- Build retrieval pipelines."
         first = aa.create_application("Example AI", "Junior RAG Engineer", "https://example.com/jobs/dup-a", jd)
+        store_before_duplicate = (self.data / "applications.json").read_bytes()
         second = aa.create_application("Example AI", "Junior RAG Engineer", "https://example.com/jobs/dup-a", jd)
         self.assertEqual(second["decision"], "duplicate_requires_clarification")
+        self.assertIs(second["persistent_write_allowed"], False)
+        self.assertEqual(second["possible_existing_applications"][0]["application_id"], first["application"]["application_id"])
+        self.assertEqual((self.data / "applications.json").read_bytes(), store_before_duplicate)
         self.assertEqual(first["application"]["application_id"], aa.load_store()["applications"][0]["application_id"])
         self.assertEqual(first["application"]["application_id"], aa.get_app(first["application"]["application_id"])[0]["application_id"])
 
