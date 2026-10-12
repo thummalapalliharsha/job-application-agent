@@ -291,7 +291,7 @@ def approve_resume(aid,reviewed_plan=None):
     if not jd_text or reviewed_plan.get('source_jd_text','').strip()!=jd_text:
       return {'decision':'plan_jd_mismatch','message':'The reviewed plan does not match this application’s saved job description.'}
     import jd_resume_planner as planner
-    profile=load_profile()
+    profile=planner.load_profile()
     expected=planner.plan_resume(jd_text,profile)
     categories=[group.get('category') for group in profile.get('skills',{}).get('skill_groups',[]) if group.get('category')]
     if reviewed_plan.get('candidate_skill_categories',categories)!=categories:

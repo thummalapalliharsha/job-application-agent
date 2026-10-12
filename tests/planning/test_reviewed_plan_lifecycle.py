@@ -97,6 +97,11 @@ class ReviewedPlanLifecycleTests(unittest.TestCase):
         tampered = copy.deepcopy(plan)
         tampered["resume_plan"]["projects_to_include"] = []
         self.assertEqual(aa.approve_resume(self.aid, tampered)["decision"], "plan_evidence_mismatch")
+        noncanonical_categories = copy.deepcopy(plan)
+        noncanonical_categories["candidate_skill_categories"].append("unknown_category")
+        rejected_categories = aa.approve_resume(self.aid, noncanonical_categories)
+        self.assertEqual(rejected_categories["decision"], "plan_evidence_mismatch")
+        self.assertEqual(rejected_categories["message"], "The reviewed plan contains a non-canonical skill category list.")
         self.assertEqual(aa.get_app(self.aid)[0]["phase8_plan_reference"], old_reference)
 
         approved = aa.approve_resume(self.aid, plan)
@@ -115,6 +120,24 @@ class ReviewedPlanLifecycleTests(unittest.TestCase):
         self.assertEqual(app["selected_experience"], expected_experience)
         self.assertEqual(app["phase8_plan_reference"], approved["phase8_plan_reference"])
         self.assertEqual((self.root / old_reference).read_bytes(), self.old_plan_bytes)
+
+    def test_approval_uses_planner_profile_categories_not_local_file_order(self):
+        local_profile = copy.deepcopy(self.profile)
+        postgres_profile = copy.deepcopy(self.profile)
+        postgres_profile["skills"]["skill_groups"].sort(key=lambda group: group.get("category", ""))
+        local_categories = [group.get("category") for group in local_profile["skills"]["skill_groups"] if group.get("category")]
+        postgres_categories = [group.get("category") for group in postgres_profile["skills"]["skill_groups"] if group.get("category")]
+        self.assertNotEqual(local_categories, postgres_categories)
+
+        plan = planner.plan_resume(self.jd.strip(), self.profile)
+        plan["candidate_skill_categories"] = postgres_categories
+        with patch.object(planner, "load_profile", return_value=postgres_profile) as planner_profile, \
+             patch.object(planner, "plan_resume", return_value=plan), \
+             patch.object(aa, "load_profile", return_value=local_profile):
+            approved = aa.approve_resume(self.aid, plan)
+
+        self.assertEqual(approved["decision"], "approved", approved)
+        planner_profile.assert_called_once_with()
 
     def test_insightedge_selection_is_three_expected_projects_no_experience_four_certs(self):
         insightedge = next(item for item in aa.load_store()["applications"]
