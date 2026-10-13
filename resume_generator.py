@@ -47,7 +47,7 @@ def add_labeled_line(doc,label,value,size=11,label_size=12,before=0,after=0):
     return p
 
 def section(doc,title):
-    p=doc.add_paragraph(); p.paragraph_format.space_before=Pt(4); p.paragraph_format.space_after=Pt(1); p.paragraph_format.line_spacing=1.0
+    p=doc.add_paragraph(); p.paragraph_format.space_before=Pt(1); p.paragraph_format.space_after=Pt(1); p.paragraph_format.line_spacing=1.0
     r=p.add_run(title.upper()); set_run(r,13,True)
     borders=OxmlElement('w:pBdr'); bottom=OxmlElement('w:bottom'); bottom.set(qn('w:val'),'single'); bottom.set(qn('w:sz'),'5'); bottom.set(qn('w:space'),'1'); bottom.set(qn('w:color'),'808080'); borders.append(bottom); p._p.get_or_add_pPr().append(borders)
 

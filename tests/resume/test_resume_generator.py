@@ -440,6 +440,8 @@ class ResumeGeneratorSelectionTests(unittest.TestCase):
 
         self.assertEqual(report["final_status"], "PASS", report.get("warnings_issues"))
         self.assertTrue(report["page_count_exactly_one"])
+        self.assertTrue(report["font_validation"]["passed"])
+        self.assertGreaterEqual(report["font_validation"]["minimum_font_size_pt"], 11)
         self.assertTrue(report["ats_validation"]["text_extractable"])
         self.assertTrue(report["ats_validation"]["single_column"])
         self.assertTrue(report["docx_structure_validation"]["no_tables"])
@@ -454,7 +456,7 @@ class ResumeGeneratorSelectionTests(unittest.TestCase):
 
         paragraph_by_text = {paragraph.text: paragraph for paragraph in paragraphs}
         for heading in ("PROFESSIONAL SUMMARY", "SKILLS", "PROJECTS", "EDUCATION", "CERTIFICATIONS"):
-            self.assertEqual(paragraph_by_text[heading].paragraph_format.space_before.pt, 4)
+            self.assertEqual(paragraph_by_text[heading].paragraph_format.space_before.pt, 1)
         project_titles = [paragraph_by_text[project["name"]] for project in projects]
         self.assertEqual(project_titles[0].paragraph_format.space_before.pt, 1)
         self.assertEqual(project_titles[0].paragraph_format.space_after.pt, .5)
@@ -477,6 +479,11 @@ class ResumeGeneratorSelectionTests(unittest.TestCase):
         certification_start = next(index for index, paragraph in enumerate(paragraphs) if paragraph.text == "CERTIFICATIONS")
         certification_bullets = [paragraph for paragraph in paragraphs[certification_start + 1:] if paragraph.text.startswith("• ")]
         self.assertEqual(len(certification_bullets), 4)
+        final_certification = rg.effective_certs(plan, self.profile)[-1]
+        self.assertIn(
+            f"• {final_certification['name']} — {final_certification['issuer']} ({rg.display_date(final_certification.get('issue_date'))})",
+            rendered_text,
+        )
         self.assertTrue(all(paragraph.paragraph_format.space_after.pt == .5 for paragraph in certification_bullets))
 
     def test_plain_jd_skill_lists_are_classified_by_section(self):

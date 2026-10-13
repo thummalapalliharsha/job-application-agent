@@ -31,6 +31,10 @@ def main():
  headline='Software Engineer – Python & SQL, TechNova Solutions, Hyderabad, fresher/0-1'
  expected_role='Software Engineer'
  r.append(check('Headline metadata is excluded from the resolved role',p.extract_identity(headline)['job_title']==expected_role and p.infer_target_role(headline)==expected_role and p.analyze_jd(headline)['job_title']==expected_role))
+ raw='• Core Responsibilities:\nRole: RAG Engineer\nRequired Skills: Python, RAG\nBuild and support retrieval pipelines.'
+ identity=p.extract_identity(raw); inferred=p.infer_target_role(raw); analyzed=p.analyze_jd(raw); planned=plan(raw)
+ expected_role='RAG Engineer'
+ r.append(check('Bullet responsibility heading is not used as the job title',identity['job_title']==expected_role and inferred==expected_role and analyzed['job_title']==expected_role and analyzed['role_function']==expected_role and planned['jd_analysis']['target_role']==expected_role,str(analyzed)))
  x=req('Required: vector database','vector databases'); r.append(check('1 vector database to ChromaDB semantic match',x['evidence_status'] in {'SUPPORTED','PARTIAL'} and x['match_type']=='semantic',str(x)))
  x=req('Required: LangChain','langchain'); r.append(check('2 LangChain unsupported without profile evidence',x['evidence_status']=='UNSUPPORTED',str(x)))
  x=req('Required: RAG','rag'); r.append(check('3 RAG supported by project evidence',x['evidence_status']=='SUPPORTED',str(x)))

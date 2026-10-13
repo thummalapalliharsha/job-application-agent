@@ -50,7 +50,7 @@ CATEGORIES={
  'tools':{'git','github','jupyter','vscode','pytest','n8n'},
 }
 JD_SECTION_BOUNDARIES={
- 'about the role','responsibilities','what you will do','what you will do at','key responsibilities',
+ 'about the role','responsibilities','core responsibilities','what you will do','what you will do at','key responsibilities',
  'required skills','required qualifications','requirements','must have','mandatory','minimum qualifications',
  'preferred skills','preferred qualifications','nice to have','bonus','desirable','qualifications','technical skills',
  'education','experience','role','location','company',
@@ -113,7 +113,7 @@ def _headline_role(line):
  return re.split(r'\s+[–—]\s+',line,maxsplit=1)[0].strip()
 def extract_identity(raw):
  lines=[x.strip() for x in raw.splitlines() if x.strip()]; title=lines[0] if lines else 'Unspecified role'
- if lines and (_is_job_description_heading(lines[0]) or _is_job_title_label(lines[0]) or re.search(r'\s+[–—]\s+',lines[0])): title=infer_target_role(raw)
+ if lines and (_is_job_description_heading(lines[0]) or _is_job_title_label(lines[0]) or norm(lines[0]) in JD_SECTION_BOUNDARIES or re.search(r'\s+[–—]\s+',lines[0])): title=infer_target_role(raw)
  def field(labels):
   for l in lines:
    for label in labels:
