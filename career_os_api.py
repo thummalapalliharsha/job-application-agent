@@ -19,6 +19,7 @@ import application_assistant as aa
 import jd_resume_planner as planner
 import profile_update_agent as pua
 import profile_security as profile_security
+from postgres_storage_adapter import PostgresApplicationTableMissingError
 from career_os_config import (
     DATA_DIR,
     FRONTEND_DIST_DIR,
@@ -45,6 +46,9 @@ _LOCAL_ALLOWED_HOSTS = {
 _LOCAL_ALLOWED_ORIGINS = {f"http://{host}" for host in _LOCAL_ALLOWED_HOSTS}
 _API_TOKEN = os.environ.get("CAREER_OS_API_TOKEN", "").strip()
 _RUNTIME_ENV = os.environ.get("CAREER_OS_ENV", "development").strip().casefold()
+_POSTGRES_DIAGNOSTIC_ENABLED_ENV = "CAREER_OS_POSTGRES_DIAGNOSTIC_ENABLED"
+_POSTGRES_DIAGNOSTIC_PATH = "/api/diagnostics/postgres-application-store"
+_POSTGRES_DIAGNOSTIC_APPLICATION_ID = "app_16cd654e68f9"
 _BAD_PERCENT_ESCAPE = re.compile(r"%(?![0-9A-Fa-f]{2})")
 _WINDOWS_DRIVE = re.compile(r"^[A-Za-z]:")
 
@@ -1354,7 +1358,12 @@ class Handler(BaseHTTPRequestHandler):
             return False
 
         request_path = urlparse(self.path).path
+        diagnostic_disabled = (
+            request_path == _POSTGRES_DIAGNOSTIC_PATH
+            and os.environ.get(_POSTGRES_DIAGNOSTIC_ENABLED_ENV) != "1"
+        )
         if (request_path.startswith("/api/")
+                and not diagnostic_disabled
                 and not _valid_api_token(self.command, request_path, self._single_header("Authorization"))):
             self.send_json({"error": "authentication required"}, 401)
             return False
@@ -1458,6 +1467,32 @@ class Handler(BaseHTTPRequestHandler):
         try:
             if path == "/api/health":
                 return self.send_json({"ok": True, "service": "career-os-api"})
+            if path == _POSTGRES_DIAGNOSTIC_PATH:
+                if os.environ.get(_POSTGRES_DIAGNOSTIC_ENABLED_ENV) != "1":
+                    return self.send_json({"error": "not found"}, 404)
+                authorization = self._single_header("Authorization")
+                if not _API_TOKEN or not _valid_api_token(
+                    self.command, path, authorization
+                ):
+                    return self.send_json({"error": "authentication required"}, 401)
+                adapter = aa._application_store_adapter()
+                if adapter.backend_name != "postgres":
+                    return self.send_json(
+                        {"error": "PostgreSQL application storage is not selected."},
+                        503,
+                    )
+                try:
+                    diagnostic = adapter.diagnostic_application_store(
+                        _POSTGRES_DIAGNOSTIC_APPLICATION_ID
+                    )
+                except PostgresApplicationTableMissingError as exc:
+                    return self.send_json({"error": str(exc)}, 503)
+                except Exception:
+                    return self.send_json(
+                        {"error": "PostgreSQL diagnostic query failed or the database is unavailable."},
+                        503,
+                    )
+                return self.send_json(diagnostic)
             if path == "/api/bootstrap":
                 return self.send_json({"profile": profile_summary(), **application_payload()})
             if path == "/api/profile/security":

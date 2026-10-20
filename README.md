@@ -180,6 +180,7 @@ Configure secrets in the hosting provider's private environment settings. Do not
 | `CAREER_OS_PORT` | Render API | Optional listening port when `PORT` is absent |
 | `CAREER_OS_STORAGE_ROOT` | Backend services | Optional root for data, job descriptions, and output files |
 | `CAREER_OS_FRONTEND_DIR` | Backend API | Optional location of the built frontend served by the Python API |
+| `CAREER_OS_POSTGRES_DIAGNOSTIC_ENABLED` | Render API | Temporary PostgreSQL diagnostic; disabled unless exactly `1` |
 
 The checked-in `frontend/.env.example` has a frontend API-base example; the current React client uses relative `/api/*` paths and does not read that variable.
 
@@ -188,6 +189,7 @@ The checked-in `frontend/.env.example` has a frontend API-base example; the curr
 - **Frontend:** Vercel project rooted at `frontend/`; `npm run build` is the production build command. `frontend/vercel.json` routes `/api/*` through `frontend/api/[...path].ts`.
 - **Backend:** Render Docker service built from the repository-root `Dockerfile`; the container starts `python career_os_api.py`.
 - **Secrets:** Set `CAREER_OS_RENDER_URL` and `CAREER_OS_API_TOKEN` in Vercel; set `CAREER_OS_API_TOKEN` and `CAREER_OS_PROFILE_PIN_HASH` in Render. The browser never receives either secret.
+- **Temporary PostgreSQL diagnostic:** To enable, set `CAREER_OS_POSTGRES_DIAGNOSTIC_ENABLED=1` on Render. Send `GET /api/diagnostics/postgres-application-store` with the existing `Authorization: Bearer <CAREER_OS_API_TOKEN>` header. Remove the flag after diagnosis; the endpoint is hidden when disabled.
 - No Render service manifest or CI/CD workflow is present in the repository; provider-side deployment settings control the services.
 - Render's current plan has no persistent disk. Plan for possible loss of local JSON data and generated files on restart/redeploy before relying on this storage for durable records.
 

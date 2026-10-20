@@ -10,6 +10,11 @@ from postgres_client import PostgresClient
 from postgres_config import PostgresConfig, load_postgres_config
 from storage_adapter import EMPTY_APPLICATION_STORE, EMPTY_PROFILE_DOCUMENTS, PROFILE_DOCUMENT_CATEGORIES, StorageAdapter
 
+
+class PostgresApplicationTableMissingError(RuntimeError):
+    """Raised when the diagnostic's expected public application table is absent."""
+
+
 try:  # pragma: no cover - optional runtime dependency for staging only.
     import psycopg
 except ModuleNotFoundError:  # pragma: no cover
@@ -163,6 +168,47 @@ class PostgresStorageAdapter(StorageAdapter):
             json.loads(record_json) if isinstance(record_json, str) else record_json
             for _, record_json in rows
         ]
+
+    def diagnostic_application_store(self, application_id: str) -> dict[str, Any]:
+        self._require_postgres_backend()
+        try:
+            connection = self.client.connect()
+            with connection.transaction():
+                with connection.cursor() as cursor:
+                    cursor.execute("SET TRANSACTION READ ONLY")
+                    cursor.execute(
+                        """
+                        SELECT current_database(),
+                               current_user,
+                               current_schema(),
+                               version(),
+                               (SELECT COUNT(*) FROM public.application_records),
+                               EXISTS (
+                                   SELECT 1
+                                   FROM public.application_records
+                                   WHERE application_id = %s
+                               )
+                        """,
+                        (application_id,),
+                    )
+                    database, user, schema, server_version, record_count, application_exists = cursor.fetchone()
+            return {
+                "host": connection.info.host,
+                "database": database,
+                "user": user,
+                "schema": schema,
+                "server_version": server_version,
+                "application_record_count": record_count,
+                "target_application_exists": application_exists,
+            }
+        except Exception as exc:
+            if getattr(exc, "sqlstate", None) == "42P01" or getattr(exc, "pgcode", None) == "42P01":
+                raise PostgresApplicationTableMissingError(
+                    "Expected table public.application_records is missing."
+                ) from exc
+            raise
+        finally:
+            self.client.close()
 
     def load_application_store(self) -> dict[str, Any]:
         return self.translate_application_store({"applications": self._fetch_application_rows()})
