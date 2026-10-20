@@ -16,8 +16,11 @@ from career_os_config import (
   JOB_DESCRIPTIONS_DIR,
   OUTPUT_DIR,
   resolve_storage_reference,
+  storage_root,
   storage_reference,
 )
+from postgres_storage_adapter import PostgresStorageAdapter
+from postgres_config import storage_backend_mode
 from storage_adapter import FileStorageAdapter
 ROOT=CODE_ROOT
 DATA=DATA_DIR; JOBS=JOB_DESCRIPTIONS_DIR; OUT=OUTPUT_DIR; REPORTS=OUT/'reports'; LETTERS=OUT/'cover_letters'; RESUMES=OUT/'resumes'
@@ -34,7 +37,13 @@ def artifact_stem(app, kind, lifecycle, suffix=None):
  return f'{stem}_{suffix}' if suffix else stem
 def norm(s): return re.sub(r'[^a-z0-9]+',' ',str(s or '').lower()).strip()
 def _application_store_adapter(root=None):
-    return FileStorageAdapter(root=root or ROOT)
+    backend = storage_backend_mode()
+    resolved_root = storage_root(root)
+    if backend == "file":
+        return FileStorageAdapter(root=resolved_root)
+    if backend == "postgres":
+        return PostgresStorageAdapter(root=resolved_root)
+    raise ValueError(f"Unsupported application storage backend: {backend}")
 
 def load_store():
     return _application_store_adapter(ROOT).load_application_store()

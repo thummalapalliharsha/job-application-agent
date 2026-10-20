@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import http.client
 import json
+import tempfile
 import threading
 import unittest
 from contextlib import contextmanager
@@ -11,11 +12,13 @@ from http.server import ThreadingHTTPServer
 from unittest.mock import Mock, patch
 
 import career_os_api as api
+import application_assistant as aa
 from postgres_config import PostgresConfig
 from postgres_storage_adapter import (
     PostgresApplicationTableMissingError,
     PostgresStorageAdapter,
 )
+from storage_adapter import FileStorageAdapter
 
 
 class FakeReadOnlyCursor:
@@ -68,6 +71,40 @@ class FakeUndefinedTableError(RuntimeError):
 
 class PostgresDiagnosticApiTests(unittest.TestCase):
     token = "test-diagnostic-token"
+
+    def test_real_selector_uses_file_by_default(self):
+        with tempfile.TemporaryDirectory() as temporary, patch.dict(
+            "os.environ", {}, clear=True
+        ):
+            adapter = aa._application_store_adapter(temporary)
+
+        self.assertIsInstance(adapter, FileStorageAdapter)
+
+    def test_real_selector_uses_postgres_without_connecting(self):
+        with tempfile.TemporaryDirectory() as temporary, patch.dict(
+            "os.environ",
+            {
+                "CAREER_OS_STORAGE_BACKEND": "postgres",
+                "CAREER_OS_POSTGRES_URL": "postgresql://test.invalid/career_os",
+            },
+            clear=True,
+        ):
+            adapter = aa._application_store_adapter(temporary)
+
+        self.assertIsInstance(adapter, PostgresStorageAdapter)
+        self.assertIsNone(adapter.client._connection)
+
+    def test_real_selector_rejects_unsupported_backend(self):
+        with tempfile.TemporaryDirectory() as temporary, patch.dict(
+            "os.environ",
+            {"CAREER_OS_STORAGE_BACKEND": "sqlite"},
+            clear=True,
+        ):
+            with self.assertRaisesRegex(
+                ValueError,
+                "Unsupported application storage backend: sqlite",
+            ):
+                aa._application_store_adapter(temporary)
 
     def request_diagnostic(self, headers=None):
         server = ThreadingHTTPServer(("127.0.0.1", 0), api.Handler)
