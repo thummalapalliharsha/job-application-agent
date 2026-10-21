@@ -1,9 +1,4 @@
-"""PostgreSQL connection wrapper used only for readiness and health checks.
-
-This module intentionally does not create schema, table, or application data.
-It is a connection abstraction for the durable-storage phase and performs no
-application persistence operations.
-"""
+"""PostgreSQL connection and transaction helpers used by the storage adapter."""
 from __future__ import annotations
 
 from contextlib import contextmanager
@@ -26,12 +21,7 @@ class PostgresUnavailableError(RuntimeError):
 
 
 class PostgresClient:
-    """Very small client abstraction for readiness checks during startup.
-
-    This is intentionally limited to connection, ping, healthcheck, and transaction
-    wrappers. The storage adapter is not yet wired into persistent profile or
-    application writes.
-    """
+    """Connection, readiness, healthcheck, and transaction helpers for PostgreSQL storage."""
 
     def __init__(self, config: PostgresConfig | None = None):
         self.config = config or load_postgres_config()
@@ -55,6 +45,7 @@ class PostgresClient:
         if self.config.url:
             return {"conninfo": self.config.url}
         kwargs = dict(self.config.connection_kwargs)
+        kwargs["dbname"] = kwargs.pop("database")
         kwargs.pop("sslmode", None)
         return kwargs
 
@@ -69,7 +60,7 @@ class PostgresClient:
             self._connection = psycopg.connect(**self._connection_kwargs())
             return self._connection
         except Exception as exc:  # pragma: no cover - exercised via unit tests with mocks
-            raise PostgresUnavailableError(str(exc)) from exc
+            raise PostgresUnavailableError("Unable to connect to PostgreSQL.") from exc
 
     def close(self) -> None:
         if self._connection is not None:

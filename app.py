@@ -127,7 +127,6 @@ if st.session_state.get('settings_motion_preference') == 'Reduced motion':
  </style>''', unsafe_allow_html=True)
 
 def load_apps(): return aa.load_store().get('applications',[])
-def save_apps(apps): aa.save_store({'applications':apps})
 def app_by_id(aid): return next((x for x in load_apps() if x['application_id']==aid),None)
 def resolve_ref(ref):
  path=resolve_storage_reference(str(ref))
@@ -235,6 +234,7 @@ def apply_project_selection_override(aid,record_ids,source):
  if invalid: raise ValueError('Only canonical completed projects may be selected: '+', '.join(invalid))
  apps=load_apps(); app=next((x for x in apps if x['application_id']==aid),None)
  if not app: raise ValueError('Application not found.')
+ original=copy.deepcopy(app)
  plan_path=resolve_ref(app['phase8_plan_reference']); plan=json.loads(plan_path.read_text(encoding='utf-8'))
  selected=[eligible[x] for x in record_ids]
  plan.setdefault('resume_plan',{})['projects_to_include']=selected
@@ -242,7 +242,8 @@ def apply_project_selection_override(aid,record_ids,source):
  plan['resume_plan']['project_selection_record_ids']=list(record_ids)
  plan['project_selection_source']=source
  plan_path.write_text(json.dumps(plan,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
- app['selected_projects']=[x['name'] for x in selected]; app['project_selection_mode']='manual' if source=='manual' else 'automatic'; app['project_selection_source']=source; app['project_selection_record_ids']=list(record_ids); app['last_updated']=aa.now(); aa.save_store({'applications':apps})
+ app['selected_projects']=[x['name'] for x in selected]; app['project_selection_mode']='manual' if source=='manual' else 'automatic'; app['project_selection_source']=source; app['project_selection_record_ids']=list(record_ids); app['last_updated']=aa.now()
+ if not aa.replace_application_snapshot(aid,original,app): raise RuntimeError('Application data changed during project selection. Reload and retry.')
  return selected
 def persist_project_selection_change(aid,mode,record_ids):
  if mode not in {'automatic','manual'}: raise ValueError('Invalid project selection mode.')
@@ -250,6 +251,7 @@ def persist_project_selection_change(aid,mode,record_ids):
  if len(record_ids)>PROJECT_LIMIT: raise ValueError(f'At most {PROJECT_LIMIT} projects can be selected for this resume.')
  apps=load_apps(); app=next((x for x in apps if x['application_id']==aid),None)
  if not app: raise ValueError('Application not found.')
+ original=copy.deepcopy(app)
  plan_path=resolve_ref(app['phase8_plan_reference']); plan=json.loads(plan_path.read_text(encoding='utf-8')); resume_plan=plan.setdefault('resume_plan',{})
  eligible={p['record_id']:p for p in eligible_completed_projects()}
  if mode=='automatic':
@@ -265,7 +267,8 @@ def persist_project_selection_change(aid,mode,record_ids):
  plan['project_selection_source']=mode
  plan.setdefault('approval_checkpoint',{})['resume_generation_allowed']=False
  plan_path.write_text(json.dumps(plan,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
- app['selected_projects']=[x['name'] for x in selected]; app['project_selection_mode']=mode; app['project_selection_source']=mode; app['project_selection_record_ids']=list(record_ids); app['resume_generation_allowed']=False; app['resume_working_artifact_stale']=True; app['current_status']='awaiting_resume_approval'; app['last_updated']=aa.now(); aa.save_store({'applications':apps})
+ app['selected_projects']=[x['name'] for x in selected]; app['project_selection_mode']=mode; app['project_selection_source']=mode; app['project_selection_record_ids']=list(record_ids); app['resume_generation_allowed']=False; app['resume_working_artifact_stale']=True; app['current_status']='awaiting_resume_approval'; app['last_updated']=aa.now()
+ if not aa.replace_application_snapshot(aid,original,app): raise RuntimeError('Application data changed during project selection. Reload and retry.')
  return selected
 def resume_project_edit_state_key(aid,suffix): return f'_resume_project_edit_{aid}_{suffix}'
 def resume_preview_state_key(aid): return f'_resume_preview_{aid}'
@@ -357,32 +360,19 @@ def finalize_doc(app,kind,src):
    version+=1
  shutil.copy2(src,final); pdf=pdf_convert(final)
  if not pdf_is_readable(pdf).get('passed'): raise RuntimeError('Generated final PDF is not readable.')
- app=app_by_id(app['application_id']); apps=load_apps(); target=next(x for x in apps if x['application_id']==app['application_id'])
+ app=app_by_id(app['application_id']); apps=load_apps(); target=next(x for x in apps if x['application_id']==app['application_id']); original=copy.deepcopy(target)
  key='resume_reference' if kind=='resume' else 'cover_letter_reference'; target[key]=str(final.relative_to(ROOT)); target[f'{kind}_pdf_reference']=str(pdf.relative_to(ROOT)); target[f'{kind}_status']='final'
  if kind=='resume':
   target.update({'resume_docx_path':str(final.relative_to(ROOT)),'resume_pdf_path':str(pdf.relative_to(ROOT)),'resume_docx_sha256':file_sha256(final),'resume_pdf_sha256':file_sha256(pdf),'resume_generation_id':'gen_'+uuid.uuid4().hex,'resume_finalized_at':aa.now(),'resume_final_stale':False})
- target['last_updated']=aa.now(); save_apps(apps); return final,pdf
+ target['last_updated']=aa.now()
+ if not aa.replace_application_snapshot(target['application_id'],original,target): raise RuntimeError('Application data changed during finalization. Reload and retry.')
+ return final,pdf
 def load_document_history():
- path=DATA/'document_history.json'
- if not path.exists(): return {'documents':[]}
- try:
-  raw=path.read_text(encoding='utf-8')
-  if not raw.strip(): return {'documents':[]}
-  history=json.loads(raw)
-  if not isinstance(history,dict) or not isinstance(history.get('documents'),list): return {'documents':[]}
-  return history
- except (OSError,UnicodeError,json.JSONDecodeError):
-  return {'documents':[]}
+ return aa.load_document_history()
 def save_document_history(history):
- path=DATA/'document_history.json'; path.parent.mkdir(parents=True,exist_ok=True); payload=json.dumps(history,indent=2,ensure_ascii=False)+'\n'; temporary=None
- try:
-  with tempfile.NamedTemporaryFile('w',encoding='utf-8',dir=path.parent,prefix=f'.{path.name}.',suffix='.tmp',delete=False) as handle:
-   temporary=Path(handle.name); handle.write(payload); handle.flush(); os.fsync(handle.fileno())
-  os.replace(str(temporary),str(path))
- finally:
-  if temporary and temporary.exists(): temporary.unlink()
+ aa.save_document_history(history)
 def save_history(app,kind,doc,pdf):
- h=load_document_history(); h['documents'].append({'application_id':app['application_id'],'company':app.get('company_name'),'role':app.get('job_title'),'kind':kind,'date':aa.now(),'docx':str(doc.relative_to(ROOT)),'pdf':str(pdf.relative_to(ROOT)),'selected_projects':app.get('selected_projects',[]),'selected_skills':app.get('selected_skills',[]),'selected_certifications':app.get('selected_certifications',[])}); save_document_history(h)
+ return aa.save_history(app,kind,doc,pdf)
 
 def header(eyebrow,title,desc):
  st.markdown('<div class="cc-topline"><strong>CAREER OS / COMMAND CENTER</strong><span class="live">SYSTEM ONLINE · LOCAL-FIRST</span></div>',unsafe_allow_html=True)
@@ -545,7 +535,9 @@ def resume_workspace():
      working_pdf=pdf_convert(out); generation_id='gen_'+uuid.uuid4().hex; generated_at=aa.now(); docx_rel=str(out.relative_to(ROOT)); pdf_rel=str(working_pdf.relative_to(ROOT))
     st.session_state['resume_generation_result']={'docx':str(out.relative_to(ROOT)),'validation_report':str(report.relative_to(ROOT)),'validation':validation}
     if validation.get('page_count')==1 and validation.get('final_status')=='PASS':
-      apps=load_apps(); target=next(x for x in apps if x['application_id']==app['application_id']); target.update({'working_resume_reference':docx_rel,'working_resume_pdf_reference':pdf_rel,'working_resume_docx_path':docx_rel,'working_resume_pdf_path':pdf_rel,'working_resume_docx_sha256':file_sha256(out),'working_resume_pdf_sha256':file_sha256(working_pdf),'working_resume_generation_id':generation_id,'working_resume_generated_at':generated_at,'resume_validation_reference':str(report.relative_to(ROOT)),'resume_working_artifact_stale':False,'resume_final_stale':bool(target.get('resume_generation_id')),'current_status':'resume_ready','last_updated':aa.now()}); save_apps(apps); st.success('Working resume generated and validated.'); st.rerun()
+      updated=aa.mutate_application(app['application_id'],lambda current:current.update({'working_resume_reference':docx_rel,'working_resume_pdf_reference':pdf_rel,'working_resume_docx_path':docx_rel,'working_resume_pdf_path':pdf_rel,'working_resume_docx_sha256':file_sha256(out),'working_resume_pdf_sha256':file_sha256(working_pdf),'working_resume_generation_id':generation_id,'working_resume_generated_at':generated_at,'resume_validation_reference':str(report.relative_to(ROOT)),'resume_working_artifact_stale':False,'resume_final_stale':bool(current.get('resume_generation_id')),'current_status':'resume_ready','last_updated':aa.now()}))
+      if not updated: raise RuntimeError('Application was deleted before the Working Resume could be activated.')
+      st.success('Working resume generated and validated.'); st.rerun()
     else: st.error(f"Resume validation failed: {validation.get('final_status','UNKNOWN')}. Review {report.relative_to(ROOT)} before retrying.")
   except Exception as exc:
    st.error(f'Resume generation failed: {type(exc).__name__}: {exc}')
@@ -620,7 +612,8 @@ def cover_workspace():
   if result.get('decision')=='created':
    source=resolve_ref(result['cover_letter_working_reference']); doc=source.with_suffix('.docx'); pdf=source.with_suffix('.pdf')
    md_to_docx(source,doc); pdf_convert(doc)
-   apps=load_apps(); target=next(x for x in apps if x['application_id']==app['application_id']); target['cover_letter_working_docx_reference']=str(doc.relative_to(ROOT)); target['cover_letter_working_pdf_reference']=str(pdf.relative_to(ROOT)); save_apps(apps)
+   updated=aa.mutate_application(app['application_id'],lambda current:current.update({'cover_letter_working_docx_reference':str(doc.relative_to(ROOT)),'cover_letter_working_pdf_reference':str(pdf.relative_to(ROOT))}))
+   if not updated: raise RuntimeError('Application was deleted before the Working Cover Letter could be activated.')
   st.success('Working cover letter generated.'); st.rerun()
  app=app_by_id(app['application_id']); working_ref=app.get('cover_letter_working_reference'); final_ref=app.get('cover_letter_reference'); final_pdf_ref=app.get('cover_letter_pdf_reference')
  left,right=st.columns(2)
@@ -636,13 +629,16 @@ def cover_workspace():
      doc=resolve_ref(app.get('cover_letter_working_docx_reference')) if app.get('cover_letter_working_docx_reference') else path.with_suffix('.docx')
      if not doc.exists(): md_to_docx(path,doc)
      working_pdf=pdf_convert(doc)
-     apps=load_apps(); target=next(x for x in apps if x['application_id']==app['application_id']); target['cover_letter_working_docx_reference']=str(doc.relative_to(ROOT)); target['cover_letter_working_pdf_reference']=str(working_pdf.relative_to(ROOT)); save_apps(apps)
+     updated=aa.mutate_application(app['application_id'],lambda current:current.update({'cover_letter_working_docx_reference':str(doc.relative_to(ROOT)),'cover_letter_working_pdf_reference':str(working_pdf.relative_to(ROOT))}))
+     if not updated: raise RuntimeError('Application was deleted before the Working Cover Letter could be activated.')
     st.markdown(f'<div class="artifact-meta">Reference: {escape(str(working_ref))}<br>PDF: {escape(str(working_pdf.relative_to(ROOT)))}<br>Availability: persisted<br>Format: PDF (source Markdown preserved)</div>',unsafe_allow_html=True)
     st.text_area('Working cover-letter preview',path.read_text(encoding='utf-8',errors='replace'),height=300,key=f'cover_working_preview_{app["application_id"]}')
     st.download_button('Download Working Cover Letter',working_pdf.read_bytes(),file_name=working_pdf.name,mime='application/pdf',key=f'cover_download_working_{app["application_id"]}')
     if st.button('Finalize Cover Letter',type='primary',key=f'cover_finalize_{app["application_id"]}'):
      try:
-      apps=load_apps(); target=next(x for x in apps if x['application_id']==app['application_id']); target['cover_letter_working_reference']=str(path.relative_to(ROOT)); save_apps(apps); doc=resolve_ref(target.get('cover_letter_working_docx_reference')) if target.get('cover_letter_working_docx_reference') else path.with_suffix('.docx');
+      updated=aa.mutate_application(app['application_id'],lambda current:current.update({'cover_letter_working_reference':str(path.relative_to(ROOT))}))
+      if not updated: raise RuntimeError('Application was deleted before the Working Cover Letter could be activated.')
+      doc=resolve_ref(updated.get('cover_letter_working_docx_reference')) if updated.get('cover_letter_working_docx_reference') else path.with_suffix('.docx');
       if not doc.exists(): md_to_docx(path,doc)
       final,pdf=finalize_doc(app,'cover_letter',doc); check=pdf_is_readable(pdf)
       if check['passed']: st.success('Cover letter finalized and converted to PDF.'); st.rerun()

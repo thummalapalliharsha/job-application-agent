@@ -86,6 +86,40 @@ class StorageAdapterContractTests(unittest.TestCase):
             adapter = FileStorageAdapter(root=tmpdir)
             self.assertEqual(adapter.load_application_store(), {"applications": []})
 
+    def test_file_adapter_document_history_crud_and_restart(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            adapter = FileStorageAdapter(root=tmpdir)
+            entry = adapter.append_document_history(
+                {"application_id": "app_history", "kind": "resume", "company": "Example"}
+            )
+            document_id = entry["document_id"]
+            self.assertEqual(adapter.load_document_history(), {"documents": [entry]})
+
+            updated = adapter.replace_document_history_entry(
+                document_id,
+                {"application_id": "app_history", "kind": "cover_letter", "company": "Updated"},
+            )
+            self.assertEqual(updated["document_id"], document_id)
+            self.assertEqual(
+                FileStorageAdapter(root=tmpdir).load_document_history(),
+                {"documents": [updated]},
+            )
+            self.assertEqual(adapter.delete_document_history_entry(document_id), updated)
+            self.assertEqual(adapter.load_document_history(), {"documents": []})
+
+    def test_file_adapter_refuses_malformed_history_without_overwriting_it(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            adapter = FileStorageAdapter(root=tmpdir)
+            path = Path(tmpdir) / "data" / "document_history.json"
+            path.write_text('{"documents": "invalid"}', encoding="utf-8")
+            original = path.read_bytes()
+
+            with self.assertRaisesRegex(RuntimeError, "documents list"):
+                adapter.load_document_history()
+            with self.assertRaisesRegex(RuntimeError, "documents list"):
+                adapter.append_document_history({"application_id": "app_history"})
+            self.assertEqual(path.read_bytes(), original)
+
     def test_postgres_adapter_preserves_nested_json_normalization(self):
         payload = {
             "master_profile": {

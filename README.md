@@ -92,6 +92,59 @@ The production web UI is React, TypeScript, and Vite under `frontend/`. `fronten
 
 Canonical profile and application data are JSON files under `data/`. Job-description snapshots are under `job_descriptions/`; reports and generated artifacts are under `output/`. `CAREER_OS_STORAGE_ROOT` can select a different root. Render's filesystem is ephemeral unless backed by a persistent disk. The current Render plan does not provide a persistent disk, so file-backed data and artifacts may not survive a restart or redeploy.
 
+When `CAREER_OS_STORAGE_BACKEND=postgres` is selected, profile, application, and document-history records use PostgreSQL. The application does not create its PostgreSQL schema at startup: an operator must first apply the additive `postgres_schema_sql()` schema to the intended database. The explicit `run_staging_backfill()` path also applies that schema, but it additionally imports and reconciles profile, application, job-description, report, and history data in one transaction; it is not a schema-only command.
+
+For schema-only preparation, use the dedicated local-target command `postgres_schema_migrate.py`. It is deliberately restricted to `127.0.0.1:55432/career_test` as user `career_test`; it rejects connection URLs and remote/shared targets, requires explicit disposable confirmation and expected identity arguments, verifies the connected database/user/PostgreSQL 16 version before DDL, rejects conflicting relation kinds, and validates required columns/types before committing. All DDL runs in one transaction. It never imports application data and does not invoke `run_staging_backfill()`.
+
+Non-production operator procedure:
+
+1. Provision a dedicated disposable local PostgreSQL 16 database and independently verify the container, loopback-only port mapping, dedicated volume, database, and role. Take a restorable snapshot before schema changes. Do not target production or shared/remote staging.
+2. Set the connection environment in PowerShell. Load the password from an ACL-protected secret file without echoing it:
+
+   ```powershell
+   $secretPath = '<ACL-protected secret file path>'
+   $env:POSTGRES_PASSWORD = [System.IO.File]::ReadAllText($secretPath).TrimEnd([char[]]@(10,13))
+   $env:CAREER_OS_STORAGE_BACKEND = 'postgres'
+   $env:POSTGRES_HOST = '127.0.0.1'
+   $env:POSTGRES_PORT = '55432'
+   $env:POSTGRES_DB = 'career_test'
+   $env:POSTGRES_USER = 'career_test'
+   $env:POSTGRES_SSLMODE = 'disable'
+   ```
+
+   Never put the password in command arguments, scripts, source, or logs.
+3. From the repository root, run:
+
+   ```powershell
+   python postgres_schema_migrate.py `
+     --confirm-disposable `
+     --expected-host 127.0.0.1 `
+     --expected-port 55432 `
+     --expected-database career_test `
+     --expected-user career_test
+   ```
+
+   The command refuses other targets. Inspect the success result; on any exception the DDL transaction rolls back.
+4. Verify on the same connection using read-only queries:
+
+   ```sql
+   SELECT current_database(), current_user, current_setting('server_version_num');
+   SELECT table_name, column_name, data_type, is_identity
+   FROM information_schema.columns
+   WHERE table_schema = 'public'
+     AND table_name IN ('document_history_records', 'document_history_migrations')
+   ORDER BY table_name, ordinal_position;
+   ```
+
+   Confirm the expected database/user and PostgreSQL major version 16, plus `document_id`, `application_id`, `payload_json`, identity `history_position`, timestamps, and migration marker columns. Re-run the schema-only command to confirm repeatability.
+5. Keep schema-only preparation separate from `run_staging_backfill()`. The latter is an explicit full data-import/reconciliation operation, guarded for non-production staging but not limited to a disposable local database.
+
+The application does not apply schema automatically at startup. Rollback of uncommitted DDL is automatic on failure. After a successful commit, do not drop tables or manually delete schema objects as an ad hoc rollback; schema is additive and may contain live records. Restore the pre-change disposable snapshot or use a separately reviewed forward migration. Schema application itself does not import history; the runtime importer records its own legacy source marker on first access.
+
+On first history access, if `data/document_history.json` exists, a valid legacy snapshot is imported transactionally into `document_history_records`; the source file is retained and its SHA-256 and imported count are recorded in `document_history_migrations`. A missing source file leaves PostgreSQL history unchanged. An existing empty `{"documents":[]}` file is recorded as an empty migration, so later source changes are detected. Legacy entries without IDs receive generated stable database IDs; source order and duplicate entries are preserved. The runtime importer and staging backfill share the same advisory lock, source hash, marker, and conflict checks. Repeated imports of the same source are no-ops. Malformed/unreadable JSON, a changed source hash, or existing PostgreSQL history without the marker stops the operation visibly; it does not clear, merge, or overwrite history.
+
+For recovery, stop further imports when a history error is reported. Preserve both the source file and a database snapshot; do not delete a marker or history rows to force a retry. A failed import/backfill transaction rolls back its inserted history and marker. After a committed migration, changing the source file or switching back to file mode does not reverse database writes. Recovery from committed data requires an explicit, reviewed reconciliation or restoration from the pre-migration snapshot, with the migration marker reconciled consistently. In file mode, history remains in `data/document_history.json` with stable IDs and atomic snapshot writes.
+
 ## Repository Structure
 
 Production Python modules remain at the repository root; they are not in a `backend/` directory.
@@ -179,15 +232,20 @@ Configure secrets in the hosting provider's private environment settings. Do not
 | `PORT` | Render API | Render-provided listening port; otherwise `CAREER_OS_PORT` or `8504` is used |
 | `CAREER_OS_PORT` | Render API | Optional listening port when `PORT` is absent |
 | `CAREER_OS_STORAGE_ROOT` | Backend services | Optional root for data, job descriptions, and output files |
+| `CAREER_OS_POSTGRES_STAGING_HOST` | Explicit staging backfill only | Required exact Neon staging hostname allow-list; must match the configured target |
 | `CAREER_OS_FRONTEND_DIR` | Backend API | Optional location of the built frontend served by the Python API |
+| `CAREER_OS_POSTGRES_DIAGNOSTIC_ENABLED` | Render API | Temporary PostgreSQL diagnostic; disabled unless exactly `1` |
 
 The checked-in `frontend/.env.example` has a frontend API-base example; the current React client uses relative `/api/*` paths and does not read that variable.
+
+The explicit staging backfill additionally requires `CAREER_OS_ENV=staging` and `CAREER_OS_POSTGRES_STAGING_HOST` set to the exact staging hostname. The connection target must match that allow-list and be a Neon hostname whose labels identify staging; production-looking, arbitrary, incomplete, or ambiguous targets are rejected before health checks or database connections.
 
 ## Deployment
 
 - **Frontend:** Vercel project rooted at `frontend/`; `npm run build` is the production build command. `frontend/vercel.json` routes `/api/*` through `frontend/api/[...path].ts`.
 - **Backend:** Render Docker service built from the repository-root `Dockerfile`; the container starts `python career_os_api.py`.
 - **Secrets:** Set `CAREER_OS_RENDER_URL` and `CAREER_OS_API_TOKEN` in Vercel; set `CAREER_OS_API_TOKEN` and `CAREER_OS_PROFILE_PIN_HASH` in Render. The browser never receives either secret.
+- **Temporary PostgreSQL diagnostic:** To enable, set `CAREER_OS_POSTGRES_DIAGNOSTIC_ENABLED=1` on Render. Send `GET /api/diagnostics/postgres-application-store` with the existing `Authorization: Bearer <CAREER_OS_API_TOKEN>` header. Remove the flag after diagnosis; the endpoint is hidden when disabled.
 - No Render service manifest or CI/CD workflow is present in the repository; provider-side deployment settings control the services.
 - Render's current plan has no persistent disk. Plan for possible loss of local JSON data and generated files on restart/redeploy before relying on this storage for durable records.
 

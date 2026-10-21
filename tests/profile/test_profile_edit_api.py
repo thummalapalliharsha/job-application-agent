@@ -13,6 +13,7 @@ import threading
 import unittest
 from http.server import ThreadingHTTPServer
 from pathlib import Path
+from unittest.mock import patch
 
 import application_assistant as aa
 import career_os_api as api
@@ -262,6 +263,37 @@ class ProfileEditApiTests(unittest.TestCase):
         self.assertEqual(result["decision"], "stale_profile")
         self.assertEqual({path: path.read_bytes() for path in self.data.glob("*.json")}, stale_snapshot)
 
+    def test_file_profile_edit_restores_snapshot_when_invalidation_fails(self):
+        project = pua.all_data(self.root)["projects"]["projects"][0]
+        plan = pua.plan_profile_edit(
+            updates={"projects": [{
+                "record_id": project["record_id"],
+                "fields": {"purpose": "Temporary update before injected failure."},
+            }]},
+            root=self.root,
+        )
+        self.assertEqual(plan["decision"], "planned", plan)
+        snapshot_paths = [
+            self.data / "projects.json",
+            self.data / "master_profile.json",
+        ]
+        original = {path: path.read_bytes() for path in snapshot_paths}
+
+        with patch.dict(os.environ, {"CAREER_OS_STORAGE_BACKEND": "file"}), patch.object(
+            pua,
+            "invalidate_approved_applications",
+            side_effect=RuntimeError("simulated invalidation failure"),
+        ):
+            with self.assertRaisesRegex(RuntimeError, "invalidation failure"):
+                pua.apply_profile_edit_plan(
+                    plan,
+                    root=self.root,
+                    confirm=True,
+                    pin=self.pin,
+                )
+
+        self.assertEqual({path: path.read_bytes() for path in snapshot_paths}, original)
+
     def test_invalid_addition_is_rejected_without_partial_writes(self):
         additions = self._additions()
         additions["projects"][0]["fields"]["github_url"] = "https://example.invalid/not-github"
@@ -402,6 +434,45 @@ class ProfileEditApiTests(unittest.TestCase):
         self.assertTrue(applications["app_unrelated_project"]["resume_generation_allowed"])
         self.assertEqual(affected_plan_path.read_bytes(), approved_snapshot)
         self.assertTrue(unrelated_plan_path.is_file())
+
+    def test_profile_invalidation_preserves_concurrent_update_to_another_application(self):
+        project = pua.all_data(self.root)["projects"]["projects"][0]
+        selected_id = project["record_id"]
+        self._seed_approved_application("app_invalidation_target", project_ids=[selected_id])
+        self._seed_approved_application("app_invalidation_unrelated")
+        original_affects = api._profile_action_affects_application
+        interleaved = False
+
+        def invalidate_after_interleaved_write(action, app, plan):
+            nonlocal interleaved
+            affected = original_affects(action, app, plan)
+            if not interleaved:
+                interleaved = True
+                updated = aa.mutate_application(
+                    "app_invalidation_unrelated",
+                    lambda current: current.update({"application_notes": "concurrent update"}),
+                    root=self.root,
+                )
+                self.assertIsNotNone(updated)
+            return affected
+
+        action = {
+            "category": "projects",
+            "record_id": selected_id,
+            "fields": {"purpose": "updated concurrently"},
+        }
+        with patch.object(api, "_profile_action_affects_application", side_effect=invalidate_after_interleaved_write), \
+             patch.dict(os.environ, {"CAREER_OS_STORAGE_BACKEND": "file"}):
+            invalidated = api.invalidate_approved_applications_for_profile_actions([action], root=self.root)
+            applications = {
+                item["application_id"]: item
+                for item in aa._application_store_adapter(self.root).load_application_store()["applications"]
+            }
+
+        self.assertTrue(interleaved)
+        self.assertEqual(invalidated, ["app_invalidation_target"])
+        self.assertFalse(applications["app_invalidation_target"]["resume_generation_allowed"])
+        self.assertEqual(applications["app_invalidation_unrelated"]["application_notes"], "concurrent update")
 
     def test_selected_skills_certifications_experience_and_education_invalidate_approval(self):
         for index, category in enumerate(("skills", "certifications", "experience", "education")):

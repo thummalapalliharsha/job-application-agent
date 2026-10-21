@@ -1,4 +1,5 @@
 import copy
+import hashlib
 import json
 import os
 import tempfile
@@ -75,6 +76,34 @@ class FakeCursor:
         if "INSERT INTO PROFILE_DOCUMENTS" in sql_text:
             self.connection.data["profile_documents"][params[0]] = params[1]
             return None
+        if "SELECT PG_ADVISORY_XACT_LOCK" in sql_text:
+            self.result = None
+            return None
+        if "SELECT SOURCE_SHA256 FROM DOCUMENT_HISTORY_MIGRATIONS" in sql_text:
+            marker = self.connection.data["document_history_migrations"].get(params[0])
+            self.result = (marker["source_sha256"],) if marker else None
+            return None
+        if "SELECT COUNT(*) FROM DOCUMENT_HISTORY_RECORDS" in sql_text:
+            self.result = (len(self.connection.data["document_history_records"]),)
+            return None
+        if "INSERT INTO DOCUMENT_HISTORY_RECORDS" in sql_text:
+            document_id, application_id, payload_json = params
+            if document_id in self.connection.data["document_history_records"]:
+                raise RuntimeError(f"duplicate document history ID: {document_id}")
+            if self.connection.fail_on_document_history_insert:
+                raise RuntimeError("forced document history insert failure")
+            self.connection.data["document_history_records"][document_id] = {
+                "application_id": application_id,
+                "payload_json": json.loads(payload_json),
+            }
+            return None
+        if "INSERT INTO DOCUMENT_HISTORY_MIGRATIONS" in sql_text:
+            migration_id, source_hash, imported_count = params
+            self.connection.data["document_history_migrations"][migration_id] = {
+                "source_sha256": source_hash,
+                "imported_count": imported_count,
+            }
+            return None
         if "INSERT INTO APPLICATION_RECORDS" in sql_text:
             app_id = params[0]
             self.connection.data["application_records"][app_id] = params[1]
@@ -140,12 +169,15 @@ class FakeConnection:
             "quarantine_log": {},
             "profile_documents": {},
             "application_records": {},
+            "document_history_records": {},
+            "document_history_migrations": {},
         }
         self._before_tx = copy.deepcopy(self.data)
         self.schema_created = False
         self.commits = 0
         self.rollbacks = 0
         self.fail_on_validation = False
+        self.fail_on_document_history_insert = False
         self.in_transaction = False
         self._autocommit = True
         self.cursor_obj = FakeCursor(self)
@@ -179,6 +211,15 @@ class FakeConnection:
 
 
 class PostgresStagingBackfillTests(unittest.TestCase):
+    def setUp(self):
+        self.staging_host_patch = patch.dict(
+            os.environ,
+            {"CAREER_OS_POSTGRES_STAGING_HOST": "ep-neon-staging.neon.tech"},
+            clear=False,
+        )
+        self.staging_host_patch.start()
+        self.addCleanup(self.staging_host_patch.stop)
+
     def _write_minimal_valid_manifest(self, root: Path) -> None:
         data_dir = root / "data"
         data_dir.mkdir(parents=True, exist_ok=True)
@@ -207,7 +248,126 @@ class PostgresStagingBackfillTests(unittest.TestCase):
         with patch.dict(os.environ, {"CAREER_OS_STORAGE_BACKEND": "postgres", "CAREER_OS_ENV": "production", "CAREER_OS_POSTGRES_URL": "postgresql://user:pw@dpg-example.render.com/postgres"}, clear=False):
             ok, message = assert_staging_target()
             self.assertFalse(ok)
-            self.assertIn("Production", message)
+            self.assertIn("staging", message)
+
+    def test_staging_target_guard_rejects_arbitrary_postgres_hosts(self):
+        with patch.dict(
+            os.environ,
+            {
+                "CAREER_OS_STORAGE_BACKEND": "postgres",
+                "CAREER_OS_ENV": "staging",
+                "CAREER_OS_POSTGRES_URL": "postgresql://user:secret@db.example.com/app",
+            },
+            clear=False,
+        ):
+            ok, message = assert_staging_target()
+        self.assertFalse(ok)
+        self.assertIn("allow-listed staging host", message)
+
+    def test_staging_target_guard_rejects_production_neon_url(self):
+        with patch.dict(
+            os.environ,
+            {
+                "CAREER_OS_STORAGE_BACKEND": "postgres",
+                "CAREER_OS_ENV": "staging",
+                "CAREER_OS_POSTGRES_URL": "postgresql://user:secret@ep-prod.neon.tech/neondb",
+            },
+            clear=False,
+        ):
+            ok, message = assert_staging_target()
+        self.assertFalse(ok)
+        self.assertIn("allow-listed staging host", message)
+
+    def test_staging_target_guard_rejects_conflicting_environment_labels(self):
+        with patch.dict(
+            os.environ,
+            {
+                "CAREER_OS_STORAGE_BACKEND": "postgres",
+                "CAREER_OS_ENV": "staging",
+                "APP_ENV": "production",
+                "CAREER_OS_POSTGRES_URL": "postgresql://user:secret@ep-neon-staging.neon.tech/neondb",
+            },
+            clear=False,
+        ):
+            ok, message = assert_staging_target()
+        self.assertFalse(ok)
+        self.assertIn("conflicting", message)
+
+    def test_staging_target_guard_requires_explicit_environment_and_host_identity(self):
+        with patch.dict(
+            os.environ,
+            {
+                "CAREER_OS_STORAGE_BACKEND": "postgres",
+                "CAREER_OS_POSTGRES_URL": "postgresql://user:secret@ep-neon-staging.neon.tech/neondb",
+            },
+            clear=True,
+        ):
+            ok, message = assert_staging_target()
+        self.assertFalse(ok)
+        self.assertIn("CAREER_OS_ENV", message)
+
+        with patch.dict(
+            os.environ,
+            {
+                "CAREER_OS_STORAGE_BACKEND": "postgres",
+                "CAREER_OS_ENV": "staging",
+                "CAREER_OS_POSTGRES_URL": "postgresql://user:secret@ep-neon-staging.neon.tech/neondb",
+            },
+            clear=True,
+        ):
+            ok, message = assert_staging_target()
+        self.assertFalse(ok)
+        self.assertIn("allow-list", message)
+
+    def test_staging_target_guard_accepts_exact_allow_listed_staging_target(self):
+        with patch.dict(
+            os.environ,
+            {
+                "CAREER_OS_STORAGE_BACKEND": "postgres",
+                "CAREER_OS_ENV": "staging",
+                "CAREER_OS_POSTGRES_STAGING_HOST": "ep-neon-staging.neon.tech",
+                "CAREER_OS_POSTGRES_URL": "postgresql://user:secret@ep-neon-staging.neon.tech/neondb",
+            },
+            clear=False,
+        ):
+            ok, message = assert_staging_target()
+        self.assertTrue(ok, message)
+
+    def test_staging_target_guard_rejects_url_host_override(self):
+        with patch.dict(
+            os.environ,
+            {
+                "CAREER_OS_STORAGE_BACKEND": "postgres",
+                "CAREER_OS_ENV": "staging",
+                "CAREER_OS_POSTGRES_STAGING_HOST": "ep-neon-staging.neon.tech",
+                "CAREER_OS_POSTGRES_URL": "postgresql://user:secret@ep-neon-staging.neon.tech/neondb?host=prod.example.com",
+            },
+            clear=False,
+        ):
+            ok, message = assert_staging_target()
+        self.assertFalse(ok)
+        self.assertIn("override target identity", message)
+
+    def test_rejected_target_does_not_healthcheck_or_open_backfill_connection(self):
+        with tempfile.TemporaryDirectory() as tmpdir, patch.dict(
+            os.environ,
+            {
+                "CAREER_OS_STORAGE_BACKEND": "postgres",
+                "CAREER_OS_ENV": "staging",
+                "CAREER_OS_POSTGRES_URL": "postgresql://user:secret@db.example.com/app",
+            },
+            clear=False,
+        ):
+            client = Mock()
+            connection_factory = Mock()
+            with self.assertRaisesRegex(ValueError, "allow-listed staging host"):
+                run_staging_backfill(
+                    tmpdir,
+                    client=client,
+                    connection_factory=connection_factory,
+                )
+            client.healthcheck.assert_not_called()
+            connection_factory.assert_not_called()
 
     def test_preflight_accepts_valid_manifest_and_healthy_stage(self):
         with tempfile.TemporaryDirectory() as tmpdir, patch.dict(os.environ, {"CAREER_OS_STORAGE_BACKEND": "postgres", "CAREER_OS_ENV": "staging", "CAREER_OS_POSTGRES_URL": "postgresql://user:pw@ep-neon-staging.neon.tech/neondb"}, clear=False):
@@ -243,6 +403,74 @@ class PostgresStagingBackfillTests(unittest.TestCase):
             self.assertEqual(conn.commits, 0)
             self.assertEqual(conn.data["application_records"], {})
             self.assertFalse(conn.schema_created)
+            self.assertEqual(conn.data["document_history_records"], {})
+            self.assertEqual(conn.data["document_history_migrations"], {})
+
+    def test_staging_history_import_refuses_existing_conflicting_id_without_overwrite(self):
+        with tempfile.TemporaryDirectory() as tmpdir, patch.dict(
+            os.environ,
+            {
+                "CAREER_OS_STORAGE_BACKEND": "postgres",
+                "CAREER_OS_ENV": "staging",
+                "CAREER_OS_POSTGRES_URL": "postgresql://user:password@ep-neon-staging.neon.tech/neondb",
+            },
+            clear=False,
+        ):
+            root = Path(tmpdir)
+            self._write_minimal_valid_manifest(root)
+            conn = FakeConnection()
+            original = {
+                "application_id": "app_1",
+                "payload_json": {
+                    "document_id": "doc_1",
+                    "application_id": "app_1",
+                    "record_type": "original",
+                },
+            }
+            conn.data["document_history_records"]["doc_1"] = copy.deepcopy(original)
+            client = Mock()
+            client.healthcheck.return_value = {
+                "backend": "postgres", "configured": True, "ready": True,
+                "reachable": True, "error": None,
+            }
+
+            with self.assertRaisesRegex(RuntimeError, "without a migration record"):
+                run_staging_backfill(root, client=client, connection_factory=lambda: conn)
+
+            self.assertEqual(conn.rollbacks, 1)
+            self.assertEqual(conn.commits, 0)
+            self.assertEqual(conn.data["document_history_records"], {"doc_1": original})
+            self.assertEqual(conn.data["document_history_migrations"], {})
+            self.assertEqual(conn.data["application_records"], {})
+
+    def test_staging_history_import_failure_rolls_back_rows_and_marker(self):
+        with tempfile.TemporaryDirectory() as tmpdir, patch.dict(
+            os.environ,
+            {
+                "CAREER_OS_STORAGE_BACKEND": "postgres",
+                "CAREER_OS_ENV": "staging",
+                "CAREER_OS_POSTGRES_URL": "postgresql://user:password@ep-neon-staging.neon.tech/neondb",
+            },
+            clear=False,
+        ):
+            root = Path(tmpdir)
+            self._write_minimal_valid_manifest(root)
+            conn = FakeConnection()
+            conn.fail_on_document_history_insert = True
+            client = Mock()
+            client.healthcheck.return_value = {
+                "backend": "postgres", "configured": True, "ready": True,
+                "reachable": True, "error": None,
+            }
+
+            with self.assertRaisesRegex(RuntimeError, "forced document history insert failure"):
+                run_staging_backfill(root, client=client, connection_factory=lambda: conn)
+
+            self.assertEqual(conn.rollbacks, 1)
+            self.assertEqual(conn.commits, 0)
+            self.assertEqual(conn.data["document_history_records"], {})
+            self.assertEqual(conn.data["document_history_migrations"], {})
+            self.assertEqual(conn.data["application_records"], {})
 
     def test_runner_rejects_dirty_connection_before_entering_transaction(self):
         with tempfile.TemporaryDirectory() as tmpdir, patch.dict(os.environ, {"CAREER_OS_STORAGE_BACKEND": "postgres", "CAREER_OS_ENV": "staging", "CAREER_OS_POSTGRES_URL": "postgresql://user:pw@ep-neon-staging.neon.tech/neondb"}, clear=False):
@@ -271,6 +499,16 @@ class PostgresStagingBackfillTests(unittest.TestCase):
             run_staging_backfill(root, client=client, connection_factory=lambda: conn)
             self.assertEqual(len(conn.data["backfill_runs"]), 1)
             self.assertEqual(len(conn.data["quarantine_log"]), 0)
+            self.assertEqual(len(conn.data["document_history_records"]), 1)
+            self.assertEqual(
+                conn.data["document_history_migrations"]["legacy_document_history_v1"],
+                {
+                    "source_sha256": hashlib.sha256(
+                        (root / "data" / "document_history.json").read_bytes()
+                    ).hexdigest(),
+                    "imported_count": 1,
+                },
+            )
             self.assertEqual(conn.commits, 2)
 
     def test_same_logical_quarantine_set_is_idempotent_across_different_manifest_runs(self):

@@ -16,8 +16,11 @@ from career_os_config import (
   JOB_DESCRIPTIONS_DIR,
   OUTPUT_DIR,
   resolve_storage_reference,
+  storage_root,
   storage_reference,
 )
+from postgres_storage_adapter import PostgresStorageAdapter
+from postgres_config import storage_backend_mode
 from storage_adapter import FileStorageAdapter
 ROOT=CODE_ROOT
 DATA=DATA_DIR; JOBS=JOB_DESCRIPTIONS_DIR; OUT=OUTPUT_DIR; REPORTS=OUT/'reports'; LETTERS=OUT/'cover_letters'; RESUMES=OUT/'resumes'
@@ -34,20 +37,50 @@ def artifact_stem(app, kind, lifecycle, suffix=None):
  return f'{stem}_{suffix}' if suffix else stem
 def norm(s): return re.sub(r'[^a-z0-9]+',' ',str(s or '').lower()).strip()
 def _application_store_adapter(root=None):
-    return FileStorageAdapter(root=root or ROOT)
+    backend = storage_backend_mode()
+    resolved_root = storage_root(root)
+    if backend == "file":
+        return FileStorageAdapter(root=resolved_root)
+    if backend == "postgres":
+        return PostgresStorageAdapter(root=resolved_root)
+    raise ValueError(f"Unsupported application storage backend: {backend}")
 
 def load_store():
     return _application_store_adapter(ROOT).load_application_store()
 
 def save_store(store):
  with APPLICATION_STORE_LOCK:
+  adapter = _application_store_adapter(ROOT)
+  if adapter.backend_name == "postgres":
+   raise RuntimeError("Full application-store snapshots cannot be saved in PostgreSQL mode.")
   payload = store if isinstance(store, dict) else {'applications': []}
   applications = payload.get('applications', []) if isinstance(payload, dict) else []
   if not isinstance(applications, list):
    applications = []
   filtered = [app for app in applications if isinstance(app, dict) and app.get('application_id') not in DELETED_APPLICATION_IDS]
   normalized = {'applications': filtered}
-  _application_store_adapter(ROOT).save_application_store(normalized)
+  adapter.save_application_store(normalized)
+
+def insert_application(application):
+ with APPLICATION_STORE_LOCK:
+  _application_store_adapter(ROOT).insert_application(application)
+
+def mutate_application(application_id, mutation, root=None):
+ with APPLICATION_STORE_LOCK:
+  return _application_store_adapter(ROOT if root is None else root).mutate_application(application_id, mutation)
+
+def replace_application_snapshot(application_id, expected, replacement, root=None):
+ def replace(current):
+  if current != expected:
+   return False
+  current.clear()
+  current.update(copy.deepcopy(replacement))
+  return True
+ return mutate_application(application_id,replace,root=root)
+
+def delete_application_record(application_id, expected=None):
+ with APPLICATION_STORE_LOCK:
+  return _application_store_adapter(ROOT).delete_application(application_id, expected=expected)
 def load_profile(): return {n:json.loads((DATA/f'{n}.json').read_text(encoding='utf-8')) for n in ['master_profile','skills','projects','experience','certifications','education','achievements']}
 def phase8_plan(jd_text,report_path):
  import jd_resume_planner
@@ -88,7 +121,12 @@ def create_application(company,title,url,jd_text,source=None,location=None,emplo
 	plan.setdefault('resume_plan',{})['automatic_projects_to_include']=copy.deepcopy(plan['resume_plan'].get('projects_to_include',[]))
 	plan_report.write_text(json.dumps(plan,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
 	app={'application_id':aid,'company_name':company,'job_title':title,'job_url':url,'source_platform':source,'location':location,'employment_type':employment_type,'job_description_reference':storage_reference(jd_path, root=ROOT),'job_description_text':jd_text,'date_added':date.today().isoformat(),'date_applied':None,'current_status':'awaiting_resume_approval','status_history':[{'old_status':None,'new_status':'awaiting_resume_approval','timestamp':now(),'source':'application_assistant'}],'resume_reference':None,'cover_letter_reference':None,'project_selection_mode':'automatic','project_selection_source':'automatic','project_selection_record_ids':[x.get('record_id') for x in plan['resume_plan']['projects_to_include']],'selected_projects':[x.get('name') for x in plan['resume_plan']['projects_to_include']],'selected_skills':[x.get('name') for x in plan['resume_plan']['skills_to_include']],'selected_certifications':[x.get('name') for x in plan['resume_plan']['certifications_to_include']],'experience_decision':plan['resume_plan']['experience_decisions'],'requirements_summary':plan['jd_analysis'].get('requirements',[]),'supported_requirements':[x.get('requirement') for x in plan['evidence_summary']['supported_requirements']],'partial_requirements':[x.get('requirement') for x in plan['evidence_summary']['partial_requirements']],'unsupported_requirements':[x.get('requirement') for x in plan['evidence_summary']['unsupported_requirements']],'candidate_gap_summary':gap_summary(plan),'application_checklist':checklist(plan),'application_notes':[],'follow_up_date':None,'last_updated':now(),'phase8_plan_reference':storage_reference(plan_report, root=ROOT),'resume_generation_allowed':False,'provenance':{'job_source':'user_provided','candidate_source':'data/*.json','phase8_source':storage_reference(plan_report, root=ROOT)},'manual_submission_required':True,'automatic_submission_enabled':False}
-	store['applications'].append(app); save_store(store); return {'decision':'created','application':app,'persistent_write_allowed':True}
+	with APPLICATION_STORE_LOCK:
+		latest_store=load_store()
+		dup=duplicate_candidates(latest_store,company,title,url,jd_text)
+		if dup: return {'decision':'duplicate_requires_clarification','possible_existing_applications':dup,'persistent_write_allowed':False}
+		insert_application(app)
+	return {'decision':'created','application':app,'persistent_write_allowed':True}
 def get_app(aid=None,company=None,title=None,url=None):
  apps=load_store().get('applications',[]); matches=[]
  for a in apps:
@@ -100,15 +138,22 @@ def update_status(aid,status,explicit_submission=False):
  store=load_store(); app=next((x for x in store['applications'] if x['application_id']==aid),None)
  if not app: return {'decision':'not_found'}
  if status=='applied' and not explicit_submission: return {'decision':'confirmation_required','message':'The user must explicitly confirm manual submission before status becomes applied.','application_id':aid}
- old=app['current_status']; app['current_status']=status; app['last_updated']=now(); app['status_history'].append({'old_status':old,'new_status':status,'timestamp':now(),'source':'explicit_user_confirmation' if status=='applied' else 'user_status_update'})
- if status=='applied': app['date_applied']=date.today().isoformat()
- save_store(store); return {'decision':'updated','application':app}
+ def update(current):
+  old=current['current_status']; current['current_status']=status; current['last_updated']=now()
+  current['status_history'].append({'old_status':old,'new_status':status,'timestamp':current['last_updated'],'source':'explicit_user_confirmation' if status=='applied' else 'user_status_update'})
+  if status=='applied': current['date_applied']=date.today().isoformat()
+ updated=mutate_application(aid,update)
+ return {'decision':'updated','application':updated} if updated else {'decision':'not_found'}
 def add_note(aid,note,follow_up_date=None):
  store=load_store(); app=next((x for x in store['applications'] if x['application_id']==aid),None)
  if not app:return {'decision':'not_found'}
- app['application_notes'].append({'note':note,'timestamp':now(),'source':'user_provided'})
- if follow_up_date: app['follow_up_date']=follow_up_date
- app['last_updated']=now(); save_store(store); return {'decision':'updated','application':app}
+ def update(current):
+  timestamp=now()
+  current['application_notes'].append({'note':note,'timestamp':timestamp,'source':'user_provided'})
+  if follow_up_date: current['follow_up_date']=follow_up_date
+  current['last_updated']=timestamp
+ updated=mutate_application(aid,update)
+ return {'decision':'updated','application':updated} if updated else {'decision':'not_found'}
 def generate_cover_letter(aid):
  store=load_store(); app=next((x for x in store['applications'] if x['application_id']==aid),None)
  if not app:return {'decision':'not_found'}
@@ -216,15 +261,19 @@ def generate_cover_letter(aid):
  content='\n'.join(lines)+'\n'
  base=artifact_stem(app,'cover_letter','Working'); path=LETTERS/f'{base}.md'; path.parent.mkdir(parents=True,exist_ok=True)
  path.write_text(content,encoding='utf-8')
- for a in store['applications']:
-  if a['application_id']==aid:
-    a['cover_letter_working_reference']=storage_reference(path, root=ROOT)
-    a['cover_letter_source_reference']=storage_reference(path, root=ROOT)
-    if not a.get('cover_letter_reference'):
-     a['cover_letter_reference']=storage_reference(path, root=ROOT)
-    a['application_checklist']['documents'][1]['status']='ready'
-    a['last_updated']=now()
- save_store(store)
+ def update(current):
+  if (current.get('phase8_plan_reference') != app.get('phase8_plan_reference')
+      or current.get('project_selection_record_ids') != app.get('project_selection_record_ids')):
+   return False
+  reference=storage_reference(path, root=ROOT)
+  current['cover_letter_working_reference']=reference
+  current['cover_letter_source_reference']=reference
+  if not current.get('cover_letter_reference'):
+   current['cover_letter_reference']=reference
+  current['application_checklist']['documents'][1]['status']='ready'
+  current['last_updated']=now()
+ updated=mutate_application(aid,update)
+ if not updated:return {'decision':'conflict','message':'Application planning changed while the cover letter was generated. Reload and retry.'}
  return {'decision':'created','cover_letter_reference':storage_reference(path, root=ROOT),'cover_letter_working_reference':storage_reference(path, root=ROOT),'content':content}
 def edit_cover_letter(aid, content):
  store=load_store(); app=next((x for x in store['applications'] if x['application_id']==aid),None)
@@ -239,12 +288,22 @@ def edit_cover_letter(aid, content):
  if found:return {'decision':'invalid','message':'Unsupported or placeholder wording is not allowed: '+', '.join(found)}
  reference=app.get('cover_letter_working_reference') or app.get('cover_letter_source_reference')
  if not reference:return {'decision':'invalid','message':'Generate a working cover letter before editing.'}
- path=resolve_storage_reference(str(reference))
- if path is None: return {'decision':'invalid','message':'The cover-letter reference is invalid.'}
+ if resolve_storage_reference(str(reference)) is None: return {'decision':'invalid','message':'The cover-letter reference is invalid.'}
+ path=LETTERS/f'{artifact_stem(app,"cover_letter","Working",uuid.uuid4().hex)}.md'
  path.parent.mkdir(parents=True,exist_ok=True); path.write_text(content+'\n',encoding='utf-8')
- for item in store['applications']:
-  if item.get('application_id')==aid: item['last_updated']=now(); item['cover_letter_edited_at']=item['last_updated']
- save_store(store); return {'decision':'saved','cover_letter_reference':reference,'content':content+'\n'}
+ replacement_reference=storage_reference(path,root=ROOT)
+ def update(current):
+  if (current.get('cover_letter_working_reference') or current.get('cover_letter_source_reference')) != reference:
+   return False
+  current['cover_letter_working_reference']=replacement_reference
+  current['cover_letter_source_reference']=replacement_reference
+  if current.get('cover_letter_reference') == reference:
+   current['cover_letter_reference']=replacement_reference
+  current['last_updated']=now()
+  current['cover_letter_edited_at']=current['last_updated']
+ updated=mutate_application(aid,update)
+ if not updated:return {'decision':'conflict','message':'The working cover letter changed while the edit was being saved. Reload and retry.'}
+ return {'decision':'saved','cover_letter_reference':replacement_reference,'cover_letter_working_reference':replacement_reference,'content':content+'\n'}
 
 def apply_persisted_project_selection(plan,app,profile):
  selection_source=app.get('project_selection_mode') or app.get('project_selection_source') or 'automatic'
@@ -283,6 +342,7 @@ def apply_persisted_project_selection(plan,app,profile):
 def approve_resume(aid,reviewed_plan=None):
   store=load_store(); app=next((x for x in store['applications'] if x['application_id']==aid),None)
   if not app:return {'decision':'not_found'}
+  original_app=copy.deepcopy(app)
   plan_ref=app.get('phase8_plan_reference')
   if reviewed_plan is not None:
     if not isinstance(reviewed_plan,dict) or reviewed_plan.get('mode')!='job_application_planning':
@@ -361,14 +421,18 @@ def approve_resume(aid,reviewed_plan=None):
     })
     app.setdefault('provenance',{})['phase8_source']=plan_ref
     app.setdefault('status_history',[]).append({'old_status':old_status,'new_status':'resume_ready','timestamp':app['last_updated'],'source':'explicit_user_approval'})
-    save_store(store)
-    return {'decision':'approved','application_id':aid,'resume_generation_allowed':True,'phase8_plan_reference':plan_ref,'application':app}
+    updated=replace_application_snapshot(aid,original_app,app)
+    if not updated:return {'decision':'conflict','message':'Application data changed during approval. Reload and retry.'}
+    return {'decision':'approved','application_id':aid,'resume_generation_allowed':True,'phase8_plan_reference':plan_ref,'application':updated}
   if plan_ref:
     plan_path=resolve_storage_reference(str(plan_ref))
     if plan_path is None: return {'decision':'error','message':'The approved Resume Plan reference is invalid.'}
     if plan_path.exists():
       plan=json.loads(plan_path.read_text(encoding='utf-8')); plan.setdefault('approval_checkpoint',{})['resume_generation_allowed']=True; plan_path.write_text(json.dumps(plan,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
-  app['resume_generation_allowed']=True; app['current_status']='resume_ready'; app['last_updated']=now(); app['status_history'].append({'old_status':'awaiting_resume_approval','new_status':'resume_ready','timestamp':now(),'source':'explicit_user_approval'}); save_store(store); return {'decision':'approved','application_id':aid,'resume_generation_allowed':True}
+  app['resume_generation_allowed']=True; app['current_status']='resume_ready'; app['last_updated']=now(); app['status_history'].append({'old_status':'awaiting_resume_approval','new_status':'resume_ready','timestamp':now(),'source':'explicit_user_approval'})
+  updated=replace_application_snapshot(aid,original_app,app)
+  if not updated:return {'decision':'conflict','message':'Application data changed during approval. Reload and retry.'}
+  return {'decision':'approved','application_id':aid,'resume_generation_allowed':True}
 def search(query=None,status=None):
  apps=load_store().get('applications',[]); q=norm(query); return [a for a in apps if (not status or a.get('current_status')==status) and (not q or q in norm(a.get('company_name')) or q in norm(a.get('job_title')) or q in norm(a.get('application_notes')))]
 def summary_report():
@@ -377,27 +441,10 @@ def summary_report():
  path=REPORTS/'application_summary.json'; path.parent.mkdir(parents=True,exist_ok=True); path.write_text(json.dumps({'generated_at':now(),'applications':rows},indent=2,ensure_ascii=False)+'\n',encoding='utf-8'); return path
 
 def load_document_history():
- path=DATA/'document_history.json'
- if not path.exists(): return {'documents':[]}
- try:
-  raw=path.read_text(encoding='utf-8')
-  if not raw.strip(): return {'documents':[]}
-  history=json.loads(raw)
-  if not isinstance(history,dict) or not isinstance(history.get('documents'),list): return {'documents':[]}
-  return history
- except (OSError,UnicodeError,json.JSONDecodeError):
-  return {'documents':[]}
+ return _application_store_adapter(ROOT).load_document_history()
 
 def save_document_history(history):
- path=DATA/'document_history.json'; path.parent.mkdir(parents=True,exist_ok=True)
- payload=json.dumps(history,indent=2,ensure_ascii=False)+'\n'
- temporary=None
- try:
-  with tempfile.NamedTemporaryFile('w',encoding='utf-8',dir=path.parent,prefix=f'.{path.name}.',suffix='.tmp',delete=False) as handle:
-   temporary=Path(handle.name); handle.write(payload); handle.flush(); os.fsync(handle.fileno())
-  os.replace(str(temporary),str(path))
- finally:
-  if temporary and temporary.exists(): temporary.unlink()
+ _application_store_adapter(ROOT).save_document_history(history)
 
 def _history_path_value(value):
     if value is None:
@@ -413,8 +460,8 @@ def _history_path_value(value):
     return relative.as_posix()
 
 def save_history(app, kind, doc, pdf):
- h=load_document_history(); h['documents'].append({'application_id':app.get('application_id'),'company':app.get('company_name'),'role':app.get('job_title'),'kind':kind,'date':now(),'docx':_history_path_value(doc),'pdf':_history_path_value(pdf),'selected_projects':app.get('selected_projects',[]),'selected_skills':app.get('selected_skills',[]),'selected_certifications':app.get('selected_certifications',[])})
- save_document_history(h)
+ entry={'application_id':app.get('application_id'),'company':app.get('company_name'),'role':app.get('job_title'),'kind':kind,'date':now(),'docx':_history_path_value(doc),'pdf':_history_path_value(pdf),'selected_projects':app.get('selected_projects',[]),'selected_skills':app.get('selected_skills',[]),'selected_certifications':app.get('selected_certifications',[])}
+ return _application_store_adapter(ROOT).append_document_history(entry)
 
 def main():
  ap=argparse.ArgumentParser(description='Phase 9A human-in-the-loop application assistant'); sub=ap.add_subparsers(dest='command',required=True)

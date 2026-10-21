@@ -5,13 +5,13 @@ Default behavior is a read-only update plan. Persistent writes require --apply
 and --confirm. The agent never regenerates resumes.
 """
 from __future__ import annotations
-import argparse, copy, hashlib, json, os, re, shutil, tempfile
+import argparse, copy, json, os, re, shutil, tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 from career_os_config import CODE_ROOT, DATA_DIR, OUTPUT_DIR, STORAGE_ROOT, storage_root
 from profile_security import ProfilePinVerificationError, verify_profile_pin
-from storage_adapter import FileStorageAdapter
+from storage_adapter import FileStorageAdapter, profile_documents_revision
 
 ROOT=CODE_ROOT
 DATA=DATA_DIR; REPORTS=OUTPUT_DIR/'reports'
@@ -75,9 +75,9 @@ def dump(name,obj,root=None,pin=None):
     docs = adapter.load_profile_documents()
     docs[name] = copy.deepcopy(obj)
     adapter.save_profile_documents(docs)
-def invalidate_approved_applications(actions,root=None):
+def invalidate_approved_applications(actions,root=None,applications=None):
     from career_os_api import invalidate_approved_applications_for_profile_actions
-    return invalidate_approved_applications_for_profile_actions(actions,root=root)
+    return invalidate_approved_applications_for_profile_actions(actions,root=root,applications=applications)
 def now(): return datetime.now(timezone.utc).isoformat()
 def norm(s): return re.sub(r'[^a-z0-9]+',' ',str(s).lower()).strip()
 def slug(s): return re.sub(r'[^a-z0-9]+','_',str(s).lower()).strip('_')
@@ -241,8 +241,7 @@ def result(request,decision,category,actions,conflicts,questions):
     return {'request':request,'decision':decision,'category':category,'actions':actions,'conflicts':conflicts,'questions':questions,'persistent_write_allowed':decision=='planned' and bool(actions),'resume_regeneration':False}
 
 def _profile_revision(data):
-    encoded=json.dumps(data,sort_keys=True,ensure_ascii=False,separators=(',',':')).encode('utf-8')
-    return hashlib.sha256(encoded).hexdigest()
+    return profile_documents_revision(data)
 
 def _profile_edit_value(field,value,list_fields=None):
     if field in (PROFILE_ADD_LIST_FIELDS if list_fields is None else list_fields):
@@ -415,7 +414,7 @@ def plan_profile_edit(updates=None,root=None,additions=None):
     plan['additions']=copy.deepcopy(additions)
     return plan
 
-def apply_plan(plan,root=None,confirm=False,confirm_delete=False,pin=None,invalidate_applications=True):
+def apply_plan(plan,root=None,confirm=False,confirm_delete=False,pin=None,invalidate_applications=True,_before_persist=None,_expected_profile_revision=None,_update_applications=None):
     if not confirm: raise PermissionError('Persistent profile writes require explicit --confirm.')
     verify_profile_pin(pin)
     if plan.get('decision')!='planned' or not plan.get('actions'): raise ValueError('Only a non-ambiguous planned update can be applied.')
@@ -423,6 +422,7 @@ def apply_plan(plan,root=None,confirm=False,confirm_delete=False,pin=None,invali
     unsupported=[a.get('action') for a in plan['actions'] if a.get('action') not in supported]
     if unsupported: raise ValueError('Unsupported profile update action(s): '+', '.join(str(x) for x in unsupported))
     data=all_data(root); changed=[]
+    expected_profile_revision=_expected_profile_revision or plan.get('base_revision') or _profile_revision(data)
     for a in plan['actions']:
         action=a['action']
         if action=='add_skill':
@@ -476,9 +476,27 @@ def apply_plan(plan,root=None,confirm=False,confirm_delete=False,pin=None,invali
                 data[category].setdefault(PROFILE_ADD_COLLECTIONS[category],[]).append(record)
             changed.append(category+'.json')
     sync_master(data)
-    _storage_adapter(root).save_profile_documents(data)
-    if invalidate_applications:
-        invalidate_approved_applications(plan['actions'],root)
+    if _before_persist is not None:
+        _before_persist(data)
+    adapter=_storage_adapter(root)
+    if invalidate_applications and getattr(adapter,'backend_name',None)=='postgres':
+        expected_applications=adapter.load_application_store().get('applications',[])
+        def update_applications(applications):
+            if _update_applications is not None:
+                return _update_applications(applications)
+            return invalidate_approved_applications(
+                plan['actions'],root,applications=applications
+            )
+        adapter.save_profile_documents_and_update_applications(
+            data,
+            expected_profile_revision,
+            expected_applications,
+            update_applications,
+        )
+    else:
+        adapter.save_profile_documents(data)
+        if invalidate_applications:
+            invalidate_approved_applications(plan['actions'],root)
     return sorted(set(changed))
 
 def sync_master(data):
@@ -503,24 +521,45 @@ def apply_profile_edit_plan(plan,root=None,confirm=False,pin=None):
         return {'decision':'stale_profile','message':'The canonical profile changed after this edit was planned. Reload and review the current profile.'}
     if plan.get('actions')!=current.get('actions'):
         return {'decision':'invalid','message':'The planned profile changes do not match the submitted edits.'}
+    adapter=_storage_adapter(root)
+    postgres_mode=getattr(adapter,'backend_name',None)=='postgres'
     names={action['category'] for action in current['actions']}|{'master_profile'}
-    paths={name:storage_root(root)/'data'/f'{name}.json' for name in names}
-    originals={path:path.read_bytes() for path in paths.values()}
+    originals={}
+    if not postgres_mode:
+        paths={name:storage_root(root)/'data'/f'{name}.json' for name in names}
+        originals={path:path.read_bytes() for path in paths.values()}
     try:
-        changed=apply_plan(current,root,confirm=True,pin=pin,invalidate_applications=False)
-        validation=validate_data(root)
-        if not validation.get('valid'):
-            raise ValueError('Profile validation failed: '+', '.join(validation.get('errors',[])))
-        invalidate_approved_applications(current['actions'],root)
+        if postgres_mode:
+            validation={}
+            def validate_before_persist(documents):
+                validation.update(validate_data(root,documents))
+                if not validation.get('valid'):
+                    raise ValueError('Profile validation failed: '+', '.join(validation.get('errors',[])))
+            changed=apply_plan(
+                current,
+                root,
+                confirm=True,
+                pin=pin,
+                invalidate_applications=True,
+                _before_persist=validate_before_persist,
+                _expected_profile_revision=current['base_revision'],
+            )
+        else:
+            changed=apply_plan(current,root,confirm=True,pin=pin,invalidate_applications=False)
+            validation=validate_data(root)
+            if not validation.get('valid'):
+                raise ValueError('Profile validation failed: '+', '.join(validation.get('errors',[])))
+            invalidate_approved_applications(current['actions'],root)
     except ProfilePinVerificationError:
         raise
     except Exception:
-        for path,content in originals.items(): path.write_bytes(content)
+        if not postgres_mode:
+            for path,content in originals.items(): path.write_bytes(content)
         raise
     return {'decision':'profile_updated','changed_files':changed,'validation':validation}
 
-def validate_data(root=None):
-    data=all_data(root); errors=[]
+def validate_data(root=None,documents=None):
+    data=all_data(root) if documents is None else documents; errors=[]
     for p in project_records(data):
         if p.get('project_status') not in STATUSES: errors.append('invalid project status '+p.get('record_id',''))
         if p.get('github_availability') not in GITHUB_STATUSES: errors.append('invalid github status '+p.get('record_id',''))

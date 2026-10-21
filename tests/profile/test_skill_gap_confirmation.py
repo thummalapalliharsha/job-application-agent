@@ -2,24 +2,65 @@
 """Isolated API tests for explicit JD skill-gap confirmation."""
 from __future__ import annotations
 
+import copy
 import json
 import os
 import secrets
 import shutil
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 import application_assistant as aa
 import career_os_api as api
 import jd_resume_planner as planner
+import profile_update_agent as pua
 import profile_security as psecurity
 
 ROOT = Path(__file__).resolve().parents[2]
 
 
+class TransactionalProfileAdapter:
+    backend_name = "postgres"
+
+    def __init__(self, profile, applications):
+        self.profile = copy.deepcopy(profile)
+        self.applications = copy.deepcopy(applications)
+        self.fail_after_application_update = False
+
+    def load_profile_documents(self):
+        return copy.deepcopy(self.profile)
+
+    def load_application_store(self):
+        return {"applications": copy.deepcopy(self.applications)}
+
+    def save_profile_documents_and_update_applications(
+        self, documents, expected_profile_revision, expected_applications, update_applications
+    ):
+        if pua._profile_revision(self.profile) != expected_profile_revision:
+            raise RuntimeError("Profile data changed during profile update.")
+        if self.applications != expected_applications:
+            raise RuntimeError("Application data changed during profile update.")
+        original_profile = copy.deepcopy(self.profile)
+        original_applications = copy.deepcopy(self.applications)
+        try:
+            self.profile = copy.deepcopy(documents)
+            update_applications(self.applications)
+            if self.fail_after_application_update:
+                raise RuntimeError("injected failure after application update")
+        except Exception:
+            self.profile = original_profile
+            self.applications = original_applications
+            raise
+
+
 class SkillGapConfirmationTests(unittest.TestCase):
     def setUp(self):
+        backend_patch = patch.dict(os.environ, {"CAREER_OS_STORAGE_BACKEND": "file"})
+        backend_patch.start()
+        self.addCleanup(backend_patch.stop)
+
         self.temporary = tempfile.TemporaryDirectory(prefix="skill-gap-confirmation-")
         self.root = Path(self.temporary.name)
         self.data = self.root / "data"
@@ -110,6 +151,86 @@ class SkillGapConfirmationTests(unittest.TestCase):
             self.assertEqual(result["decision"], "pin_verification_required", result)
             self.assertNotIn(self.pin, json.dumps(result))
             self.assertEqual({path: path.read_bytes() for path in paths}, original)
+
+    def test_postgres_skill_confirmation_rolls_back_profile_plan_and_application_on_commit_failure(self):
+        application = next(
+            item for item in aa.load_store()["applications"]
+            if item["application_id"] == self.aid
+        )
+        plan_path = self.root / application["phase8_plan_reference"]
+        original_plan = plan_path.read_bytes()
+        adapter = TransactionalProfileAdapter(
+            pua.all_data(self.root),
+            [application],
+        )
+        adapter.fail_after_application_update = True
+        original_profile = copy.deepcopy(adapter.profile)
+        original_applications = copy.deepcopy(adapter.applications)
+
+        def invalidate(actions, root=None, applications=None):
+            return []
+
+        with patch.dict(os.environ, {"CAREER_OS_STORAGE_BACKEND": "postgres"}), \
+             patch.object(aa, "_application_store_adapter", return_value=adapter), \
+             patch.object(pua, "_storage_adapter", return_value=adapter), \
+             patch.object(pua, "invalidate_approved_applications", side_effect=invalidate):
+            result = api.confirm_skill_gap(
+                self.aid,
+                {
+                    "skill": "LangChain",
+                    "category": "generative_ai",
+                    "confirmed": True,
+                    "pin": self.pin,
+                },
+            )
+
+        self.assertEqual(result["decision"], "error", result)
+        self.assertIn("injected failure", result["message"])
+        self.assertEqual(adapter.profile, original_profile)
+        self.assertEqual(adapter.applications, original_applications)
+        self.assertEqual(plan_path.read_bytes(), original_plan)
+
+    def test_postgres_skill_confirmation_commits_profile_plan_and_application_together(self):
+        application = next(
+            item for item in aa.load_store()["applications"]
+            if item["application_id"] == self.aid
+        )
+        plan_path = self.root / application["phase8_plan_reference"]
+        original_plan = plan_path.read_bytes()
+        adapter = TransactionalProfileAdapter(
+            pua.all_data(self.root),
+            [application],
+        )
+
+        with patch.dict(os.environ, {"CAREER_OS_STORAGE_BACKEND": "postgres"}), \
+             patch.object(aa, "_application_store_adapter", return_value=adapter), \
+             patch.object(pua, "_storage_adapter", return_value=adapter), \
+             patch.object(pua, "invalidate_approved_applications", return_value=[]):
+            result = api.confirm_skill_gap(
+                self.aid,
+                {
+                    "skill": "LangChain",
+                    "category": "generative_ai",
+                    "confirmed": True,
+                    "pin": self.pin,
+                },
+            )
+
+        self.assertEqual(result["decision"], "skill_added_candidate_provided", result)
+        skill_names = {
+            skill["name"]
+            for group in adapter.profile["skills"]["skill_groups"]
+            for skill in group["skills"]
+        }
+        self.assertIn("LangChain", skill_names)
+        saved_application = adapter.applications[0]
+        self.assertFalse(saved_application["resume_generation_allowed"])
+        self.assertEqual(saved_application["current_status"], "awaiting_resume_approval")
+        self.assertEqual(plan_path.read_bytes(), original_plan)
+        new_plan_path = self.root / saved_application["phase8_plan_reference"]
+        self.assertNotEqual(new_plan_path, plan_path)
+        persisted_plan = json.loads(new_plan_path.read_text(encoding="utf-8"))
+        self.assertFalse(persisted_plan["approval_checkpoint"]["resume_generation_allowed"])
 
 
 if __name__ == "__main__":

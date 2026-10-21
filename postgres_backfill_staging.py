@@ -2,8 +2,9 @@
 
 This module intentionally does not auto-run on import. It contains the explicit,
 transaction-scoped backfill logic that validates the A-tier manifest, requires a
-healthy Neon staging connection, and performs idempotent upserts inside a single
-transaction.
+healthy Neon staging connection, and performs the explicitly requested backfill inside
+a single transaction. Document history uses the runtime importer's conflict-safe marker
+protocol rather than upserting conflicting history rows.
 """
 from __future__ import annotations
 
@@ -12,30 +13,74 @@ import json
 import os
 from pathlib import Path
 from typing import Any, Callable
+from urllib.parse import parse_qs, unquote, urlsplit
 
 from postgres_client import PostgresClient
 from postgres_config import PostgresConfig, load_postgres_config
+from postgres_storage_adapter import import_legacy_document_history
 from postgres_schema import postgres_schema_sql
 from postgres_backfill_dry_run import build_a_tier_manifest, validate_manifest
 
 
 def assert_staging_target(config: PostgresConfig | None = None) -> tuple[bool, str]:
-    """Ensure the target is explicit staging-only and not Render production."""
+    """Require an explicitly allow-listed Neon staging target before any connection."""
     resolved = config or load_postgres_config()
     backend = (os.environ.get("CAREER_OS_STORAGE_BACKEND", "file") or "file").strip().lower()
     if backend != "postgres":
         return False, "CAREER_OS_STORAGE_BACKEND must be set to postgres for staging writes."
     if not resolved.is_configured:
         return False, "PostgreSQL staging configuration is missing."
-    url = (resolved.url or "").lower()
-    host = (resolved.host or "").lower()
-    env_name = (os.environ.get("CAREER_OS_ENV") or os.environ.get("APP_ENV") or os.environ.get("ENVIRONMENT") or "staging").strip().lower()
-    if env_name in {"production", "prod", "render"}:
-        return False, "Production targets are forbidden for the staging-only backfill."
-    if "render" in url or "render" in host:
-        return False, "Render production connections are not allowed for this staging backfill."
-    if "neon.tech" not in url and "neon.tech" not in host and not url and not host:
-        return False, "Staging backfill requires an explicit Neon staging Postgres URL or host."
+    environment_values = {
+        key: os.environ.get(key, "").strip().lower()
+        for key in ("CAREER_OS_ENV", "APP_ENV", "ENVIRONMENT")
+        if os.environ.get(key, "").strip()
+    }
+    if environment_values.get("CAREER_OS_ENV") != "staging":
+        return False, "CAREER_OS_ENV must explicitly identify the environment as staging."
+    if any(value != "staging" for value in environment_values.values()):
+        return False, "Environment variables provide conflicting staging identity."
+
+    approved_host = os.environ.get("CAREER_OS_POSTGRES_STAGING_HOST", "").strip().lower().rstrip(".")
+    if not approved_host:
+        return False, "CAREER_OS_POSTGRES_STAGING_HOST must explicitly allow-list the staging host."
+    labels = approved_host.split(".")
+    if (
+        len(labels) < 3
+        or labels[-2:] != ["neon", "tech"]
+        or not any(label in {"stage", "staging"} or label.endswith("-staging") for label in labels[:-2])
+        or any("prod" in label or label == "live" for label in labels[:-2])
+    ):
+        return False, "The allow-listed host must identify a non-production Neon staging target."
+
+    if resolved.url:
+        try:
+            parsed = urlsplit(resolved.url)
+            configured_host = (parsed.hostname or "").lower().rstrip(".")
+            configured_database = unquote(parsed.path.lstrip("/").split("/", 1)[0])
+            configured_user = unquote(parsed.username or "")
+            connection_parameters = parse_qs(parsed.query, keep_blank_values=True)
+            configured_port = parsed.port
+        except (ValueError, UnicodeError):
+            return False, "The configured PostgreSQL URL is invalid or ambiguous."
+        override_parameters = {key.casefold() for key in connection_parameters}
+        if {"host", "hostaddr", "service", "dbname", "user", "port"} & override_parameters:
+            return False, "The PostgreSQL URL contains connection parameters that can override target identity."
+        if (
+            (resolved.host and resolved.host.lower().rstrip(".") != configured_host)
+            or (resolved.database and resolved.database != configured_database)
+            or (resolved.user and resolved.user != configured_user)
+            or (configured_port is not None and resolved.port != configured_port)
+        ):
+            return False, "PostgreSQL URL and separate connection fields provide conflicting target identity."
+    else:
+        configured_host = (resolved.host or "").lower().rstrip(".")
+        configured_database = resolved.database
+        configured_user = resolved.user
+
+    if not configured_host or not configured_database or not configured_user:
+        return False, "The staging host, database, and user must all be explicit."
+    if configured_host != approved_host:
+        return False, "The configured PostgreSQL host does not match the allow-listed staging host."
     return True, ""
 
 
@@ -260,17 +305,7 @@ def run_staging_backfill(
                             (item.get("record_id"), json.dumps(item, ensure_ascii=False, sort_keys=True)),
                         )
 
-                    history_payload = _read_json_file(root_path / "data" / "document_history.json")
-                    for item in history_payload.get("documents", []):
-                        if not isinstance(item, dict):
-                            continue
-                        document_id = item.get("document_id")
-                        if not document_id:
-                            continue
-                        cursor.execute(
-                            "INSERT INTO document_history_records (document_id, application_id, payload_json) VALUES (%s, %s, %s) ON CONFLICT (document_id) DO UPDATE SET application_id = EXCLUDED.application_id, payload_json = EXCLUDED.payload_json, updated_at = now()",
-                            (document_id, item.get("application_id"), json.dumps(item, ensure_ascii=False, sort_keys=True)),
-                        )
+                    import_legacy_document_history(cursor, root_path / "data")
 
                     jd_dir = root_path / "job_descriptions"
                     if jd_dir.exists():
@@ -426,17 +461,7 @@ def run_staging_backfill(
                         (item.get("record_id"), json.dumps(item, ensure_ascii=False, sort_keys=True)),
                     )
 
-                history_payload = _read_json_file(root_path / "data" / "document_history.json")
-                for item in history_payload.get("documents", []):
-                    if not isinstance(item, dict):
-                        continue
-                    document_id = item.get("document_id")
-                    if not document_id:
-                        continue
-                    cursor.execute(
-                        "INSERT INTO document_history_records (document_id, application_id, payload_json) VALUES (%s, %s, %s) ON CONFLICT (document_id) DO UPDATE SET application_id = EXCLUDED.application_id, payload_json = EXCLUDED.payload_json, updated_at = now()",
-                        (document_id, item.get("application_id"), json.dumps(item, ensure_ascii=False, sort_keys=True)),
-                    )
+                import_legacy_document_history(cursor, root_path / "data")
 
                 jd_dir = root_path / "job_descriptions"
                 if jd_dir.exists():

@@ -210,6 +210,45 @@ class ReviewedPlanLifecycleTests(unittest.TestCase):
         self.assertEqual(self.old_final_docx.read_bytes(), b"historical-final-docx")
         self.assertEqual(self.old_final_pdf.read_bytes(), b"historical-final-pdf")
 
+    def test_concurrent_working_revision_is_not_overwritten_by_generation(self):
+        plan = self.reviewed_plan()
+        approval = aa.approve_resume(self.aid, plan)
+        self.assertEqual(approval["decision"], "approved", approval)
+        concurrent_state = {
+            "working_resume_reference": "output/resumes/concurrent.docx",
+            "working_resume_pdf_reference": "output/resumes/concurrent.pdf",
+            "working_resume_docx_path": "output/resumes/concurrent.docx",
+            "working_resume_pdf_path": "output/resumes/concurrent.pdf",
+            "working_resume_generation_id": "gen_concurrent",
+            "working_resume_revision_id": "rev_concurrent",
+            "working_resume_revision_reference": "output/resume_edits/concurrent.json",
+        }
+
+        def generate_during_concurrent_edit(_plan, _profile, output):
+            Path(output).write_bytes(b"stale-generated-resume")
+            self.assertIsNotNone(
+                aa.mutate_application(
+                    self.aid,
+                    lambda current: current.update(concurrent_state),
+                )
+            )
+
+        def fake_convert(docx):
+            pdf = Path(docx).with_suffix(".pdf")
+            pdf.write_bytes(b"stale-generated-pdf")
+            return pdf
+
+        with patch.object(rg, "profile", return_value=self.profile), \
+             patch.object(rg, "generate", side_effect=generate_during_concurrent_edit), \
+             patch.object(rg, "validate", return_value={"page_count": 1, "final_status": "PASS"}), \
+             patch.object(api, "convert_pdf", side_effect=fake_convert):
+            result = api.generate_working_resume(self.aid)
+
+        self.assertEqual(result["decision"], "conflict", result)
+        current = aa.get_app(self.aid)[0]
+        for key, value in concurrent_state.items():
+            self.assertEqual(current[key], value)
+
     def test_generation_uses_configured_profile_source_when_local_profile_differs(self):
         plan = self.reviewed_plan()
         approval = aa.approve_resume(self.aid, plan)

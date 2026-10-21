@@ -1,9 +1,68 @@
 import json
+import http.client
+import os
 import tempfile
+import threading
 import unittest
+from contextlib import ExitStack, contextmanager
+from http.server import ThreadingHTTPServer
 from pathlib import Path
+from unittest.mock import patch
 
 import application_assistant as aa
+import career_os_api as api
+import career_os_config
+
+
+class FakeApplicationDatabase:
+    def __init__(self, *, fail_on_insert=False):
+        self.rows = {}
+        self.fail_on_insert = fail_on_insert
+
+    def cursor(self):
+        return FakeApplicationCursor(self)
+
+
+class FakeApplicationCursor:
+    def __init__(self, database):
+        self.database = database
+        self.rows = []
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        return False
+
+    def execute(self, statement, params=None):
+        normalized = " ".join(statement.split()).casefold()
+        if normalized.startswith("select application_id, payload_json"):
+            self.rows = [
+                (application_id, payload)
+                for application_id, payload in sorted(self.database.rows.items())
+            ]
+        elif normalized.startswith("insert into application_records"):
+            if self.database.fail_on_insert:
+                raise RuntimeError("simulated PostgreSQL insert failure")
+            application_id, payload = params[:2]
+            self.database.rows[application_id] = payload
+        else:
+            raise AssertionError(f"Unexpected PostgreSQL statement: {statement}")
+
+    def fetchall(self):
+        return self.rows
+
+
+class FakeApplicationConnection:
+    def __init__(self, database):
+        self.database = database
+
+    @contextmanager
+    def transaction(self):
+        yield self
+
+    def cursor(self):
+        return self.database.cursor()
 
 
 class ApplicationStorePersistenceTests(unittest.TestCase):
@@ -26,6 +85,8 @@ class ApplicationStorePersistenceTests(unittest.TestCase):
         self.original_reports = aa.REPORTS
         self.original_letters = aa.LETTERS
         self.original_resumes = aa.RESUMES
+        self.backend_patch = patch.dict(os.environ, {"CAREER_OS_STORAGE_BACKEND": "file"}, clear=False)
+        self.backend_patch.start()
 
         aa.ROOT = self.root
         aa.DATA = self.data
@@ -43,7 +104,259 @@ class ApplicationStorePersistenceTests(unittest.TestCase):
         aa.REPORTS = self.original_reports
         aa.LETTERS = self.original_letters
         aa.RESUMES = self.original_resumes
+        self.backend_patch.stop()
         self.temporary.cleanup()
+
+    @staticmethod
+    def _application_plan(_jd_text, _report_path):
+        return {
+            "resume_plan": {
+                "projects_to_include": [],
+                "skills_to_include": [],
+                "certifications_to_include": [],
+                "experience_decisions": [],
+            },
+            "jd_analysis": {"requirements": []},
+            "evidence_summary": {
+                "supported_requirements": [],
+                "partial_requirements": [],
+                "unsupported_requirements": [],
+            },
+        }
+
+    @staticmethod
+    def _request_api(method, path, payload=None):
+        server = ThreadingHTTPServer(("127.0.0.1", 0), api.Handler)
+        host = f"127.0.0.1:{server.server_port}"
+        original_hosts = set(api._ALLOWED_HOSTS)
+        api._ALLOWED_HOSTS.add(host)
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        try:
+            connection = http.client.HTTPConnection(
+                "127.0.0.1", server.server_port, timeout=5
+            )
+            headers = {"Authorization": "Bearer persistence-test-token"}
+            body = None
+            if payload is not None:
+                headers["Content-Type"] = "application/json"
+                body = json.dumps(payload)
+            connection.request(method, path, body=body, headers=headers)
+            response = connection.getresponse()
+            result = json.loads(response.read().decode("utf-8"))
+            connection.close()
+            return response.status, result
+        finally:
+            server.shutdown()
+            server.server_close()
+            thread.join(timeout=5)
+            api._ALLOWED_HOSTS.clear()
+            api._ALLOWED_HOSTS.update(original_hosts)
+
+    def _postgres_test_patches(self, database):
+        connection = FakeApplicationConnection(database)
+        return (
+            patch.dict(
+                os.environ,
+                {
+                    "CAREER_OS_STORAGE_BACKEND": "postgres",
+                    "CAREER_OS_POSTGRES_URL": "postgresql://unit.test/career_os",
+                },
+                clear=False,
+            ),
+            patch("postgres_storage_adapter.psycopg", object()),
+            patch(
+                "postgres_client.PostgresClient.healthcheck",
+                return_value={
+                    "backend": "postgres",
+                    "configured": True,
+                    "ready": True,
+                    "reachable": True,
+                    "error": None,
+                },
+            ),
+            patch(
+                "postgres_client.PostgresClient.connect",
+                return_value=connection,
+            ),
+            patch.object(api, "_API_TOKEN", "persistence-test-token"),
+            patch.object(api, "profile_summary", return_value={}),
+            patch.object(api, "ROOT", self.root),
+            patch.object(aa, "phase8_plan", side_effect=self._application_plan),
+        )
+
+    def test_postgres_create_is_readable_from_bootstrap(self):
+        database = FakeApplicationDatabase()
+        with ExitStack() as stack:
+            for patcher in self._postgres_test_patches(database):
+                stack.enter_context(patcher)
+            self.assertEqual(
+                aa._application_store_adapter(self.root).backend_name,
+                "postgres",
+            )
+            status, created = self._request_api(
+                "POST",
+                "/api/applications",
+                {
+                    "company": "PostgreSQL Round Trip Co",
+                    "title": "Persistence Engineer",
+                    "url": "https://example.test/postgres-round-trip",
+                    "job_description": (
+                        "Persistence Engineer\nResponsibilities:\n- Persist records."
+                    ),
+                },
+            )
+            self.assertEqual(status, 201, created)
+            application = created["application"]
+            application_id = application["application_id"]
+            self.assertIn(application_id, database.rows)
+
+            status, bootstrap = self._request_api("GET", "/api/bootstrap")
+
+        self.assertEqual(status, 200, bootstrap)
+        reloaded = next(
+            item for item in bootstrap["applications"]
+            if item["application_id"] == application_id
+        )
+        self.assertEqual(reloaded["company_name"], "PostgreSQL Round Trip Co")
+        self.assertEqual(reloaded["job_title"], "Persistence Engineer")
+        self.assertEqual(
+            reloaded["job_description_text"],
+            application["job_description_text"],
+        )
+
+    def test_postgres_insert_failure_returns_non_success_create_response(self):
+        database = FakeApplicationDatabase(fail_on_insert=True)
+        with ExitStack() as stack:
+            for patcher in self._postgres_test_patches(database):
+                stack.enter_context(patcher)
+            status, result = self._request_api(
+                "POST",
+                "/api/applications",
+                {
+                    "company": "Failed PostgreSQL Co",
+                    "title": "Persistence Engineer",
+                    "url": "https://example.test/postgres-failure",
+                    "job_description": (
+                        "Persistence Engineer\nResponsibilities:\n- Persist records."
+                    ),
+                },
+            )
+
+        self.assertEqual(status, 500, result)
+        self.assertNotEqual(result.get("decision"), "created")
+        self.assertEqual(database.rows, {})
+
+    def test_application_adapter_selection_and_postgres_failures(self):
+        with patch.dict(os.environ, {}, clear=True):
+            self.assertEqual(aa._application_store_adapter(self.root).backend_name, "file")
+
+        with patch.object(aa, "ROOT", career_os_config.CODE_ROOT), patch.object(
+            career_os_config, "STORAGE_ROOT", self.root
+        ):
+            self.assertEqual(aa._application_store_adapter().root, self.root.resolve())
+
+        with patch.dict(os.environ, {"CAREER_OS_STORAGE_BACKEND": "postgres"}, clear=True):
+            adapter = aa._application_store_adapter(self.root)
+            with self.assertRaisesRegex(RuntimeError, "configuration is missing"):
+                adapter.load_application_store()
+
+        with patch.dict(
+            os.environ,
+            {"CAREER_OS_STORAGE_BACKEND": "postgres", "CAREER_OS_POSTGRES_URL": "postgresql://test"},
+            clear=True,
+        ), patch("postgres_storage_adapter.psycopg", object()):
+            adapter = aa._application_store_adapter(self.root)
+            self.assertEqual(adapter.backend_name, "postgres")
+            with self.assertRaisesRegex(RuntimeError, "snapshots cannot be saved"):
+                aa.save_store({"applications": []})
+            with patch.object(adapter.client, "ping", return_value=False):
+                with self.assertRaisesRegex(RuntimeError, "PostgreSQL application storage is unavailable"):
+                    adapter.load_application_store()
+
+    def test_file_adapter_mutation_rejects_stale_delete_and_preserves_updates(self):
+        adapter = aa.FileStorageAdapter(root=self.root)
+        adapter.save_application_store({"applications": [{
+            "application_id": "app_mutable",
+            "current_status": "saved",
+            "application_notes": [],
+        }]})
+        original = adapter.load_application_store()["applications"][0]
+        updated = adapter.mutate_application(
+            "app_mutable",
+            lambda current: current.update({"current_status": "interview"}),
+        )
+        self.assertEqual(updated["current_status"], "interview")
+        self.assertIsNone(adapter.delete_application("app_mutable", expected=original))
+        self.assertEqual(adapter.load_application_store()["applications"], [updated])
+        deleted = adapter.delete_application("app_mutable", expected=updated)
+        self.assertEqual(deleted, updated)
+        self.assertEqual(adapter.load_application_store(), {"applications": []})
+
+    def test_concurrent_cover_letter_edits_compare_and_swap_unique_artifacts(self):
+        application_id = "app_concurrent_letter"
+        original_reference = "output/cover_letters/active.md"
+        final_reference = "output/cover_letters/finalized.md"
+        original_path = self.root / original_reference
+        final_path = self.root / final_reference
+        original_path.write_text("Original working letter.\n", encoding="utf-8")
+        final_path.write_text("Finalized letter.\n", encoding="utf-8")
+        adapter = aa.FileStorageAdapter(root=self.root)
+        adapter.save_application_store({"applications": [{
+            "application_id": application_id,
+            "company_name": "Example Co",
+            "cover_letter_working_reference": original_reference,
+            "cover_letter_source_reference": original_reference,
+            "cover_letter_reference": final_reference,
+        }]})
+
+        mutation_barrier = threading.Barrier(2)
+        original_mutate = aa.mutate_application
+        results = []
+        failures = []
+
+        def synchronized_mutate(aid, mutation, root=None):
+            mutation_barrier.wait(timeout=5)
+            return original_mutate(aid, mutation, root=root)
+
+        def edit(content):
+            try:
+                results.append(aa.edit_cover_letter(application_id, content))
+            except Exception as exc:
+                failures.append(exc)
+
+        new_artifacts = set(self.letters.glob("*.md"))
+        with patch.object(aa, "resolve_storage_reference", side_effect=lambda ref: self.root / ref), \
+             patch.object(aa, "mutate_application", side_effect=synchronized_mutate):
+            workers = [
+                threading.Thread(target=edit, args=(f"Letter for Example Co: edit {index}.",))
+                for index in (1, 2)
+            ]
+            for worker in workers:
+                worker.start()
+            for worker in workers:
+                worker.join(timeout=5)
+
+        self.assertTrue(all(not worker.is_alive() for worker in workers))
+        self.assertEqual(failures, [])
+        self.assertCountEqual([result["decision"] for result in results], ["saved", "conflict"])
+        created_artifacts = set(self.letters.glob("*.md")) - new_artifacts
+        self.assertEqual(len(created_artifacts), 2)
+        self.assertEqual(original_path.read_text(encoding="utf-8"), "Original working letter.\n")
+        self.assertEqual(final_path.read_text(encoding="utf-8"), "Finalized letter.\n")
+
+        store = adapter.load_application_store()
+        saved_application = store["applications"][0]
+        active_reference = saved_application["cover_letter_working_reference"]
+        self.assertEqual(saved_application["cover_letter_source_reference"], active_reference)
+        self.assertEqual(saved_application["cover_letter_reference"], final_reference)
+        active_path = self.root / active_reference
+        self.assertIn(active_path, created_artifacts)
+        saved_result = next(result for result in results if result["decision"] == "saved")
+        self.assertEqual(saved_result["cover_letter_working_reference"], active_reference)
+        self.assertEqual(active_path.read_text(encoding="utf-8"), saved_result["content"])
+        orphan_path = next(path for path in created_artifacts if path != active_path)
+        self.assertNotEqual(orphan_path.read_text(encoding="utf-8"), saved_result["content"])
 
     def test_create_save_reload_round_trip(self):
         jd = "Junior Generative AI RAG Engineer\nRequired Skills:\n- Python\n- RAG\nResponsibilities:\n- Build retrieval pipelines."
@@ -61,6 +374,82 @@ class ApplicationStorePersistenceTests(unittest.TestCase):
         self.assertEqual(reloaded[0]["company_name"], "Example AI")
         self.assertEqual(reloaded[0]["job_title"], "Junior RAG Engineer")
         self.assertEqual(reloaded[0]["selected_projects"], reloaded[0]["selected_projects"])
+
+    def test_create_reloads_store_after_planning_before_persisting(self):
+        adapter = aa.FileStorageAdapter(root=self.root)
+        adapter.save_application_store({"applications": [
+            {"application_id": "app_abcd", "company_name": "ABCD", "current_status": "saved"},
+            {"application_id": "app_keep", "company_name": "Keep Co", "current_status": "saved"},
+        ]})
+        planning_started = threading.Event()
+        finish_planning = threading.Event()
+        create_results = []
+        create_errors = []
+
+        def paused_plan(_jd_text, _report_path):
+            planning_started.set()
+            if not finish_planning.wait(timeout=5):
+                raise TimeoutError("Test did not release application planning.")
+            return {
+                "resume_plan": {
+                    "projects_to_include": [],
+                    "skills_to_include": [],
+                    "certifications_to_include": [],
+                    "experience_decisions": [],
+                },
+                "jd_analysis": {"requirements": []},
+                "evidence_summary": {
+                    "supported_requirements": [],
+                    "partial_requirements": [],
+                    "unsupported_requirements": [],
+                },
+            }
+
+        def create():
+            try:
+                create_results.append(aa.create_application(
+                    "New Co",
+                    "New Role",
+                    "https://example.test/new-role",
+                    "New Role\nResponsibilities:\n- Build systems.",
+                ))
+            except Exception as exc:
+                create_errors.append(exc)
+
+        with patch.object(aa, "_application_store_adapter", return_value=adapter), \
+             patch.object(aa, "phase8_plan", side_effect=paused_plan):
+            worker = threading.Thread(target=create)
+            worker.start()
+            try:
+                self.assertTrue(planning_started.wait(timeout=5))
+                deleted = aa.delete_application_record(
+                    "app_abcd",
+                    expected={
+                        "application_id": "app_abcd",
+                        "company_name": "ABCD",
+                        "current_status": "saved",
+                    },
+                )
+                self.assertIsNotNone(deleted)
+                updated = aa.mutate_application(
+                    "app_keep",
+                    lambda current: current.update({"current_status": "interview"}),
+                )
+                self.assertEqual(updated["current_status"], "interview")
+            finally:
+                finish_planning.set()
+                worker.join(timeout=5)
+
+        self.assertFalse(worker.is_alive(), "Application creation did not finish.")
+        self.assertEqual(create_errors, [])
+        self.assertEqual(create_results[0]["decision"], "created")
+        records = {
+            item["application_id"]: item
+            for item in adapter.load_application_store()["applications"]
+        }
+        self.assertNotIn("app_abcd", records)
+        self.assertEqual(records["app_keep"]["current_status"], "interview")
+        self.assertIn(create_results[0]["application"]["application_id"], records)
 
     def test_nested_payload_round_trip_and_status_history_preserved(self):
         store = {"applications": [{

@@ -4,10 +4,12 @@ from __future__ import annotations
 
 import copy
 import json
+import os
 import shutil
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from docx import Document
 
@@ -21,7 +23,16 @@ APPLICATION_ID = "app_b70a2228a165"
 
 class CoverLetterPdfLifecycleTests(unittest.TestCase):
     def setUp(self):
+        self.backend_patch = patch.dict(
+            os.environ,
+            {"CAREER_OS_STORAGE_BACKEND": "file"},
+            clear=False,
+        )
+        self.backend_patch.start()
+        self.addCleanup(self.backend_patch.stop)
+
         self.temporary = tempfile.TemporaryDirectory(prefix="cover-letter-pdf-lifecycle-")
+        self.addCleanup(self.temporary.cleanup)
         self.root = Path(self.temporary.name)
         self.data = self.root / "data"
         self.reports = self.root / "output" / "reports"
@@ -34,11 +45,12 @@ class CoverLetterPdfLifecycleTests(unittest.TestCase):
 
         original_apps = json.loads((self.data / "applications.json").read_text(encoding="utf-8"))
         target = next(item for item in original_apps["applications"] if item["application_id"] == APPLICATION_ID)
-        plan_reference = target["phase8_plan_reference"].replace("\\", "/")
-        source_plan = ROOT / plan_reference
+        plan_reference = "output/reports/cover_letter_lifecycle_plan.json"
         destination_plan = self.root / plan_reference
         destination_plan.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(source_plan, destination_plan)
+        destination_plan.write_text("{}\n", encoding="utf-8")
+        target["phase8_plan_reference"] = plan_reference
+        target.setdefault("provenance", {})["phase8_source"] = plan_reference
 
         self.final_markdown = self.letters / "existing_final.md"
         self.final_pdf = self.letters / "existing_final.pdf"
@@ -55,6 +67,7 @@ class CoverLetterPdfLifecycleTests(unittest.TestCase):
 
         self.original_aa_paths = (aa.ROOT, aa.DATA, aa.JOBS, aa.OUT, aa.REPORTS, aa.LETTERS, aa.RESUMES)
         self.original_api_root = api.ROOT
+        self.addCleanup(self._restore_module_configuration)
         aa.ROOT = self.root
         aa.DATA = self.data
         aa.JOBS = self.root / "job_descriptions"
@@ -64,10 +77,9 @@ class CoverLetterPdfLifecycleTests(unittest.TestCase):
         aa.RESUMES = self.resumes
         api.ROOT = self.root
 
-    def tearDown(self):
+    def _restore_module_configuration(self):
         aa.ROOT, aa.DATA, aa.JOBS, aa.OUT, aa.REPORTS, aa.LETTERS, aa.RESUMES = self.original_aa_paths
         api.ROOT = self.original_api_root
-        self.temporary.cleanup()
 
     def test_api_generation_creates_working_markdown_docx_pdf_and_persists_refs(self):
         result = api.generate_working_cover_letter(APPLICATION_ID)
@@ -184,6 +196,7 @@ class CoverLetterPdfLifecycleTests(unittest.TestCase):
                 "Fuel Consumption Prediction",
             ],
         })
+        application.setdefault("provenance", {})["phase8_source"] = application["phase8_plan_reference"]
         store["applications"].append(application)
         aa.save_store(store)
 
@@ -223,6 +236,7 @@ class CoverLetterPdfLifecycleTests(unittest.TestCase):
             "project_selection_record_ids": ["project_bank_customer_clustering_dashboard"],
             "selected_projects": ["Bank Customer Clustering and Financial Analytics Dashboard"],
         })
+        application.setdefault("provenance", {})["phase8_source"] = application["phase8_plan_reference"]
         store["applications"].append(application)
         aa.save_store(store)
 

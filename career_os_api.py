@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import base64
 import hashlib
 import json
 import copy
@@ -19,6 +20,7 @@ import application_assistant as aa
 import jd_resume_planner as planner
 import profile_update_agent as pua
 import profile_security as profile_security
+from postgres_storage_adapter import PostgresApplicationTableMissingError
 from career_os_config import (
     DATA_DIR,
     FRONTEND_DIST_DIR,
@@ -45,6 +47,9 @@ _LOCAL_ALLOWED_HOSTS = {
 _LOCAL_ALLOWED_ORIGINS = {f"http://{host}" for host in _LOCAL_ALLOWED_HOSTS}
 _API_TOKEN = os.environ.get("CAREER_OS_API_TOKEN", "").strip()
 _RUNTIME_ENV = os.environ.get("CAREER_OS_ENV", "development").strip().casefold()
+_POSTGRES_DIAGNOSTIC_ENABLED_ENV = "CAREER_OS_POSTGRES_DIAGNOSTIC_ENABLED"
+_POSTGRES_DIAGNOSTIC_PATH = "/api/diagnostics/postgres-application-store"
+_POSTGRES_DIAGNOSTIC_APPLICATION_ID = "app_16cd654e68f9"
 _BAD_PERCENT_ESCAPE = re.compile(r"%(?![0-9A-Fa-f]{2})")
 _WINDOWS_DRIVE = re.compile(r"^[A-Za-z]:")
 
@@ -273,13 +278,12 @@ def _profile_action_affects_application(action, app, plan):
     return False
 
 
-def invalidate_approved_applications_for_profile_actions(actions, *, root=None):
-    store_path = storage_root(ROOT if root is None else root) / "data" / "applications.json"
-    if not store_path.is_file():
-        return []
+def invalidate_approved_applications_for_profile_actions(actions, *, root=None, applications=None):
+    adapter = aa._application_store_adapter(aa.ROOT if root is None else root)
     with _RESUME_DOCUMENT_LOCK:
-        store = json.loads(store_path.read_text(encoding="utf-8"))
-        applications = store.get("applications", []) if isinstance(store, dict) else []
+        transactional_update = applications is not None
+        if applications is None:
+            applications = adapter.load_application_store().get("applications", [])
         invalidated = []
         for app in applications:
             if not isinstance(app, dict) or app.get("resume_generation_allowed") is not True:
@@ -291,15 +295,25 @@ def invalidate_approved_applications_for_profile_actions(actions, *, root=None):
                 plan = {}
             if not any(_profile_action_affects_application(action, app, plan) for action in actions if isinstance(action, dict)):
                 continue
-            app.update({
-                "resume_generation_allowed": False,
-                "resume_working_artifact_stale": True,
-                "current_status": "awaiting_resume_approval",
-                "last_updated": aa.now(),
-            })
-            invalidated.append(app.get("application_id"))
-        if invalidated:
-            _atomic_write_json(store_path, store)
+            expected = copy.deepcopy(app)
+
+            def invalidate(current):
+                if current != expected or current.get("resume_generation_allowed") is not True:
+                    return False
+                current.update({
+                    "resume_generation_allowed": False,
+                    "resume_working_artifact_stale": True,
+                    "current_status": "awaiting_resume_approval",
+                    "last_updated": aa.now(),
+                })
+                return True
+
+            application_id = app.get("application_id")
+            if transactional_update:
+                if invalidate(app):
+                    invalidated.append(application_id)
+            elif aa.mutate_application(application_id, invalidate, root=root):
+                invalidated.append(application_id)
         return invalidated
 
 
@@ -329,66 +343,144 @@ def confirm_skill_gap(aid, payload):
                              if planner.norm(item.get("requirement")) == planner.norm(skill_name)), None)
             if not matching or matching.get("classification") != "required" or matching.get("evidence_status") not in {"UNSUPPORTED", "UNKNOWN"}:
                 return {"decision": "invalid", "message": "Only a currently unsupported required JD skill can be added through this confirmation."}
-            store_path = aa.DATA / "applications.json"
-            original_store = store_path.read_bytes()
-            original_plan = plan_path.read_bytes()
+            adapter = aa._application_store_adapter(aa.ROOT)
+            postgres_backend = adapter.backend_name == "postgres"
             profile_paths = [_storage_root() / "data" / "skills.json", _storage_root() / "data" / "master_profile.json"]
-            original_profile = {path: path.read_bytes() for path in profile_paths}
-            profile = pua.all_data(ROOT)
+            original_profile = (
+                {} if postgres_backend else {path: path.read_bytes() for path in profile_paths}
+            )
             update_plan = pua.plan_skill_gap_addition(skill_name, category, root=ROOT, application_id=aid)
             if update_plan.get("decision") != "planned":
                 return {"decision": update_plan.get("decision", "invalid"), "message": "The skill could not be planned for profile update.", "details": update_plan}
-            pua.apply_plan(update_plan, root=ROOT, confirm=True, pin=payload.get("pin"))
-            profile = pua.all_data(ROOT)
-            updated_plan = planner.plan_resume(app.get("job_description_text", ""), profile)
-            automatic = copy.deepcopy(updated_plan["resume_plan"].get("projects_to_include", []))
-            updated_plan["resume_plan"]["automatic_projects_to_include"] = copy.deepcopy(automatic)
-            mode = app.get("project_selection_mode") or "automatic"
-            selected = automatic
-            if mode == "manual":
-                eligible = {item.get("record_id"): item for item in profile["projects"].get("projects", [])
-                            if item.get("status") == "verified" and item.get("project_status") == "completed"}
-                selected = [eligible[record_id] for record_id in app.get("project_selection_record_ids", []) if record_id in eligible]
-                if selected:
-                    updated_plan["resume_plan"]["projects_to_include"] = selected
-                    updated_plan["resume_plan"]["project_selection_source"] = "manual"
-                    updated_plan["resume_plan"]["project_selection_record_ids"] = [item["record_id"] for item in selected]
-                else:
-                    mode = "automatic"
-            updated_plan.setdefault("approval_checkpoint", {})["resume_generation_allowed"] = False
-            _atomic_write_json(plan_path, updated_plan)
+            prepared = {}
 
-            store = json.loads(store_path.read_bytes().decode("utf-8"))
-            target = next(item for item in store.get("applications", []) if item.get("application_id") == aid)
-            selected = updated_plan["resume_plan"].get("projects_to_include", automatic)
-            target.update({
-                "selected_projects": [item.get("name") for item in selected],
-                "project_selection_mode": mode,
-                "project_selection_source": mode,
-                "project_selection_record_ids": [item.get("record_id") for item in selected],
-                "selected_skills": [item.get("name") for item in updated_plan["resume_plan"].get("skills_to_include", [])],
-                "selected_certifications": [item.get("name") for item in updated_plan["resume_plan"].get("certifications_to_include", [])],
-                "experience_decision": updated_plan["resume_plan"].get("experience_decisions", []),
-                "requirements_summary": updated_plan["jd_analysis"].get("requirements", []),
-                "supported_requirements": [item.get("requirement") for item in updated_plan["evidence_summary"].get("supported_requirements", [])],
-                "partial_requirements": [item.get("requirement") for item in updated_plan["evidence_summary"].get("partial_requirements", [])],
-                "unsupported_requirements": [item.get("requirement") for item in updated_plan["evidence_summary"].get("unsupported_requirements", [])],
-                "candidate_gap_summary": aa.gap_summary(updated_plan),
-                "application_checklist": aa.checklist(updated_plan),
-                "resume_generation_allowed": False,
-                "resume_working_artifact_stale": bool(target.get("working_resume_generation_id") or target.get("working_resume_docx_path")),
-                "current_status": "awaiting_resume_approval",
-                "last_updated": aa.now(),
-            })
-            _write_application_store_atomically(original_store, store)
-            return {"decision": "skill_added_candidate_provided", "message": "Added as candidate-provided evidence. It will not appear in a resume until verified. The refreshed Resume Plan requires approval before regeneration.", "skill": skill_name, "status": "candidate_provided", "application": target, "plan": updated_plan}
+            def prepare_updated_plan(profile):
+                updated_plan = planner.plan_resume(app.get("job_description_text", ""), profile)
+                automatic = copy.deepcopy(updated_plan["resume_plan"].get("projects_to_include", []))
+                updated_plan["resume_plan"]["automatic_projects_to_include"] = copy.deepcopy(automatic)
+                mode = app.get("project_selection_mode") or "automatic"
+                selected = automatic
+                if mode == "manual":
+                    eligible = {
+                        item.get("record_id"): item
+                        for item in profile["projects"].get("projects", [])
+                        if item.get("status") == "verified" and item.get("project_status") == "completed"
+                    }
+                    selected = [
+                        eligible[record_id]
+                        for record_id in app.get("project_selection_record_ids", [])
+                        if record_id in eligible
+                    ]
+                    if selected:
+                        updated_plan["resume_plan"]["projects_to_include"] = selected
+                        updated_plan["resume_plan"]["project_selection_source"] = "manual"
+                        updated_plan["resume_plan"]["project_selection_record_ids"] = [
+                            item["record_id"] for item in selected
+                        ]
+                    else:
+                        mode = "automatic"
+                updated_plan.setdefault("approval_checkpoint", {})[
+                    "resume_generation_allowed"
+                ] = False
+                new_plan_path = plan_path.with_name(
+                    f"{plan_path.stem}_skill_gap_{uuid.uuid4().hex}.json"
+                )
+                plan_reference = str(new_plan_path.relative_to(ROOT))
+                _atomic_write_json(new_plan_path, updated_plan, exclusive=True)
+                selected = updated_plan["resume_plan"].get("projects_to_include", automatic)
+                prepared["plan"] = updated_plan
+                prepared["application_updates"] = {
+                    "phase8_plan_reference": plan_reference,
+                    "selected_projects": [item.get("name") for item in selected],
+                    "project_selection_mode": mode,
+                    "project_selection_source": mode,
+                    "project_selection_record_ids": [
+                        item.get("record_id") for item in selected
+                    ],
+                    "selected_skills": [
+                        item.get("name")
+                        for item in updated_plan["resume_plan"].get("skills_to_include", [])
+                    ],
+                    "selected_certifications": [
+                        item.get("name")
+                        for item in updated_plan["resume_plan"].get("certifications_to_include", [])
+                    ],
+                    "experience_decision": updated_plan["resume_plan"].get("experience_decisions", []),
+                    "requirements_summary": updated_plan["jd_analysis"].get("requirements", []),
+                    "supported_requirements": [
+                        item.get("requirement")
+                        for item in updated_plan["evidence_summary"].get("supported_requirements", [])
+                    ],
+                    "partial_requirements": [
+                        item.get("requirement")
+                        for item in updated_plan["evidence_summary"].get("partial_requirements", [])
+                    ],
+                    "unsupported_requirements": [
+                        item.get("requirement")
+                        for item in updated_plan["evidence_summary"].get("unsupported_requirements", [])
+                    ],
+                    "candidate_gap_summary": aa.gap_summary(updated_plan),
+                    "application_checklist": aa.checklist(updated_plan),
+                    "resume_generation_allowed": False,
+                    "resume_working_artifact_stale": bool(
+                        app.get("working_resume_generation_id") or app.get("working_resume_docx_path")
+                    ),
+                    "current_status": "awaiting_resume_approval",
+                    "last_updated": aa.now(),
+                }
+                prepared["provenance"] = copy.deepcopy(app.get("provenance") or {})
+                prepared["provenance"]["phase8_source"] = plan_reference
+
+            def update_postgres_applications(applications):
+                current = next(
+                    (
+                        item for item in applications
+                        if item.get("application_id") == aid
+                    ),
+                    None,
+                )
+                if current != app:
+                    raise RuntimeError(
+                        "Application data changed during skill-gap confirmation. Reload and retry."
+                    )
+                pua.invalidate_approved_applications(
+                    update_plan["actions"],
+                    ROOT,
+                    applications=applications,
+                )
+                current.update(prepared["application_updates"])
+                current.setdefault("provenance", {}).update(prepared["provenance"])
+                prepared["application"] = copy.deepcopy(current)
+
+            pua.apply_plan(
+                update_plan,
+                root=ROOT,
+                confirm=True,
+                pin=payload.get("pin"),
+                _before_persist=prepare_updated_plan if postgres_backend else None,
+                _expected_profile_revision=update_plan.get("base_revision"),
+                _update_applications=update_postgres_applications if postgres_backend else None,
+            )
+
+            if not postgres_backend:
+                prepare_updated_plan(pua.all_data(ROOT))
+                store = adapter.load_application_store()
+                target = next(
+                    item for item in store.get("applications", [])
+                    if item.get("application_id") == aid
+                )
+                expected_target = copy.deepcopy(target)
+                target.update(prepared["application_updates"])
+                target.setdefault("provenance", {}).update(prepared["provenance"])
+                if not aa.replace_application_snapshot(aid, expected_target, target):
+                    raise RuntimeError("Application data changed during skill-gap confirmation. Reload and retry.")
+                prepared["application"] = target
+            return {"decision": "skill_added_candidate_provided", "message": "Added as candidate-provided evidence. It will not appear in a resume until verified. The refreshed Resume Plan requires approval before regeneration.", "skill": skill_name, "status": "candidate_provided", "application": prepared["application"], "plan": prepared["plan"]}
         except profile_security.ProfilePinVerificationError:
             return {"decision": "pin_verification_required", "message": "A valid six-digit security PIN is required. No profile changes were saved."}
         except Exception as exc:
             for path, content in original_profile.items() if 'original_profile' in locals() else []:
                 path.write_bytes(content)
-            if 'original_plan' in locals():
-                plan_path.write_bytes(original_plan)
             return {"decision": "error", "message": f"Skill-gap confirmation was not completed: {type(exc).__name__}: {exc}"}
 
 
@@ -461,11 +553,196 @@ def _path_is_application_owned(path, application_id):
     return re.search(r"(?<![A-Za-z0-9])" + re.escape(application_id) + r"(?![A-Za-z0-9])", Path(path).as_posix()) is not None
 
 
+def _application_deletion_manifest_dir():
+    return aa.DATA / ".application_deletion_recovery"
+
+
+def _encode_file_bytes(value):
+    return base64.b64encode(value).decode("ascii") if value is not None else None
+
+
+def _decode_file_bytes(value):
+    return base64.b64decode(value, validate=True) if value is not None else None
+
+
+def _write_deletion_manifest(path, manifest):
+    _atomic_write_json(path, manifest)
+
+
+def _remove_deletion_manifest(path):
+    path.unlink(missing_ok=True)
+    try:
+        path.parent.rmdir()
+    except OSError:
+        pass
+
+
+def _atomic_write_bytes(path, value, suffix):
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, temporary = tempfile.mkstemp(prefix=f".{path.name}.{suffix}.", suffix=".tmp", dir=str(path.parent))
+    try:
+        with os.fdopen(fd, "wb") as handle:
+            handle.write(value)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(temporary, path)
+    finally:
+        if os.path.exists(temporary):
+            os.unlink(temporary)
+
+
+def _stage_application_artifacts(application_id, artifact_paths, history_path, original_history, updated_history):
+    manifest_dir = _application_deletion_manifest_dir()
+    manifest_dir.mkdir(parents=True, exist_ok=True)
+    manifest_id = uuid.uuid4().hex
+    manifest_path = manifest_dir / f"{manifest_id}.json"
+    artifacts = []
+    for path in sorted(artifact_paths, key=str):
+        if path.is_file():
+            artifacts.append({
+                "original": str(path),
+                "staged": str(path.with_name(f".{path.name}.delete-{manifest_id}")),
+            })
+    manifest = {
+        "version": 1,
+        "manifest_id": manifest_id,
+        "application_id": application_id,
+        "artifacts": artifacts,
+        "history_original": _encode_file_bytes(original_history),
+        "history_updated": _encode_file_bytes(updated_history),
+    }
+    _write_deletion_manifest(manifest_path, manifest)
+    for artifact in artifacts:
+        os.replace(artifact["original"], artifact["staged"])
+    return manifest_path
+
+
+def _read_deletion_manifest(path, roots):
+    manifest = json.loads(path.read_text(encoding="utf-8"))
+    manifest_id = path.stem
+    if (
+        not isinstance(manifest, dict)
+        or manifest.get("version") != 1
+        or manifest.get("manifest_id") != manifest_id
+        or not isinstance(manifest.get("application_id"), str)
+        or not manifest["application_id"]
+        or not isinstance(manifest.get("artifacts"), list)
+    ):
+        raise ValueError(f"Invalid application-deletion recovery manifest: {path.name}")
+    for artifact in manifest["artifacts"]:
+        if not isinstance(artifact, dict):
+            raise ValueError(f"Invalid artifact entry in recovery manifest: {path.name}")
+        original = Path(artifact.get("original", ""))
+        staged = Path(artifact.get("staged", ""))
+        if (
+            not original.is_absolute()
+            or not staged.is_absolute()
+            or staged.parent != original.parent
+            or staged.name != f".{original.name}.delete-{manifest_id}"
+            or not any(_path_is_within(original, root) for root in roots)
+        ):
+            raise ValueError(f"Unsafe artifact path in recovery manifest: {path.name}")
+    _decode_file_bytes(manifest.get("history_original"))
+    _decode_file_bytes(manifest.get("history_updated"))
+    return manifest
+
+
+def _restore_deletion_manifest(path, manifest, history_path):
+    original_history = _decode_file_bytes(manifest["history_original"])
+    updated_history = _decode_file_bytes(manifest["history_updated"])
+    current_history = history_path.read_bytes() if history_path.is_file() else None
+    if current_history not in (original_history, updated_history):
+        raise RuntimeError("Document history changed while application deletion recovery was pending.")
+    for artifact in manifest["artifacts"]:
+        original = Path(artifact["original"])
+        staged = Path(artifact["staged"])
+        if staged.exists():
+            if original.exists():
+                raise RuntimeError(f"Cannot restore staged artifact because the original path exists: {original}")
+            os.replace(staged, original)
+    if current_history != original_history:
+        if original_history is None:
+            history_path.unlink(missing_ok=True)
+        else:
+            _atomic_write_bytes(history_path, original_history, manifest["manifest_id"])
+    _remove_deletion_manifest(path)
+
+
+def _finalize_deletion_manifest(path, manifest, history_path):
+    original_history = _decode_file_bytes(manifest["history_original"])
+    updated_history = _decode_file_bytes(manifest["history_updated"])
+    current_history = history_path.read_bytes() if history_path.is_file() else None
+    if current_history not in (original_history, updated_history):
+        raise RuntimeError("Document history changed while application deletion recovery was pending.")
+    if current_history != updated_history:
+        if updated_history is None:
+            history_path.unlink(missing_ok=True)
+        else:
+            _atomic_write_bytes(history_path, updated_history, manifest["manifest_id"])
+    removed = 0
+    for artifact in manifest["artifacts"]:
+        staged = Path(artifact["staged"])
+        if staged.exists():
+            try:
+                staged.unlink()
+                removed += 1
+            except FileNotFoundError:
+                pass
+    _remove_deletion_manifest(path)
+    return removed
+
+
+def _recover_application_deletions(adapter, *, application_id=None):
+    manifest_dir = _application_deletion_manifest_dir()
+    if not manifest_dir.exists():
+        return []
+    roots = _application_artifact_roots()
+    manifests = []
+    for path in sorted(manifest_dir.glob("*.json")):
+        try:
+            manifest = _read_deletion_manifest(path, roots)
+        except (OSError, UnicodeError, json.JSONDecodeError, ValueError) as exc:
+            return [f"{path.name}: {exc}"]
+        if application_id is None or manifest["application_id"] == application_id:
+            manifests.append((path, manifest))
+    if not manifests:
+        return []
+    try:
+        current_ids = {
+            item.get("application_id")
+            for item in adapter.load_application_store().get("applications", [])
+            if isinstance(item, dict)
+        }
+    except Exception as exc:
+        return [f"Unable to determine pending deletion outcome: {exc}"]
+    errors = []
+    history_path = aa.DATA / "document_history.json"
+    for path, manifest in manifests:
+        try:
+            if manifest["application_id"] in current_ids:
+                _restore_deletion_manifest(path, manifest, history_path)
+            else:
+                _finalize_deletion_manifest(path, manifest, history_path)
+        except (OSError, UnicodeError, json.JSONDecodeError, ValueError, RuntimeError) as exc:
+            errors.append(f"{path.name}: {exc}")
+    return errors
+
+
 def delete_application(aid):
     """Remove one application, its history index entries, and safely scoped artifacts."""
+    adapter = aa._application_store_adapter(aa.ROOT)
+    postgres_backend = adapter.backend_name == "postgres"
     store_path = aa.DATA / "applications.json"
     history_path = aa.DATA / "document_history.json"
     with aa.APPLICATION_STORE_LOCK:
+        recovery_errors = _recover_application_deletions(adapter)
+        if recovery_errors:
+            return {
+                "decision": "error",
+                "message": "A previous application deletion still requires recovery.",
+                "recovery_errors": recovery_errors,
+            }
         store = aa.load_store()
         applications = store.get("applications", [])
         target = next((item for item in applications if item.get("application_id") == aid), None)
@@ -473,8 +750,8 @@ def delete_application(aid):
             return {"decision": "not_found", "message": "Application was not found."}
 
         try:
-            history = json.loads(history_path.read_text(encoding="utf-8")) if history_path.is_file() else {"documents": []}
-        except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+            history = adapter.load_document_history()
+        except Exception as exc:
             return {"decision": "error", "message": f"Document history could not be read safely: {exc}"}
         if not isinstance(history, dict) or not isinstance(history.get("documents", []), list):
             return {"decision": "error", "message": "Document history has an invalid format; no application data was removed."}
@@ -515,42 +792,131 @@ def delete_application(aid):
         updated_history = {**history, "documents": remaining_history}
         cleanup_errors = []
         removed_artifacts = 0
-        for path in artifact_paths:
-            try:
-                if path.is_file():
-                    path.unlink()
-                    removed_artifacts += 1
-            except OSError as exc:
-                cleanup_errors.append({"path": str(path), "error": str(exc)})
 
-        if cleanup_errors:
-            return {
-                "decision": "error",
-                "message": "Some associated files could not be deleted; the application remains in history so you can retry.",
-                "cleanup_errors": cleanup_errors,
-            }
-
-        original_history = history_path.read_bytes() if history_path.is_file() else None
+        original_history = None
+        manifest_path = None
         try:
-            if target_history:
-                _atomic_write_json(history_path, updated_history)
-            _atomic_write_json(store_path, updated_store)
-        except OSError as exc:
-            try:
-                if original_history is None:
-                    history_path.unlink(missing_ok=True)
-                else:
-                    history_path.write_bytes(original_history)
-            except OSError:
-                pass
+            original_history = history_path.read_bytes() if history_path.is_file() else None
+            if postgres_backend:
+                updated_history_bytes = original_history
+
+                def stage_postgres_files():
+                    nonlocal manifest_path
+                    manifest_path = _stage_application_artifacts(
+                        aid,
+                        artifact_paths,
+                        history_path,
+                        original_history,
+                        updated_history_bytes,
+                    )
+
+                deleted = adapter.delete_application(
+                    aid,
+                    expected=target,
+                    before_delete=stage_postgres_files,
+                )
+                if deleted is None:
+                    raise RuntimeError("Application changed during deletion; reload and retry.")
+                try:
+                    removed_artifacts = _finalize_deletion_manifest(
+                        manifest_path,
+                        _read_deletion_manifest(manifest_path, roots),
+                        history_path,
+                    )
+                    manifest_path = None
+                except (OSError, UnicodeError, json.JSONDecodeError, ValueError, RuntimeError) as exc:
+                    cleanup_errors.append({"error": str(exc)})
+                    if manifest_path is not None:
+                        try:
+                            pending_manifest = _read_deletion_manifest(manifest_path, roots)
+                            removed_artifacts = sum(
+                                not Path(item["staged"]).exists()
+                                for item in pending_manifest["artifacts"]
+                            )
+                        except (OSError, UnicodeError, json.JSONDecodeError, ValueError):
+                            pass
+            else:
+                updated_history_bytes = (
+                    (json.dumps(updated_history, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
+                    if target_history
+                    else original_history
+                )
+                manifest_path = _stage_application_artifacts(
+                    aid,
+                    artifact_paths,
+                    history_path,
+                    original_history,
+                    updated_history_bytes,
+                )
+                if target_history:
+                    _atomic_write_json(history_path, updated_history)
+                _atomic_write_json(store_path, updated_store)
+                try:
+                    removed_artifacts = _finalize_deletion_manifest(
+                        manifest_path,
+                        _read_deletion_manifest(manifest_path, roots),
+                        history_path,
+                    )
+                    manifest_path = None
+                except (OSError, UnicodeError, json.JSONDecodeError, ValueError, RuntimeError) as exc:
+                    cleanup_errors.append({"error": str(exc)})
+                    if manifest_path is not None:
+                        try:
+                            pending_manifest = _read_deletion_manifest(manifest_path, roots)
+                            removed_artifacts = sum(
+                                not Path(item["staged"]).exists()
+                                for item in pending_manifest["artifacts"]
+                            )
+                        except (OSError, UnicodeError, json.JSONDecodeError, ValueError):
+                            pass
+        except Exception as exc:
+            recovery_errors = _recover_application_deletions(
+                adapter,
+                application_id=aid,
+            )
+            if recovery_errors:
+                return {
+                    "decision": "error",
+                    "message": f"Application deletion outcome requires recovery: {exc}",
+                    "recovery_pending": True,
+                    "recovery_errors": recovery_errors,
+                }
+            if manifest_path is not None:
+                try:
+                    still_exists = any(
+                        item.get("application_id") == aid
+                        for item in adapter.load_application_store().get("applications", [])
+                        if isinstance(item, dict)
+                    )
+                except Exception:
+                    still_exists = True
+                if not still_exists:
+                    aa.DELETED_APPLICATION_IDS.add(aid)
+                    return {
+                        "decision": "deleted",
+                        "message": "Application removed; recovery completed after a storage error.",
+                        "application_id": aid,
+                        "artifacts_removed": removed_artifacts,
+                    }
+            if cleanup_errors:
+                return {
+                    "decision": "error",
+                    "message": "Some associated files could not be deleted; the application remains in history so you can retry.",
+                    "cleanup_errors": cleanup_errors,
+                }
             return {"decision": "error", "message": f"Application data could not be removed safely: {exc}"}
 
         aa.DELETED_APPLICATION_IDS.add(aid)
         return {
             "decision": "deleted",
-            "message": "Application removed from history.",
+            "message": (
+                "Application removed from history; artifact cleanup is pending recovery."
+                if cleanup_errors
+                else "Application removed from history."
+            ),
             "application_id": aid,
             "artifacts_removed": removed_artifacts,
+            **({"cleanup_pending": True, "cleanup_errors": cleanup_errors} if cleanup_errors else {}),
         }
 
 
@@ -712,24 +1078,6 @@ def _atomic_write_json(path, value, *, exclusive=False):
             os.unlink(temporary)
 
 
-def _write_application_store_atomically(expected_bytes, store):
-    store_path = aa.DATA / "applications.json"
-    if not store_path.is_file() or store_path.read_bytes() != expected_bytes:
-        raise RuntimeError("Application data changed during validation. Reload the current application and retry.")
-    fd, temporary = tempfile.mkstemp(prefix=".applications.resume-save.", suffix=".tmp", dir=str(store_path.parent))
-    try:
-        with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as handle:
-            handle.write(json.dumps(store, indent=2, ensure_ascii=False) + "\n")
-            handle.flush()
-            os.fsync(handle.fileno())
-        if store_path.read_bytes() != expected_bytes:
-            raise RuntimeError("Application data changed during validation. Reload the current application and retry.")
-        os.replace(temporary, store_path)
-    finally:
-        if os.path.exists(temporary):
-            os.unlink(temporary)
-
-
 def _normalized_document_text(text):
     import re
     return re.sub(r"\s+", "", str(text or "")).casefold()
@@ -810,10 +1158,9 @@ def save_resume_document_payload(aid, payload):
     import resume_document_validation as rdv
 
     with _RESUME_DOCUMENT_LOCK:
-        store_path = aa.DATA / "applications.json"
         try:
-            original_store_bytes = store_path.read_bytes()
-            store = json.loads(original_store_bytes.decode("utf-8"))
+            adapter = aa._application_store_adapter(aa.ROOT)
+            store = adapter.load_application_store()
             app = next((item for item in store.get("applications", []) if item.get("application_id") == aid), None)
         except (OSError, json.JSONDecodeError) as exc:
             return {"decision": "error", "message": f"Application data could not be read: {exc}", "previous_working_preserved": True}
@@ -957,9 +1304,7 @@ def save_resume_document_payload(aid, payload):
                 _atomic_write_json(report_path, report, exclusive=True); staged_paths.append(report_path)
                 _atomic_write_json(sidecar_path, sidecar, exclusive=True); staged_paths.append(sidecar_path)
 
-                latest_store = aa.load_store()
-                if store_path.read_bytes() != original_store_bytes:
-                    raise RuntimeError("Application data changed during validation. Reload the current application and retry.")
+                latest_store = adapter.load_application_store()
                 target = next((item for item in latest_store.get("applications", []) if item.get("application_id") == aid), None)
                 if not target:
                     raise RuntimeError("The selected application was removed during validation.")
@@ -982,7 +1327,8 @@ def save_resume_document_payload(aid, payload):
                     "resume_working_artifact_stale": False,
                     "last_updated": saved_at,
                 })
-                _write_application_store_atomically(original_store_bytes, latest_store)
+                if not aa.replace_application_snapshot(aid, app, target):
+                    raise RuntimeError("Application data changed during validation. Reload and retry.")
                 staged_paths.clear()
                 return _save_resume_response(target, candidate, report, docx_ref, pdf_ref, saved_at)
         except rdm.ResumeDocumentValidationError as exc:
@@ -1040,7 +1386,8 @@ def persist_working_cover_letter_formats(aid, result):
         "cover_letter_working_pdf_reference": pdf_ref,
         "last_updated": aa.now(),
     })
-    aa.save_store(store)
+    if not aa.replace_application_snapshot(aid, app, target):
+        return {"decision": "conflict", "message": "Application data changed while saving the cover letter. Reload and retry."}
     return {
         **result,
         "cover_letter_working_reference": str(markdown_ref),
@@ -1086,11 +1433,54 @@ def generate_working_resume(aid):
     generated_at = aa.now()
     docx_ref = str(output.relative_to(ROOT))
     pdf_ref = str(working_pdf.relative_to(ROOT))
-    store = aa.load_store()
-    target = next(item for item in store["applications"] if item.get("application_id") == aid)
-    target.update({"working_resume_reference": docx_ref, "working_resume_pdf_reference": pdf_ref, "working_resume_docx_path": docx_ref, "working_resume_pdf_path": pdf_ref, "working_resume_docx_sha256": file_sha256(output), "working_resume_pdf_sha256": file_sha256(working_pdf), "working_resume_generation_id": generation_id, "working_resume_generated_at": generated_at, "resume_validation_reference": str(report.relative_to(ROOT)), "resume_working_artifact_stale": False, "resume_final_stale": bool(target.get("resume_generation_id")), "current_status": "resume_ready", "last_updated": generated_at})
-    aa.save_store(store)
-    return {"decision": "created", "application": target, "working": {"docx_reference": docx_ref, "pdf_reference": pdf_ref, "generation_id": generation_id, "generated_at": generated_at, "validation_reference": str(report.relative_to(ROOT)), "validation": validation}}
+    working_resume_state = {
+        key: app.get(key)
+        for key in (
+            "working_resume_reference",
+            "working_resume_pdf_reference",
+            "working_resume_docx_path",
+            "working_resume_pdf_path",
+            "working_resume_docx_sha256",
+            "working_resume_pdf_sha256",
+            "working_resume_generation_id",
+            "working_resume_generated_at",
+            "working_resume_revision_id",
+            "working_resume_revision_reference",
+            "working_resume_source_plan_sha256",
+            "working_resume_validated",
+            "working_resume_validated_at",
+            "working_resume_validation_reference",
+            "resume_validation_reference",
+            "resume_working_artifact_stale",
+        )
+    }
+
+    def activate_working_resume(current):
+        if (
+            current.get("phase8_plan_reference") != app.get("phase8_plan_reference")
+            or current.get("resume_generation_allowed") is not True
+            or any(current.get(key) != value for key, value in working_resume_state.items())
+        ):
+            return False
+        current.update({
+            "working_resume_reference": docx_ref,
+            "working_resume_pdf_reference": pdf_ref,
+            "working_resume_docx_path": docx_ref,
+            "working_resume_pdf_path": pdf_ref,
+            "working_resume_docx_sha256": file_sha256(output),
+            "working_resume_pdf_sha256": file_sha256(working_pdf),
+            "working_resume_generation_id": generation_id,
+            "working_resume_generated_at": generated_at,
+            "resume_validation_reference": str(report.relative_to(ROOT)),
+            "resume_working_artifact_stale": False,
+            "resume_final_stale": bool(current.get("resume_generation_id")),
+            "current_status": "resume_ready",
+            "last_updated": aa.now(),
+        })
+    updated = aa.mutate_application(aid, activate_working_resume)
+    if not updated:
+        return {"decision": "conflict", "message": "Application data changed while saving the Working Resume. Reload and retry."}
+    return {"decision": "created", "application": updated, "working": {"docx_reference": docx_ref, "pdf_reference": pdf_ref, "generation_id": generation_id, "generated_at": generated_at, "validation_reference": str(report.relative_to(ROOT)), "validation": validation}}
 
 
 def validate_working_revision_for_finalization(aid, app=None):
@@ -1209,11 +1599,30 @@ def finalize_resume(aid):
     final_docx_ref = str(final.relative_to(ROOT))
     final_pdf_ref = str(final_pdf.relative_to(ROOT))
     finalized_at = aa.now()
-    store = aa.load_store()
-    target = next(item for item in store["applications"] if item.get("application_id") == aid)
-    target.update({"resume_reference": final_docx_ref, "resume_pdf_reference": final_pdf_ref, "resume_docx_path": final_docx_ref, "resume_pdf_path": final_pdf_ref, "resume_docx_sha256": file_sha256(final), "resume_pdf_sha256": file_sha256(final_pdf), "resume_generation_id": "gen_" + uuid.uuid4().hex, "resume_finalized_at": finalized_at, "resume_status": "final", "resume_final_stale": False, "last_updated": finalized_at})
-    aa.save_store(store)
-    return {"decision": "finalized", "application": target, "final": {"docx_reference": final_docx_ref, "pdf_reference": final_pdf_ref, "finalized_at": finalized_at, "validation_reference": str(validation_report.relative_to(ROOT))}}
+    def activate_final_resume(current):
+        if (
+            current.get("working_resume_generation_id") != app.get("working_resume_generation_id")
+            or current.get("phase8_plan_reference") != app.get("phase8_plan_reference")
+            or current.get("resume_working_artifact_stale")
+        ):
+            return False
+        current.update({
+            "resume_reference": final_docx_ref,
+            "resume_pdf_reference": final_pdf_ref,
+            "resume_docx_path": final_docx_ref,
+            "resume_pdf_path": final_pdf_ref,
+            "resume_docx_sha256": file_sha256(final),
+            "resume_pdf_sha256": file_sha256(final_pdf),
+            "resume_generation_id": "gen_" + uuid.uuid4().hex,
+            "resume_finalized_at": finalized_at,
+            "resume_status": "final",
+            "resume_final_stale": False,
+            "last_updated": finalized_at,
+        })
+    updated = aa.mutate_application(aid, activate_final_resume)
+    if not updated:
+        return {"decision": "conflict", "message": "Application data changed while finalizing the Resume. Reload and retry."}
+    return {"decision": "finalized", "application": updated, "final": {"docx_reference": final_docx_ref, "pdf_reference": final_pdf_ref, "finalized_at": finalized_at, "validation_reference": str(validation_report.relative_to(ROOT))}}
 
 
 PROJECT_LIMIT = 3
@@ -1309,7 +1718,8 @@ def save_resume_edit(aid, payload):
     updated = aa.now()
     target.update({"phase8_plan_reference": updated_plan_reference, "selected_projects": [item.get("name") for item in selected], "project_selection_mode": mode, "project_selection_source": mode, "project_selection_record_ids": list(record_ids), "resume_generation_allowed": False, "resume_working_artifact_stale": True, "current_status": "awaiting_resume_approval", "last_updated": updated})
     target.setdefault("provenance", {})["phase8_source"] = updated_plan_reference
-    aa.save_store(store)
+    if not aa.replace_application_snapshot(aid, app, target):
+        return {"decision": "conflict", "message": "Application data changed while saving the project selection. Reload and retry."}
     return {"decision": "saved", "message": "Project selection saved. Approve the updated Resume Plan in JD Intelligence, then regenerate the Working Resume. Final artifacts were not changed.", "application": target, "selected_record_ids": record_ids, "final_preserved": True}
 
 
@@ -1354,7 +1764,12 @@ class Handler(BaseHTTPRequestHandler):
             return False
 
         request_path = urlparse(self.path).path
+        diagnostic_disabled = (
+            request_path == _POSTGRES_DIAGNOSTIC_PATH
+            and os.environ.get(_POSTGRES_DIAGNOSTIC_ENABLED_ENV) != "1"
+        )
         if (request_path.startswith("/api/")
+                and not diagnostic_disabled
                 and not _valid_api_token(self.command, request_path, self._single_header("Authorization"))):
             self.send_json({"error": "authentication required"}, 401)
             return False
@@ -1457,7 +1872,44 @@ class Handler(BaseHTTPRequestHandler):
             return self.send_json({"error": "not found"}, 404)
         try:
             if path == "/api/health":
+                adapter = aa._application_store_adapter()
+                if adapter.backend_name == "postgres" and not adapter.is_ready():
+                    return self.send_json(
+                        {
+                            "ok": False,
+                            "service": "career-os-api",
+                            "storage_backend": "postgres",
+                            "error": "PostgreSQL application storage is unavailable.",
+                        },
+                        503,
+                    )
                 return self.send_json({"ok": True, "service": "career-os-api"})
+            if path == _POSTGRES_DIAGNOSTIC_PATH:
+                if os.environ.get(_POSTGRES_DIAGNOSTIC_ENABLED_ENV) != "1":
+                    return self.send_json({"error": "not found"}, 404)
+                authorization = self._single_header("Authorization")
+                if not _API_TOKEN or not _valid_api_token(
+                    self.command, path, authorization
+                ):
+                    return self.send_json({"error": "authentication required"}, 401)
+                adapter = aa._application_store_adapter()
+                if adapter.backend_name != "postgres":
+                    return self.send_json(
+                        {"error": "PostgreSQL application storage is not selected."},
+                        503,
+                    )
+                try:
+                    diagnostic = adapter.diagnostic_application_store(
+                        _POSTGRES_DIAGNOSTIC_APPLICATION_ID
+                    )
+                except PostgresApplicationTableMissingError as exc:
+                    return self.send_json({"error": str(exc)}, 503)
+                except Exception:
+                    return self.send_json(
+                        {"error": "PostgreSQL diagnostic query failed or the database is unavailable."},
+                        503,
+                    )
+                return self.send_json(diagnostic)
             if path == "/api/bootstrap":
                 return self.send_json({"profile": profile_summary(), **application_payload()})
             if path == "/api/profile/security":
@@ -1638,4 +2090,3 @@ if __name__ == "__main__":
     if _RUNTIME_ENV in {"production", "prod"} and len(_API_TOKEN) < 32:
         raise SystemExit("CAREER_OS_API_TOKEN must be configured with at least 32 characters in production")
     ThreadingHTTPServer(_api_server_address(), Handler).serve_forever()
-
