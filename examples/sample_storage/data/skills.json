@@ -1,0 +1,15 @@
+{
+  "skill_groups": [
+    {
+      "category": "programming_languages",
+      "skills": [
+        {
+          "record_id": "demo-skill-python",
+          "name": "Python",
+          "status": "unknown",
+          "sources": []
+        }
+      ]
+    }
+  ]
+}

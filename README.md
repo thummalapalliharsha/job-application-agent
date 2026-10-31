@@ -57,6 +57,7 @@ Career OS application, profile, and document services
 - Generate and edit application-specific cover letters using profile evidence, with Working and Final artifact states.
 - View the canonical profile; edit existing information or add Skills, Projects, Experience, Education, Certifications, and Achievements.
 - Review profile changes before saving. Existing profile validation and evidence/provenance handling remain in force.
+- Project and skill additions can retain an explicit evidence source; a skill may link to its supporting project while remaining marked candidate-provided and unverified.
 
 ## Profile Security
 
@@ -90,7 +91,28 @@ The production web UI is React, TypeScript, and Vite under `frontend/`. `fronten
 | `resume_document_validation.py` | Resume edit and document validation |
 | `app.py` | Separate Streamlit interface using the shared services |
 
-Canonical profile and application data are JSON files under `data/`. Job-description snapshots are under `job_descriptions/`; reports and generated artifacts are under `output/`. `CAREER_OS_STORAGE_ROOT` can select a different root. Render's filesystem is ephemeral unless backed by a persistent disk. The current Render plan does not provide a persistent disk, so file-backed data and artifacts may not survive a restart or redeploy.
+Canonical profile, application, document-history, operation, and artifact metadata are file-backed under `data/` by default. `CAREER_OS_STORAGE_ROOT` can select a different root. PostgreSQL metadata storage is opt-in through `CAREER_OS_STORAGE_BACKEND=postgres`; neither production nor local startup enables it automatically. PostgreSQL schemas are upgraded only by an explicit call to `PostgresStorageAdapter.migrate_schema()` after reviewing the additive migrations in `postgres_migrations.py`. No migration or import runs at startup.
+
+Job-description snapshots are under `job_descriptions/`; reports and generated artifacts are under `output/`. Private S3-compatible artifact storage is separately opt-in with `CAREER_OS_ARTIFACT_BACKEND=r2`, `R2_ACCOUNT_ID`, `R2_BUCKET_NAME`, `R2_ACCESS_KEY_ID`, and `R2_SECRET_ACCESS_KEY`. Keep the bucket private and supply credentials only through the deployment's secret manager; the application does not expose object URLs. Local artifact storage remains the default, and enabling R2 does not perform a bulk migration or cutover of existing files. Render's filesystem is ephemeral unless backed by a persistent disk. The current Render plan does not provide a persistent disk, so file-backed data and artifacts may not survive a restart or redeploy.
+
+### Local backup, restore rehearsal, and rollback
+
+`storage_backup.py` provides local-only backup, validation, restore rehearsal, and file-backed parity commands. It inventories allowlisted JSON metadata stores and files under `job_descriptions/` and `output/`, recording logical references, history IDs, owners, byte sizes, and SHA-256 digests. Backup creation never overwrites an existing destination. A generated bundle is not considered valid until `validate` succeeds and `restore` completes its isolated parity check.
+
+```powershell
+python -m storage_backup backup <local-storage-root> <new-backup-directory>
+python -m storage_backup validate <backup-directory>
+python -m storage_backup restore <backup-directory> <new-restore-root>
+python -m storage_backup parity <source-root> <target-root>
+```
+
+These commands do not connect to PostgreSQL or R2 and do not perform cutover. Unexpected metadata files, missing artifacts, duplicate IDs/references, and checksum or size mismatches make a bundle invalid; resolve conflicts explicitly rather than overwriting records.
+
+Keep a backup bundle in a directory writable only by the operator performing validation or restore, and prevent concurrent modification for the duration of either operation. File contents are opened without following symlinks where supported and restore verifies bytes again while copying, but portable Python filesystem APIs cannot prevent a privileged external process from replacing bundle directories or entries concurrently on every platform. Backup and restore publication use an atomic no-clobber rename on Windows and Linux; other platforms fail closed when that primitive is unavailable.
+
+Before cutover, freeze writes, create and validate a backup, rehearse restore into a new local directory, and confirm source/target parity. If PostgreSQL/R2 has accepted no writes, rollback may return to the frozen file-backed copy only after parity confirms it is unchanged and complete. Do not switch only a backend setting while either system may contain newer writes.
+
+After PostgreSQL or R2 accepts writes, rollback requires a write freeze and a separately reviewed reconciliation of all post-cutover database records and object-store artifacts into the file-backed store. Preserve both sides, resolve ID/reference conflicts without overwriting, verify artifact ownership, sizes, and hashes, and establish full parity before switching back. The repository does not automate this post-write reconciliation or a cutover; use controlled, independently validated operational tooling before any rollback.
 
 ## Repository Structure
 
@@ -181,7 +203,20 @@ Configure secrets in the hosting provider's private environment settings. Do not
 | `CAREER_OS_STORAGE_ROOT` | Backend services | Optional root for data, job descriptions, and output files |
 | `CAREER_OS_FRONTEND_DIR` | Backend API | Optional location of the built frontend served by the Python API |
 
+The explicit staging backfill also requires `CAREER_OS_ENV=staging` (if `APP_ENV` or `ENVIRONMENT` is set, it must also equal `staging`), `CAREER_OS_STORAGE_BACKEND=postgres`, and the trusted allowlist values `CAREER_OS_STAGING_ALLOWED_POSTGRES_HOST`, `CAREER_OS_STAGING_ALLOWED_POSTGRES_DB`, `CAREER_OS_STAGING_ALLOWED_POSTGRES_PORT`, `CAREER_OS_STAGING_ALLOWED_NEON_PROJECT_ID`, and `CAREER_OS_STAGING_ALLOWED_NEON_BRANCH_ID`. The active connection configuration must include matching `CAREER_OS_POSTGRES_NEON_PROJECT_ID` and `CAREER_OS_POSTGRES_NEON_BRANCH_ID`; its resolved URL or host/database/port must exactly match the allowed endpoint. If a PostgreSQL URL omits its port, the effective port is 5432; a separately configured port must agree with the URL. PostgreSQL URLs accept only the non-routing query parameters `sslmode`, `connect_timeout`, `application_name`, and `channel_binding`; all other and duplicate query parameters are rejected. Provision the allowlist only from trusted deployment configuration after independently verifying the endpoint-to-project/branch mapping in the Neon control plane. The guard performs no provider identity lookup: the configured project/branch values are an operator-verified binding, not identity derived from the hostname. Missing, conflicting, malformed, or mismatched identity fails closed. The staging runner constructs and uses the PostgreSQL client from the validated configuration; tests replace that constructor to provide fake connections, but production callers cannot inject a connection factory. Never use production credentials or target values for staging operations.
+
 The checked-in `frontend/.env.example` has a frontend API-base example; the current React client uses relative `/api/*` paths and does not read that variable.
+
+## Public demo storage
+
+The public repository uses fabricated records under `examples/sample_storage/`; these are demonstration fixtures, not candidate data or evidence. From the repository root, point the backend at that fixture before starting it:
+
+```powershell
+$env:CAREER_OS_STORAGE_ROOT = (Resolve-Path .\examples\sample_storage).Path
+python career_os_api.py
+```
+
+For the separate Streamlit interface, set the same environment variable in that terminal before running `streamlit run app.py`. The application writes demo changes to `examples/sample_storage/`, including its `output/` directory. When the variable is unset, an existing local checkout continues to use its repository-root storage, which is now ignored by Git. For stronger separation, set `CAREER_OS_STORAGE_ROOT` to a separate private directory in your local environment; never copy real records into the public fixture.
 
 ## Deployment
 

@@ -1,0 +1,30 @@
+{
+  "applications": [
+    {
+      "application_id": "demo-app-001",
+      "company_name": "Example Labs",
+      "job_title": "Junior Python Developer",
+      "job_url": "https://example.test/jobs/demo-python",
+      "source_platform": "synthetic",
+      "location": "Example City",
+      "employment_type": "full-time",
+      "current_status": "saved",
+      "date_added": "2026-01-15T00:00:00Z",
+      "last_updated": "2026-01-15T00:00:00Z",
+      "job_description_reference": "job_descriptions/demo-role.txt",
+      "job_description_text": "Synthetic role description for the public demo fixture.",
+      "manual_submission_required": true,
+      "automatic_submission_enabled": false,
+      "resume_generation_allowed": false,
+      "application_checklist": {
+        "requirements": [],
+        "documents": [],
+        "manual_actions": []
+      },
+      "status_history": [],
+      "selected_skills": [],
+      "selected_projects": [],
+      "selected_certifications": []
+    }
+  ]
+}

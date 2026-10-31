@@ -1,0 +1,15 @@
+Junior Python Developer
+Company: Example Labs
+Location: Example City
+Employment type: Full-time
+
+This synthetic job description is included only to demonstrate the public
+Career OS sample workflow. It does not represent a real employer or vacancy.
+
+Responsibilities:
+- Read and maintain small Python applications.
+- Add tests for straightforward feature changes.
+
+Requirements:
+- Familiarity with Python and version control.
+- Ability to explain a code change and its tests.

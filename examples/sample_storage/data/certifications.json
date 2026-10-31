@@ -1,0 +1,13 @@
+{
+  "certifications": [
+    {
+      "record_id": "demo-cert-python",
+      "credential_id": "demo-credential-python",
+      "name": "Example Python Foundations",
+      "issuer": "Example Training",
+      "credential_type": "course",
+      "status": "unverified",
+      "sources": []
+    }
+  ]
+}

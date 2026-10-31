@@ -1,0 +1,17 @@
+{
+  "projects": [
+    {
+      "record_id": "demo-project",
+      "name": "Example Inventory CLI",
+      "purpose": "Synthetic project record for demonstrating profile and planning screens.",
+      "functionality": ["Lists sample inventory items from local demo data."],
+      "project_status": "unknown",
+      "github_availability": "github_unverified",
+      "technologies": ["Python"],
+      "frameworks_libraries_tools": ["Python"],
+      "demonstrated_skills": ["Python"],
+      "sources": [],
+      "review_flags": ["Synthetic fixture; not candidate evidence."]
+    }
+  ]
+}

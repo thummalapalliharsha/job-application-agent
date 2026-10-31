@@ -31,7 +31,12 @@ frontend/tsconfig.tsbuildinfo
 frontend/.phase*_e2e.cjs
 
 # Generated application artifacts
-output/
+/output/
+
+# Private local profile and application storage
+/data/
+/job_descriptions/
+/resumes/
 
 # Temporary files
 *.tmp
@@ -47,4 +52,6 @@ Thumbs.db
 .idea/
 .vercel/
 .vercel
-.env*
+
+# Keep safe environment examples visible after the secret-file patterns above.
+!**/.env.example

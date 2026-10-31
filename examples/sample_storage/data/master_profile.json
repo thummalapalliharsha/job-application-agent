@@ -1,0 +1,32 @@
+{
+  "profile": {
+    "name": "Taylor Example",
+    "contact": {
+      "email": "taylor@example.test"
+    },
+    "links": {
+      "github": "https://example.test/taylor",
+      "linkedin": "https://example.test/taylor"
+    },
+    "location": "Example City"
+  },
+  "source_documents": [
+    {
+      "source_id": "demo-profile-source",
+      "source_name": "Synthetic demonstration record",
+      "source_type": "synthetic"
+    }
+  ],
+  "record_indexes": {
+    "achievement_ids": [],
+    "certification_ids": ["demo-cert-python"],
+    "education_ids": ["demo-education"],
+    "experience_ids": ["demo-experience"],
+    "project_ids": ["demo-project"],
+    "skill_categories": ["programming_languages"]
+  },
+  "conflicts_requiring_review": [],
+  "unverified_or_incomplete_records": [
+    "All records in this fixture are synthetic demonstration data."
+  ]
+}

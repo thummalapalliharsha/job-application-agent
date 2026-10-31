@@ -1,0 +1,12 @@
+{
+  "education": [
+    {
+      "record_id": "demo-education",
+      "degree": "Example Bachelor of Science",
+      "field_of_study": "Computer Science",
+      "institution": "Example University",
+      "status": "unknown",
+      "sources": []
+    }
+  ]
+}

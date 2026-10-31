@@ -1,0 +1,17 @@
+{
+  "experiences": [
+    {
+      "record_id": "demo-experience",
+      "title": "Example Project Contributor",
+      "organization": "Sample Studio",
+      "experience_type": "project",
+      "description": "Synthetic record used to demonstrate the experience view.",
+      "responsibilities": [],
+      "outcomes": [],
+      "learning_outcomes": [],
+      "technologies": ["Python"],
+      "status": "unknown",
+      "sources": []
+    }
+  ]
+}
